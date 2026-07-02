@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Bash(ls*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(python3 -m http.server*)",
+      "Bash(pkill -f \"http.server*\")",
+      "Bash(curl -s -o /dev/null*)",
+      "Bash(curl -sf http://localhost*)",
+      "Bash(\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" --headless*)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(git reset*)",
+      "Bash(git checkout*)",
+      "Bash(git clean*)",
+      "Bash(rm*)",
+      "Bash(gh *)"
+    ]
+  }
+}
