@@ -53,7 +53,19 @@
    is untouched. */
 @media screen and (min-width: 76.25em) {
   .md-sidebar {
-    width: 18rem;
+    width: 16.5rem;
+  }
+
+  /* A visible boundary between nav and content — without it, the
+     leftover space past short nav labels (nav text rarely reaches
+     the full sidebar width) reads as an accidental gap rather than
+     an intentional column edge. */
+  .md-sidebar--primary {
+    border-right: 0.05rem solid var(--md-default-fg-color--lightest);
+  }
+
+  [dir="ltr"] .md-sidebar--primary:not([hidden]) ~ .md-content > .md-content__inner {
+    margin-left: 1.6rem;
   }
 }
 
