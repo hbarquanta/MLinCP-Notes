@@ -50,23 +50,25 @@
 }
 
 /* Widen the primary sidebar — the default 12.1rem wraps chapter
-   titles onto 2-3 lines. Material lays it out with flexbox, so
-   widening it here is enough; the content column reflows on its own.
+   titles onto 2-3 lines, and with toc.integrate it also nests each
+   page's sections, which need the extra width for indentation.
    Scoped to the same desktop breakpoint Material itself uses for the
    sidebar, so the mobile off-canvas drawer (which reuses this class)
    is untouched. */
 @media screen and (min-width: 76.25em) {
   .md-sidebar {
-    width: 17rem;
+    width: 18rem;
   }
 }
 
-/* Material caps the whole page (sidebars + content) at 61rem, so
-   widening the sidebars above squeezed the content column down to
-   a sliver. Widen the overall grid to give content real room back. */
+/* Material caps the whole page at a fixed 61rem regardless of actual
+   screen size, which on a large monitor leaves the reading column
+   cramped in the middle of a mostly-empty window. Scale with the
+   viewport instead (with a sane upper cap so lines don't get
+   unreadably long on ultra-wide displays). */
 @media screen and (min-width: 76.25em) {
   .md-grid {
-    max-width: 90rem;
+    max-width: min(92vw, 110rem);
   }
 }
 
@@ -158,8 +160,80 @@
   .md-sidebar--primary .md-sidebar__toggle {
     right: -0.6rem;
   }
+}
 
-  .md-sidebar--secondary .md-sidebar__toggle {
-    left: -0.6rem;
-  }
+/* Home page hero + chapter card grid (docs/index.md). */
+.hero {
+  text-align: center;
+  padding: 2.4rem 1rem 1.6rem;
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.hero__logo {
+  width: 4.8rem;
+  height: 4.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.hero h1 {
+  margin-bottom: 0.6rem;
+}
+
+.hero__subtitle {
+  text-align: center !important;
+  font-size: 1.05rem;
+  color: var(--md-default-fg-color--light);
+  line-height: 1.6;
+}
+
+.chapter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr));
+  gap: 1rem;
+  margin: 1.6rem 0 2.4rem;
+}
+
+.chapter-card {
+  display: block;
+  position: relative;
+  padding: 1.2rem 1.2rem 1.4rem;
+  border-radius: 0.5rem;
+  border: 0.05rem solid var(--md-default-fg-color--lightest);
+  background-color: var(--md-code-bg-color);
+  text-decoration: none !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.chapter-card:hover {
+  transform: translateY(-0.2rem);
+  box-shadow: var(--md-shadow-z2);
+  border-color: var(--md-accent-fg-color);
+}
+
+.chapter-card__num {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--md-accent-fg-color);
+  background-color: var(--md-accent-fg-color--transparent);
+  border-radius: 1rem;
+  padding: 0.15rem 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.chapter-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+  color: var(--md-default-fg-color);
+}
+
+.chapter-card p {
+  text-align: left !important;
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--md-default-fg-color--light);
+  line-height: 1.5;
+  hyphens: none !important;
 }

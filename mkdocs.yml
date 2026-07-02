@@ -23,10 +23,13 @@ theme:
     - navigation.top
     - navigation.instant
     - navigation.tracking
+    - navigation.sections
+    - navigation.indexes
+    - toc.integrate
+    - toc.follow
     - search.suggest
     - search.highlight
     - content.code.copy
-    - toc.follow
 
 nav:
   - Home: index.md
