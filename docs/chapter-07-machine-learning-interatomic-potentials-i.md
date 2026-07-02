@@ -120,7 +120,7 @@ This guarantees energy conservation in MD (no energy drift) and ensures force eq
 | >2021 | Equivariant GNNs | NequIP, MACE |
 | >2023 | Foundation models | MACE-MP-0, UMA |
 
-## 7.6 Behler–Parrinello Neural Network Potentials (2007)
+## 7.6 Behler–Parrinello Neural Network Potentials
 
 The first MLIP era to use neural networks was launched by Behler & Parrinello (*Phys. Rev. Lett.* **98**, 146401, 2007). The key idea: replace hand-crafted analytical functions with element-specific neural networks, but keep the hand-crafted descriptor step.
 
@@ -182,7 +182,7 @@ Because the model is linear in the coefficients $\{c_v\}$, fitting reduces to si
 
 **Relation to GAP and MACE.** The SOAP power spectrum used in GAP is exactly the $\nu=2$ ACE basis — GAP is a nonlinear (GPR) model on top of 2-body ACE features. ACE generalizes this to arbitrary body order with a linear model. MACE takes ACE one step further: instead of fitting linear coefficients on the ACE basis, it learns nonlinear transformations of the ACE features through neural network layers and stacks multiple message-passing iterations to extend the effective receptive field beyond a single cutoff sphere.
 
-## 7.9 Message-Passing MLIPs: SchNet (2018)
+## 7.9 Message-Passing MLIPs: SchNet
 
 The 2018 generation of MLIPs replaced fixed descriptors with message-passing GNNs that learn their own atomic representations end-to-end. The prototype is **SchNet** (Schütt et al., *J. Chem. Phys.* **148**, 241722, 2018).
 
@@ -196,7 +196,7 @@ where $W^{(t)}(r_{ij})$ is a learned filter that expands the distance $r_{ij}$ o
 
 **What SchNet achieved.** By learning the representation rather than hand-crafting it, SchNet and the subsequent MPNNs (DimeNet, PaiNN, …) substantially outperformed Behler-Parrinello potentials — but they used only scalar (distance-based) features, discarding directional information. This limits their data efficiency and accuracy for systems with strong angular dependencies.
 
-## 7.10 Euclidean Graph Neural Networks: NequIP (2021)
+## 7.10 Euclidean Graph Neural Networks: NequIP
 
 Scalar MPNNs like SchNet use only interatomic distances as edge features, discarding the direction $\hat{\mathbf{r}}_{ij}$. This makes them invariant under rotation by construction, but it also means they cannot directly encode angular information — they must learn it implicitly through many layers.
 

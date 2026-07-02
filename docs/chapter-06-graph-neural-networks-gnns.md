@@ -54,8 +54,7 @@ After $t$ message-passing layers, node $i$ has received information from all nod
 
 However, using too many layers causes **oversmoothing**: repeated averaging pushes all node embeddings toward the same value, erasing the local structural distinctions the network needs to make useful predictions. In practice, 2–4 message-passing layers are used for most molecular and materials applications.
 
-## 6.7 Graph Convolutional Network (GCN) — Kipf & Welling (2017)
-
+## 6.7 Graph Convolutional Network (GCN)
 The first widely adopted GNN architecture, the Graph Convolutional Network (GCN) (Kipf & Welling, *ICLR*, 2017), uses the simplest possible choices for each component:
 
 - **Message function**: pass the neighbor embedding unchanged, $M_t(\mathbf{v}_i, \mathbf{v}_j) = \mathbf{v}_j$ (no processing).

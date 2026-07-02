@@ -104,7 +104,7 @@ $$P(x;\theta) = \prod_{t=1}^T P(x_t|x_{<t};\theta), \qquad h_t = \text{Transform
 
 The Transformer allows each token to attend to all previous tokens in parallel during training (teacher forcing), making LLMs far more scalable than earlier RNNs. In chemistry: protein language models (ESM) predict structure from sequence; other LLMs generate crystal structures and stable inorganic materials.
 
-## 9.7 The Transformer Architecture (Vaswani et al. "Attention Is All You Need", 2017)
+## 9.7 The Transformer Architecture
 
 ### From Token to Prediction: Dimensions Throughout
 
