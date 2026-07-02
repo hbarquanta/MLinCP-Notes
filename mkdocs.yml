@@ -6,21 +6,20 @@ repo_name: hbarquanta/MLinCP-Notes
 
 theme:
   name: material
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: indigo
       toggle:
-        icon: material/brightness-7
+        icon: material/weather-night
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: indigo
       toggle:
-        icon: material/brightness-4
+        icon: material/weather-sunny
         name: Switch to light mode
   features:
-    - navigation.tabs
     - navigation.top
     - navigation.instant
     - navigation.tracking
@@ -64,6 +63,7 @@ extra_javascript:
 
 extra_css:
   - https://unpkg.com/katex@0/dist/katex.min.css
+  - stylesheets/extra.css
 
 plugins:
   - search
