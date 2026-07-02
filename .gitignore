@@ -3,3 +3,5 @@ lectures/
 .DS_Store
 site/
 .venv-mkdocs-test/
+.claude/
+CLAUDE.md
