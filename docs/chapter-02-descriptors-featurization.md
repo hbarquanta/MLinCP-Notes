@@ -2,27 +2,127 @@
 
 ## 2.1 Why Descriptors?
 
-In atomistic machine learning, the inputs $x^{(p)}$ describe atomic structures: a set of $N$ atoms with nuclear charges $\{Z_i\}_{i=1}^N$ and positions $\{\mathbf{R}_i\}_{i=1}^N$. Raw Cartesian coordinates cannot be used directly as ML inputs, because the learned function must respect the physical symmetries of the problem. A valid descriptor $\mathbf{x} = \phi(\{Z_i, \mathbf{R}_i\})$ must satisfy:
+In atomistic machine learning, the inputs $x^{(p)}$ describe atomic structures: a set of $N$ atoms with nuclear charges $\{Z_i\}_{i=1}^N$ and positions $\{\mathbf{R}_i\}_{i=1}^N$. Raw Cartesian coordinates cannot be used directly as ML inputs because the learned function must respect the physical symmetries of the problem. Three terms are worth distinguishing from the outset.
+
+A **structure** is the full specification of an atomic configuration: nuclear charges $\{Z_i\}$, positions $\{\mathbf{R}_i\}$, and the unit cell for periodic systems. A **descriptor** is the algorithm $\phi$ that transforms a structure into a fixed-length numerical vector with the correct symmetry properties. The **feature vector** $\mathbf{x} = \phi(\{Z_i, \mathbf{R}_i\})$ is the actual numerical output that lives in feature space and is passed to the ML model. Descriptors can be **global** — encoding the entire molecule or unit cell as one vector (Coulomb matrix, MBTR) — or **atom-wise** — producing one vector per atom encoding the local chemical environment within a cutoff radius (ACSFs, SOAP, ACE).
+
+### Requirements on descriptors
+
+A valid descriptor $\mathbf{x} = \phi(\{Z_i, \mathbf{R}_i\})$ must satisfy:
 
 1. **Translational invariance**: $\phi$ is unchanged when all positions are shifted by a constant vector $\mathbf{t}$, i.e., $\phi(\{\mathbf{R}_i + \mathbf{t}\}) = \phi(\{\mathbf{R}_i\})$.
 2. **Rotational invariance**: $\phi$ is unchanged under any rotation $\mathbf{R} \in SO(3)$ applied to all positions.
 3. **Permutation invariance**: $\phi$ is unchanged when identical atoms are relabeled.
-4. **Uniqueness**: distinct atomic environments should map to distinct descriptors (injectivity up to symmetry).
-5. **Differentiability**: $\phi$ must be smooth and differentiable in atom positions so that forces $F_i = -\partial E / \partial \mathbf{R}_i$ can be computed analytically.
+4. **Completeness and uniqueness**: the mapping must be **surjective** (every structure maps to some feature vector) *and* **injective** (symmetry-inequivalent structures map to *different* feature vectors). Only when both hold is $\phi$ bijective — a fully invertible encoding. In practice, complete bijective mappings for arbitrary atom configurations are not achievable, so descriptors trade coverage for computational tractability.
+5. **Smoothness**: $\phi$ must be smooth and differentiable in atom positions so that forces $F_i = -\partial E / \partial \mathbf{R}_i$ can be computed analytically.
 
-## 2.2 Chronological Overview
+### Invariance, equivariance, and where to put the symmetry
 
-| Year | Descriptor | Authors | Key Idea |
-|------|-----------|---------|----------|
-| 2007 | ACSFs | Behler & Parrinello | Symmetry functions, local, differentiable |
-| 2012 | Coulomb Matrix | Rupp et al. | Electrostatic encoding of molecular geometry |
-| 2013 | SOAP | Bartók et al. | Smooth density overlap, designed for kernels |
-| 2017 | MBTR | Huo & Rupp | Many-body tensor, global, smooth distributions |
-| 2019 | ACE | Drautz | Systematic many-body expansion, complete, linear |
+For scalar properties (energy, band gap), the model output must be **invariant**: $\hat{f}(\mathcal{R}\,\mathbf{X}) = \hat{f}(\mathbf{X})$. For vectorial properties (forces, dipole moments) or tensorial properties (polarizability, stress), the output must be **equivariant** — it must transform predictably with the symmetry operation:
+
+$$\hat{f}(\mathcal{R}\,\mathbf{X}) = \mathcal{R}\,[\hat{f}(\mathbf{X})]$$
+
+A force vector, for example, must rotate exactly as the molecule rotates. Symmetry can be enforced in three ways: building it into the **descriptor** (the traditional approach for ACSFs, CM, MBTR, SOAP), building it into the **model architecture**, or designing **equivariant models** whose outputs transform correctly under all symmetry operations — the approach of equivariant graph neural networks (Chapter 6), which can directly predict vectorial and tensorial quantities. The choice shapes the inductive bias of the entire ML pipeline.
 
 ---
 
-## 2.3 Atom-Centered Symmetry Functions (ACSFs)
+## 2.2 Two-Dimensional Molecular Representations
+
+Before the 3D geometry-aware descriptors covered below, it is useful to note a class of representations based purely on molecular *topology* — the 2D graph of atoms and bonds, without 3D conformation. These are standard in cheminformatics and drug discovery, where 3D structure is often unknown or unnecessary.
+
+### SMILES
+
+**SMILES** (Simplified Molecular Input Line Entry System) encodes a molecule as an ASCII string. Atoms are written by their chemical symbol; bonds are implicit (single) or explicit (`-`, `=`, `#` for single, double, triple); rings are indicated by matching numbers on the opening and closing atoms; branches use parentheses; aromatic atoms are written in lowercase. Example — benzene: `c1ccccc1`. Example — 4-ethylheptane: `CCCC(CC)CCC`.
+
+SMILES is compact and human-readable and defines a composable language for molecules. Its limitations are that it carries no 3D conformation, cannot easily encode radicals or unusual valences, and is not well suited for generative models (small syntax violations produce invalid strings). Variants such as **DeepSMILES** and **SELFIES** (Self-Referencing Embedded Strings) address the validity problem by construction: every string in their grammar decodes to a valid molecule.
+
+### Extended Connectivity Fingerprints (ECFP)
+
+**ECFP** (also known as Morgan or circular fingerprints) represent local chemical environments of each atom at multiple radii and encode the result as a fixed-length bit vector. The algorithm has four stages:
+
+1. **Initial assignment**: each atom receives an integer identifier encoding its local environment (atomic number, degree, formal charge, etc.).
+2. **Iterative updating (Morgan algorithm)**: each atom's identifier is updated by combining it with the identifiers of its immediate neighbors, growing the local sphere by one bond per iteration; this is repeated for a fixed number of iterations (the fingerprint radius).
+3. **Duplicate removal**: identifiers that appear multiple times are deduplicated.
+4. **Bit array formation**: all identifiers are hashed into positions in a fixed-size bit vector (typically 1024 or 2048 bits).
+
+Each active bit in the ECFP vector corresponds to a recognizable chemical substructure, making the fingerprint interpretable. The reference implementation is **RDKit**, an open-source cheminformatics toolkit that also provides hundreds of additional 2D descriptors (logP, TPSA, ring counts, and more).
+
+A fundamental limitation of all 2D descriptors is the absence of *atomic-resolution 3D geometry*: two conformers of the same molecule produce the same SMILES string and ECFP fingerprint. They do not satisfy rotational or translational invariance in the 3D sense and cannot be used for force or energy prediction from atomistic positions.
+
+---
+
+## 2.3 Coulomb Matrix
+
+The Coulomb matrix $M \in \mathbb{R}^{N_\text{at}\times N_\text{at}}$ encodes the electrostatic interactions among all $N_\text{at}$ atoms in a molecule:
+
+$$M_{ij} = \begin{cases} \dfrac{1}{2} Z_i^{2.4} & i = j \\[6pt] \dfrac{Z_i Z_j}{|\mathbf{R}_i - \mathbf{R}_j|} & i \neq j \end{cases}$$
+
+where $Z_i$ is the nuclear charge (atomic number) of atom $i$ and $|\mathbf{R}_i - \mathbf{R}_j|$ is the Euclidean distance between atoms $i$ and $j$. The diagonal element $\frac{1}{2}Z_i^{2.4}$ approximates the free-atom potential energy (Thomas-Fermi model). The off-diagonal element is the classical nuclear repulsion energy.
+
+The Coulomb matrix is a **global** descriptor — it encodes the entire molecule, not the local environment of individual atoms — which makes it size-dependent and inapplicable to periodic systems (it would require padding with zeros). It is not permutation invariant by construction: reordering atoms changes $M$. Common remedies are sorting rows and columns by their $\ell^2$ norm, or using the sorted eigenvalue spectrum of $M$, which is permutation invariant but loses some structural information.
+
+The Coulomb matrix encodes only pairwise distances (2-body) and misses angular information entirely.
+
+---
+
+
+## 2.4 Many-Body Tensor Representation (MBTR)
+
+The MBTR is a **global** descriptor that encodes the full structure of a molecule by representing many-body interactions as smooth one-dimensional distributions over geometric quantities. Each geometric quantity (e.g. an inverse distance or bond angle) contributes a Gaussian peak weighted by the nuclear charges of the involved atoms, giving a differentiable, continuous fingerprint that is permutation invariant by construction.
+
+Three interaction levels are defined. For each level $k$, the descriptor is the distribution:
+
+$$D(x,\, g_k) = \sum_\text{atom tuples} w_k \cdot \mathcal{N}\!\left(x;\; g_k(i,j,\ldots),\; \sigma^2\right)$$
+
+where $g_k(i,j,\ldots)$ is the geometric function evaluated for the atom tuple, $w_k$ is a nuclear-charge weighting factor, $\sigma$ is a broadening width (hyperparameter), and $\mathcal{N}(x;\mu,\sigma^2)$ denotes a Gaussian with mean $\mu$ and variance $\sigma^2$.
+
+**$k=1$ (1-body)**: $g_1(i) = Z_i$ (nuclear charge); encodes composition.
+
+**$k=2$ (2-body)**: $g_2(i,j) = 1/r_{ij}$ (inverse distance), $w_k = Z_i Z_j$; encodes the distribution of bond distances.
+
+**$k=3$ (3-body)**: $g_3(i,j,k) = \cos\theta_{ijk}$ (cosine of the angle at atom $j$ between atoms $i$ and $k$), $w_k = Z_i Z_j Z_k$; encodes angular structure.
+
+The full MBTR vector is the concatenation of $D(x, g_1)$, $D(x, g_2)$, $D(x, g_3)$ evaluated on fine grids. The 3-body term costs $\mathcal{O}(N_\text{at}^3)$ in the number of atoms. Because the descriptor sums over all atoms globally, it is not directly applicable to large periodic systems or for computing atom-wise (local) energies.
+
+---
+
+
+## 2.5 Smooth Overlap of Atomic Positions (SOAP)
+
+SOAP constructs a rotationally invariant descriptor by representing the local atomic environment as a smooth density and computing its power spectrum under the rotation group. It is well suited for use with kernel methods.
+
+**Step 1 — Density smearing with Gaussians.** The local environment of atom $i$ is represented as a sum of Gaussians centered on each neighbor $j$ within the cutoff:
+
+$$\rho_i(\mathbf{r}) = \sum_{j \in \mathcal{N}(i)} \exp\!\left(-\alpha\,|\mathbf{r} - \mathbf{r}_{ij}|^2\right) f_c(r_{ij})$$
+
+where $\mathbf{r}_{ij} = \mathbf{R}_j - \mathbf{R}_i$ is the displacement vector from atom $i$ to neighbor $j$, $\alpha > 0$ controls the Gaussian width, and $f_c$ is a smooth cutoff function. Here $\mathcal{N}(i)$ denotes the set of atoms within cutoff $R_c$.
+
+**Step 2 — Representation via radial functions and spherical harmonics.** The density $\rho_i(\mathbf{r})$ is expanded in a product basis of radial functions $g_n(r)$ and real spherical harmonics $Y_l^m(\hat{\mathbf{r}})$:
+
+$$\rho_i(\mathbf{r}) = \sum_{n,l,m} c_{nlm}^i\, g_n(r)\, Y_l^m(\hat{\mathbf{r}})$$
+
+where $n = 1,\ldots,N_\text{max}$ indexes the radial basis, $l = 0,\ldots,L_\text{max}$ is the angular momentum quantum number, $m = -l,\ldots,l$ is the magnetic quantum number, and $\hat{\mathbf{r}} = \mathbf{r}/|\mathbf{r}|$ is the unit direction vector. The coefficients $c_{nlm}^i$ are obtained by projection onto the basis.
+
+**Step 3 — Distance metric by averaging over rotations.** The power spectrum is obtained by contracting the $m$-components, yielding a descriptor that is invariant to rotations of the local environment:
+
+$$p_{nn'l} = \sum_m \left(c_{nlm}\right)^* c_{n'lm}$$
+
+(atom index $i$ suppressed for clarity).
+
+**SOAP kernel**: the similarity between two environments is
+
+$$k(\rho, \rho') = \left|\sum_{n,n',l} p_{nn'l}\, p'_{nn'l}\right|^\zeta$$
+
+where $\zeta \ge 1$ controls the nonlinearity. Combined with Gaussian Process Regression (GPR), SOAP forms the basis of the GAP (Gaussian Approximation Potential) framework. As shown in the ACE connection below, SOAP corresponds to ACE at body order 3 (correlation order 2).
+
+**Completeness failure.** Despite satisfying all the symmetry requirements, SOAP is *not* a complete descriptor. The power spectrum contraction $\sum_m c_{nlm}^* c_{n'lm}$ discards phase information, meaning two physically distinct environments can produce identical SOAP descriptors. This was proven rigorously by Pozdnyakov et al. (*Phys. Rev. Lett.* **125**, 166001, 2020), who constructed explicit pairs of inequivalent environments that are indistinguishable by SOAP. Any model built on SOAP cannot in principle distinguish such environment pairs. In practice these failures are rare for real materials, but they represent a fundamental theoretical limitation that ACE resolves by providing a provably complete basis at arbitrary body order.
+
+Despite this limitation, SOAP is a powerful structural similarity metric. Mapping 15\,869 distinct ice polymorphs using the SOAP kernel distance reveals the structural diversity and clustering of ice phases — a demonstration of its practical utility for materials-space exploration.
+
+---
+
+
+## 2.6 Atom-Centered Symmetry Functions (ACSFs)
 
 ACSFs encode the local chemical environment of atom $i$ by summing contributions from all neighbors within a cutoff radius $R_c$. All functions are constructed to be invariant under translation, rotation, and permutation of like atoms.
 
@@ -244,83 +344,22 @@ else { _init(); }
 </script>
 ---
 
-## 2.4 Coulomb Matrix
 
-The Coulomb matrix $M \in \mathbb{R}^{N_\text{at}\times N_\text{at}}$ encodes the electrostatic interactions among all $N_\text{at}$ atoms in a molecule:
+## 2.7 Weighted Atom-Centered Symmetry Functions (wACSFs)
 
-$$M_{ij} = \begin{cases} \dfrac{1}{2} Z_i^{2.4} & i = j \\[6pt] \dfrac{Z_i Z_j}{|\mathbf{R}_i - \mathbf{R}_j|} & i \neq j \end{cases}$$
+Standard ACSFs handle multi-element systems by constructing *separate* symmetry functions for each element combination: one set of radial functions per element pair $(Z_i, Z_j)$ and one set of angular functions per triple $(Z_i, Z_j, Z_k)$. For a system with $S$ distinct elements this requires $\mathcal{O}(S)$ radial function sets and $\mathcal{O}(S^2)$ angular sets — parameter proliferation that becomes unwieldy for chemically diverse systems.
 
-where $Z_i$ is the nuclear charge (atomic number) of atom $i$ and $|\mathbf{R}_i - \mathbf{R}_j|$ is the Euclidean distance between atoms $i$ and $j$. The diagonal element $\frac{1}{2}Z_i^{2.4}$ approximates the free-atom potential energy (Thomas-Fermi model). The off-diagonal element is the classical nuclear repulsion energy.
+**Weighted ACSFs (wACSFs)** replace the element-specific function sets with a single unified set, weighting each neighbor's contribution by its nuclear charge $Z_j$. The weighted radial function is:
 
-The Coulomb matrix is a **global** descriptor — it encodes the entire molecule, not the local environment of individual atoms — which makes it size-dependent and inapplicable to periodic systems (it would require padding with zeros). It is not permutation invariant by construction: reordering atoms changes $M$. Common remedies are sorting rows and columns by their $\ell^2$ norm, or using the sorted eigenvalue spectrum of $M$, which is permutation invariant but loses some structural information.
+$$wG_i^{(2)} = \sum_{j \neq i} Z_j \exp\!\left[-\eta\left(r_{ij} - \mu_s\right)^2\right] f_c(r_{ij})$$
 
-The Coulomb matrix encodes only pairwise distances (2-body) and misses angular information entirely.
+and the weighted angular function is:
 
----
+$$wG_i^{(4)} = 2^{1-\zeta}\sum_{\substack{j,k \neq i \\ j < k}} Z_j Z_k \left(1 + \lambda\cos\theta_{ijk}\right)^\zeta \exp\!\left[-\eta\left(r_{ij}^2 + r_{ik}^2 + r_{jk}^2\right)\right] f_c(r_{ij})\,f_c(r_{ik})\,f_c(r_{jk})$$
 
-## 2.5 Smooth Overlap of Atomic Positions (SOAP)
+The nuclear charge factors $Z_j$ (2-body) and $Z_j Z_k$ (3-body) act as a continuous chemical weighting: heavier elements contribute more strongly than lighter ones. This implicitly encodes the chemical identity of each neighbor without requiring separate functions per element pair, reducing the total number of descriptor parameters by a factor of order $S$.
 
-SOAP constructs a rotationally invariant descriptor by representing the local atomic environment as a smooth density and computing its power spectrum under the rotation group. It is well suited for use with kernel methods.
-
-**Step 1 — Density smearing with Gaussians.** The local environment of atom $i$ is represented as a sum of Gaussians centered on each neighbor $j$ within the cutoff:
-
-$$\rho_i(\mathbf{r}) = \sum_{j \in \mathcal{N}(i)} \exp\!\left(-\alpha\,|\mathbf{r} - \mathbf{r}_{ij}|^2\right) f_c(r_{ij})$$
-
-where $\mathbf{r}_{ij} = \mathbf{R}_j - \mathbf{R}_i$ is the displacement vector from atom $i$ to neighbor $j$, $\alpha > 0$ controls the Gaussian width, and $f_c$ is a smooth cutoff function. Here $\mathcal{N}(i)$ denotes the set of atoms within cutoff $R_c$.
-
-**Step 2 — Representation via radial functions and spherical harmonics.** The density $\rho_i(\mathbf{r})$ is expanded in a product basis of radial functions $g_n(r)$ and real spherical harmonics $Y_l^m(\hat{\mathbf{r}})$:
-
-$$\rho_i(\mathbf{r}) = \sum_{n,l,m} c_{nlm}^i\, g_n(r)\, Y_l^m(\hat{\mathbf{r}})$$
-
-where $n = 1,\ldots,N_\text{max}$ indexes the radial basis, $l = 0,\ldots,L_\text{max}$ is the angular momentum quantum number, $m = -l,\ldots,l$ is the magnetic quantum number, and $\hat{\mathbf{r}} = \mathbf{r}/|\mathbf{r}|$ is the unit direction vector. The coefficients $c_{nlm}^i$ are obtained by projection onto the basis.
-
-**Step 3 — Distance metric by averaging over rotations.** The power spectrum is obtained by contracting the $m$-components, yielding a descriptor that is invariant to rotations of the local environment:
-
-$$p_{nn'l} = \sum_m \left(c_{nlm}\right)^* c_{n'lm}$$
-
-(atom index $i$ suppressed for clarity).
-
-**SOAP kernel**: the similarity between two environments is
-
-$$k(\rho, \rho') = \left|\sum_{n,n',l} p_{nn'l}\, p'_{nn'l}\right|^\zeta$$
-
-where $\zeta \ge 1$ controls the nonlinearity. Combined with Gaussian Process Regression (GPR), SOAP forms the basis of the GAP (Gaussian Approximation Potential) framework. As shown in the ACE connection below, SOAP corresponds to ACE at body order 3 (correlation order 2).
-
----
-
-## 2.6 Many-Body Tensor Representation (MBTR)
-
-The MBTR is a **global** descriptor that encodes the full structure of a molecule by representing many-body interactions as smooth one-dimensional distributions over geometric quantities. Each geometric quantity (e.g. an inverse distance or bond angle) contributes a Gaussian peak weighted by the nuclear charges of the involved atoms, giving a differentiable, continuous fingerprint that is permutation invariant by construction.
-
-Three interaction levels are defined. For each level $k$, the descriptor is the distribution:
-
-$$D(x,\, g_k) = \sum_\text{atom tuples} w_k \cdot \mathcal{N}\!\left(x;\; g_k(i,j,\ldots),\; \sigma^2\right)$$
-
-where $g_k(i,j,\ldots)$ is the geometric function evaluated for the atom tuple, $w_k$ is a nuclear-charge weighting factor, $\sigma$ is a broadening width (hyperparameter), and $\mathcal{N}(x;\mu,\sigma^2)$ denotes a Gaussian with mean $\mu$ and variance $\sigma^2$.
-
-**$k=1$ (1-body)**: $g_1(i) = Z_i$ (nuclear charge); encodes composition.
-
-**$k=2$ (2-body)**: $g_2(i,j) = 1/r_{ij}$ (inverse distance), $w_k = Z_i Z_j$; encodes the distribution of bond distances.
-
-**$k=3$ (3-body)**: $g_3(i,j,k) = \cos\theta_{ijk}$ (cosine of the angle at atom $j$ between atoms $i$ and $k$), $w_k = Z_i Z_j Z_k$; encodes angular structure.
-
-The full MBTR vector is the concatenation of $D(x, g_1)$, $D(x, g_2)$, $D(x, g_3)$ evaluated on fine grids. The 3-body term costs $\mathcal{O}(N_\text{at}^3)$ in the number of atoms. Because the descriptor sums over all atoms globally, it is not directly applicable to large periodic systems or for computing atom-wise (local) energies.
-
----
-
-## 2.7 Body Order
-
-A descriptor or potential has **body order** $\nu$ if it depends on $\nu$-tuples of atoms — that is, if it cannot be written as a sum of contributions from $(\nu-1)$-tuples. 2-body = pairs only; 3-body = triplets (encodes angles); 4-body = quadruplets (encodes dihedral angles). Higher body order captures richer geometric information but increases computational cost.
-
-| Descriptor | Body order | Locality |
-|-----------|-----------|---------|
-| Coulomb matrix | 2 (pairs) | Global |
-| ACSFs — radial $G^{(2)}$ | 2 | Local |
-| ACSFs — angular $G^{(4)}$ | 3 | Local |
-| SOAP power spectrum | 3 (via contraction) | Local |
-| MBTR $k=2$ | 2 | Global |
-| MBTR $k=3$ | 3 | Global |
-| ACE (correlation order $\nu$) | $\nu + 1$ | Local |
+The trade-off is that the $Z$-weighting is fixed and may not optimally distinguish all chemical environments — standard ACSFs with element-specific parameters remain more expressive when the element set is small and fixed. wACSFs generalize better across compositionally diverse systems and are a natural choice for MLIPs designed to span large regions of chemical space.
 
 ---
 
@@ -400,6 +439,11 @@ $$\varepsilon_i = \sum_{\boldsymbol{v}} c_{\boldsymbol{v}}\, B^i_{\boldsymbol{v}
 
 where $\boldsymbol{v}$ runs over all valid multi-indices and $c_{\boldsymbol{v}}$ are the fitting coefficients. The total energy is $E = \sum_i \varepsilon_i$. Since the energy is **linear in the coefficients** $c_{\boldsymbol{v}}$, fitting reduces to a standard linear least-squares or ridge regression problem, which is fast and avoids local minima. Forces are obtained analytically by differentiating $B^i_{\boldsymbol{v}}$ with respect to atomic positions.
 
+### Scalar, vectorial, and tensorial outputs
+
+The ACE framework is not limited to scalar output. By choosing different coupling schemes in the Clebsch-Gordan contraction step, one can construct basis functions $B^i_{\boldsymbol{v}}$ that transform as vectors, rank-2 tensors, or higher under $SO(3)$ rotations. This allows ACE to predict force vectors, dipole moments, polarizability tensors, and Born effective charges, with the correct transformation properties guaranteed by construction and without any additional symmetry engineering.
+
+
 ### What ACE does differently
 
 | Challenge | Earlier approaches | ACE solution |
@@ -420,7 +464,25 @@ Crucially, ACE at correlation order 3 (body order 4) is **complete (bijective)**
 
 ---
 
-## 2.9 Descriptor Properties Summary
+
+## 2.9 Body Order
+
+A descriptor or potential has **body order** $\nu$ if it depends on $\nu$-tuples of atoms — that is, if it cannot be written as a sum of contributions from $(\nu-1)$-tuples. 2-body = pairs only; 3-body = triplets (encodes angles); 4-body = quadruplets (encodes dihedral angles). Higher body order captures richer geometric information but increases computational cost.
+
+| Descriptor | Body order | Locality |
+|-----------|-----------|---------|
+| Coulomb matrix | 2 (pairs) | Global |
+| ACSFs — radial $G^{(2)}$ | 2 | Local |
+| ACSFs — angular $G^{(4)}$ | 3 | Local |
+| SOAP power spectrum | 3 (via contraction) | Local |
+| MBTR $k=2$ | 2 | Global |
+| MBTR $k=3$ | 3 | Global |
+| ACE (correlation order $\nu$) | $\nu + 1$ | Local |
+
+---
+
+
+## 2.10 Descriptor Properties Summary
 
 A useful descriptor must satisfy several formal properties. **Translational invariance** means the descriptor value is unchanged when all atomic positions are shifted by a constant vector; **rotational invariance** means it is unchanged under global rotations; **permutational invariance** means it is unchanged when identical atoms are relabeled. Beyond symmetry, a descriptor should be **unique** (injective): two physically distinct environments must map to distinct descriptor values. A stronger requirement is **completeness**: the descriptor space must form a complete basis for all invariant functions of the environment, so that in principle any property can be represented. Finally, **smoothness** requires that small changes in atomic positions produce small, continuous changes in the descriptor — a prerequisite for differentiable force evaluation.
 
@@ -437,6 +499,21 @@ Here ✓ = satisfied, ✗ = fails, ~ = conditional, ≈ = equivariant (energy is
 
 ---
 
+
+## 2.11 Historical Overview
+
+| Year | Descriptor | Authors | Key Idea |
+|------|-----------|---------|----------|
+| 2007 | ACSFs | Behler & Parrinello | Symmetry functions, local, differentiable |
+| 2012 | Coulomb Matrix | Rupp et al. | Electrostatic encoding of molecular geometry |
+| 2013 | SOAP | Bartók et al. | Smooth density overlap, designed for kernels |
+| 2017 | MBTR | Huo & Rupp | Many-body tensor, global, smooth distributions |
+| 2018 | wACSFs | Gastegger et al. | Charge-weighted ACSFs for multi-element systems |
+| 2019 | ACE | Drautz | Systematic many-body expansion, complete, linear |
+
+---
+
+
 ## References
 
 <a id="ref-bp07"></a>
@@ -450,6 +527,9 @@ Here ✓ = satisfied, ✗ = fails, ~ = conditional, ≈ = equivariant (energy is
 
 <a id="ref-bar13"></a>
 [Bar13] Bartók, A. P. et al. *On representing chemical environments.* Phys. Rev. B **87**, 184115 (2013). [DOI](https://doi.org/10.1103/PhysRevB.87.184115)
+
+<a id="ref-wacsf18"></a>
+[Gas18] Gastegger, M. et al. *wACSF — Weighted atom-centered symmetry functions as descriptors in machine learning potentials.* J. Chem. Phys. **148**, 241709 (2018). [DOI](https://doi.org/10.1063/1.5019667)
 
 <a id="ref-huo22"></a>
 [HR22] Huo, H. & Rupp, M. *Unified Representation of Molecules and Crystals for Machine Learning.* Mach. Learn.: Sci. Technol. **3**, 045017 (2022). [DOI](https://doi.org/10.1088/2632-2153/aca005)
