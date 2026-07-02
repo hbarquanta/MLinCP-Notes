@@ -36,8 +36,20 @@
       },
       plugins: [
         function (hook) {
+          // Markdown's own backslash-escaping (e.g. \, \! \{ \} -> , ! { })
+          // would otherwise mangle LaTeX commands before KaTeX ever sees them.
+          // Hide backslashes inside math spans from the markdown compiler,
+          // then restore them on the rendered DOM right before KaTeX runs.
+          var BACKSLASH_PLACEHOLDER = '\u0002';
+          hook.beforeEach(function (content) {
+            return content.replace(/\$\$[\s\S]*?\$\$|\$[^\n$]+?\$/g, function (math) {
+              return math.split('\\').join(BACKSLASH_PLACEHOLDER);
+            });
+          });
           hook.doneEach(function () {
-            renderMathInElement(document.querySelector('.markdown-section'), {
+            var el = document.querySelector('.markdown-section');
+            el.innerHTML = el.innerHTML.split(BACKSLASH_PLACEHOLDER).join('\\');
+            renderMathInElement(el, {
               delimiters: [
                 { left: '$$', right: '$$', display: true },
                 { left: '$', right: '$', display: false }
