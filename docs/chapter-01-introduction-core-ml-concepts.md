@@ -448,7 +448,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#F7E49B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 6</span>
     <span style="font-weight:700;font-size:0.9rem;">Select, train, and evaluate</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Start simple (linear model, GPR) and increase complexity only as justified by validation performance. Track train and validation loss per epoch; apply early stopping.</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Choose a model family suited to the data regime and required output (energy, force, dipole). Fit parameters on the training set using the chosen loss function; check generalization on the validation set.</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -502,9 +502,49 @@ Model performance is bounded by data quality. Three issues are especially common
 
 **ML frameworks.** PyTorch (Meta) is the dominant research framework; its dynamic computation graph and `autograd` engine make custom architectures easy to prototype. JAX (Google) offers composable function transforms (`jit`, `grad`, `vmap`) suited for scientific computing with hardware-agnostic acceleration. TensorFlow (Google) remains common in production deployments.
 
-**GPU vs CPU.** Modern GPUs (NVIDIA A100/H100) accelerate matrix multiplications — the core operation in neural networks — by factors of 100–1000× over a CPU. GPUs have high memory bandwidth but limited VRAM (40–80 GB); large models or datasets require careful batching. CPUs remain better for irregular, branchy computation such as graph traversal.
+**GPU accelerators.** GPUs accelerate the matrix multiplications at the core of neural network training by 100–1000× over a CPU, via thousands of parallel cores and extremely high memory bandwidth. The table below compares current data-centre accelerators used in ML for physics:
 
-**HPC tiers.** A typical stack: workstation GPU for development and small experiments; departmental cluster (tens of GPUs, SLURM scheduler) for hyperparameter sweeps; national supercomputer (thousands of GPUs, MPI across nodes) for large model training or high-throughput screening. Most training time is typically spent in data loading or GPU-CPU transfers, not in compute kernels.
+| Chip | Vendor | Memory | Bandwidth | Generation |
+|---|---|---|---|---|
+| H100 SXM | NVIDIA | 80 GB HBM3 | 3.35 TB/s | Hopper |
+| H200 SXM | NVIDIA | 141 GB HBM3e | 4.8 TB/s | Hopper |
+| B200 | NVIDIA | 180 GB HBM3e | 8.0 TB/s | Blackwell |
+| GB200 | NVIDIA | 2×B200 + Grace ARM CPU | 900 GB/s NVLink-C2C | Blackwell |
+| MI300X | AMD | 192 GB HBM3 | 5.3 TB/s | CDNA 3 |
+| MI350X | AMD | 288 GB HBM3e | 8.0 TB/s | CDNA 4 |
+
+The H200 carries the same compute die as the H100 but nearly doubles the memory capacity, relieving the bandwidth bottleneck for large models. The B200 (Blackwell) is a dual-die chip with fifth-generation Tensor Cores and NVLink 5.0; a GB200 NVL72 rack integrates 72 B200 chips over NVLink. AMD's MI300X powers El Capitan (#2 globally) thanks to its record memory capacity; the MI350X (CDNA 4, released mid-2025) raises this to 288 GB.
+
+**HPC hierarchy.** Supercomputing resources span several tiers. Named examples from the June 2026 TOP500 and major facility lists are shown below:
+
+<div style="margin:1.6rem 0 2.2rem;max-width:620px;margin-left:auto;margin-right:auto;font-size:0.77rem;line-height:1.5;">
+
+<div style="width:30%;margin:0 auto 4px;padding:0.5rem 0.6rem;background:rgba(186,90,90,0.16);border:1.5px solid #BA5A5A;border-radius:7px;text-align:center;box-sizing:border-box;">
+<span style="display:block;font-weight:700;font-size:0.65rem;color:#BA5A5A;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Exascale (&gt;1 EF/s)</span>
+LineShine (China, #1, 2.20 EF/s)<br>El Capitan (USA, #2, 1.81 EF/s)<br>Frontier (USA, ~1.2 EF/s)<br>Aurora (USA, 1.01 EF/s)<br>JUPITER (Germany/EU, 1.00 EF/s)
+</div>
+
+<div style="width:50%;margin:0 auto 4px;padding:0.5rem 0.7rem;background:rgba(186,90,90,0.09);border:1.5px solid #BA5A5A;border-radius:7px;text-align:center;box-sizing:border-box;">
+<span style="display:block;font-weight:700;font-size:0.65rem;color:#BA5A5A;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Pre-exascale Flagship (100–999 PF/s)</span>
+MareNostrum 5 (Spain/EU, 314 PF)<br>LUMI (Finland/EU, 309 PF)<br>Leonardo (Italy/EU, 238 PF)<br>Perlmutter (USA/NERSC, 70 PF)
+</div>
+
+<div style="width:67%;margin:0 auto 4px;padding:0.5rem 0.8rem;background:rgba(247,228,155,0.14);border:1.5px solid #C8A840;border-radius:7px;text-align:center;box-sizing:border-box;">
+<span style="display:block;font-weight:700;font-size:0.65rem;color:#A88020;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">National HPC Facilities (5–100 PF/s)</span>
+ARCHER2 (UK, 28 PF) · Hawk (Germany/HLRS, 26 PF)<br>Gadi (Australia/NCI) · Cedar (Canada/Compute Canada)<br>Shaheen III (Saudi Arabia/KAUST) · Mahti (Finland/CSC)
+</div>
+
+<div style="width:83%;margin:0 auto 4px;padding:0.5rem 0.9rem;background:rgba(164,206,139,0.14);border:1.5px solid #A4CE8B;border-radius:7px;text-align:center;box-sizing:border-box;">
+<span style="display:block;font-weight:700;font-size:0.65rem;color:#5A8E45;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">University / Institutional Clusters</span>
+bwUniCluster 2.0 (Germany) · CSD3 (UK, Cambridge)<br>Narval (Canada) · ALICE (Netherlands, Leiden)<br>10–500 GPUs, SLURM scheduler, shared allocation
+</div>
+
+<div style="width:100%;margin:0 auto;padding:0.5rem 1rem;background:rgba(134,188,189,0.14);border:1.5px solid #86BCBD;border-radius:7px;text-align:center;box-sizing:border-box;">
+<span style="display:block;font-weight:700;font-size:0.65rem;color:#2A7A7C;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Local Workstation / Lab Server</span>
+NVIDIA DGX H100 · single/multi-GPU servers · laptop or desktop CPU<br>development, prototyping, and small-scale experiments
+</div>
+
+</div>
 
 ---
 
