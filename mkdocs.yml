@@ -1,0 +1,69 @@
+site_name: ML in Computational Physics
+site_description: Lecture notes for Machine Learning in Computational Physics
+site_url: https://hbarquanta.github.io/MLinCP-Notes/
+repo_url: https://github.com/hbarquanta/MLinCP-Notes
+repo_name: hbarquanta/MLinCP-Notes
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.instant
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Chapter 1 — Introduction & Core ML Concepts: chapter-01-introduction-core-ml-concepts.md
+  - Chapter 2 — Descriptors & Featurization: chapter-02-descriptors-featurization.md
+  - Chapter 3 — Dimensionality Reduction & Clustering: chapter-03-dimensionality-reduction-clustering.md
+  - Chapter 4 — Regression & Uncertainty Quantification: chapter-04-regression-uncertainty-quantification.md
+  - Chapter 5 — Neural Networks, Trees & Regularization: chapter-05-neural-networks-trees-regularization.md
+  - Chapter 6 — Graph Neural Networks (GNNs): chapter-06-graph-neural-networks-gnns.md
+  - Chapter 7 — Machine Learning Interatomic Potentials I: chapter-07-machine-learning-interatomic-potentials-i.md
+  - Chapter 8 — Machine Learning Interatomic Potentials II: chapter-08-machine-learning-interatomic-potentials-ii.md
+  - Chapter 9 — Generative Models: chapter-09-generative-models.md
+  - Chapter 10 — ML Methods for Rare Events Sampling: chapter-10-ml-methods-for-rare-events-sampling.md
+
+markdown_extensions:
+  - admonition
+  - footnotes
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+
+extra_javascript:
+  - javascripts/katex.js
+  - https://unpkg.com/katex@0/dist/katex.min.js
+  - https://unpkg.com/katex@0/dist/contrib/auto-render.min.js
+
+extra_css:
+  - https://unpkg.com/katex@0/dist/katex.min.css
+
+plugins:
+  - search

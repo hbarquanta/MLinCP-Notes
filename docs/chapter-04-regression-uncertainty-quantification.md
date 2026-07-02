@@ -1,0 +1,162 @@
+# Chapter 4 — Regression & Uncertainty Quantification
+
+The central task of supervised regression is to learn a model $\hat{f}(\boldsymbol{x};\Theta) \approx y$ from a training set $\{(\boldsymbol{x}_p, y_p)\}_{p=1}^{P}$ of $P$ input–output pairs, where $\boldsymbol{x}_p \in \mathbb{R}^N$ is an $N$-dimensional feature vector and $y_p \in \mathbb{R}$ is the scalar label. The model is written as a linear combination of $B$ nonlinear basis functions:
+
+$$\hat{f}(\boldsymbol{x}_p;\Theta) = w_0 + \sum_{i=1}^{B} f_i(\boldsymbol{x}_p)\, w_i = b + \boldsymbol{f}_p^T \boldsymbol{w}$$
+
+where $b = w_0$ is a bias, $\boldsymbol{w} = (w_1,\ldots,w_B)^T$ is the weight vector, and $\boldsymbol{f}_p = (f_1(\boldsymbol{x}_p),\ldots,f_B(\boldsymbol{x}_p))^T$ is the basis-function vector evaluated at point $p$. The parameter set is $\Theta = (b, \boldsymbol{w},\text{ any parameters inside }f_i)$.
+
+## 4.1 Multivariate Linear Regression
+
+**Linear regression** is the special case $B = N$ where the basis functions are the raw input features: $f_i(\boldsymbol{x}) = x_i$. The model is then simply
+
+$$\hat{f}(\boldsymbol{x}_p;\boldsymbol{w}) = \boldsymbol{x}_p^T \boldsymbol{w}$$
+
+where the first component of $\boldsymbol{x}_p$ is set to 1 to absorb the bias. The training objective is to minimize the mean squared loss over all $P$ data points:
+
+$$g(\boldsymbol{w}) = \frac{1}{P}\sum_{p=1}^{P}\!\left(\boldsymbol{x}_p^T\boldsymbol{w} - y_p\right)^2$$
+
+This is convex in $\boldsymbol{w}$ and has a closed-form solution — the **normal equations**:
+
+$$\boldsymbol{w}^* = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\boldsymbol{y}$$
+
+where $\mathbf{X} \in \mathbb{R}^{P \times N}$ is the data matrix with rows $\boldsymbol{x}_p^T$ and $\boldsymbol{y} = (y_1,\ldots,y_P)^T$.
+
+**Multivariate nonlinear regression** generalizes this by replacing $\boldsymbol{x}_p$ with a $B$-dimensional vector of nonlinear functions $\boldsymbol{f}_p$, while the model remains linear in $\boldsymbol{w}$. The loss becomes
+
+$$g(\Theta) = \frac{1}{P}\sum_{p=1}^{P}\!\left(\boldsymbol{f}_p^T\boldsymbol{w} - y_p\right)^2$$
+
+Stacking the $\boldsymbol{f}_p^T$ as rows into the $P \times B$ feature matrix $\mathbf{F}$, the normal equations generalize to $\boldsymbol{w}^* = (\mathbf{F}^T\mathbf{F})^{-1}\mathbf{F}^T\boldsymbol{y}$.
+
+**Universal approximation.** If $B \geq N$ and at least $N$ of the basis functions are linearly independent, the spanning set has sufficient capacity to act as a universal approximator — it can fit any smooth function to arbitrary precision given enough data. Common choices include polynomial sets, Fourier bases, and neural networks. However, a degree-$D$ Fourier basis on an $N$-dimensional input has $B = (2D+1)^N - 1$ terms, growing exponentially with dimension — the **scaling problem**. The kernel trick, described next, circumvents this.
+
+## 4.2 The Kernel Trick
+
+Recall the setup: we have $P$ training points indexed by $p = 1, \ldots, P$, each with a $B$-dimensional feature vector $\boldsymbol{f}_p$, and we want to fit the weight vector $\boldsymbol{w} \in \mathbb{R}^B$. When the basis is a high-degree polynomial or Fourier set, $B$ can be astronomically large (e.g. $B \sim 10^{11}$ for degree-4 Fourier on 12 inputs), making direct optimization of $\boldsymbol{w}$ infeasible.
+
+The key insight is that $\boldsymbol{w}$ can always be decomposed as $\boldsymbol{w} = \mathbf{F}^T\boldsymbol{\alpha} + \boldsymbol{r}$, where $\mathbf{F} \in \mathbb{R}^{P \times B}$ is the same feature matrix from Section 4.1 (rows $\boldsymbol{f}_p^T$), $\boldsymbol{\alpha} \in \mathbb{R}^P$ is a new coefficient vector with one entry per training point, and $\boldsymbol{r}$ is orthogonal to the row space of $\mathbf{F}$ (i.e. $\mathbf{F}\boldsymbol{r} = \mathbf{0}$). Since $\boldsymbol{r}$ is orthogonal to every training point's feature vector, it contributes nothing to any prediction and can be dropped. The model then becomes
+
+$$\hat{f}(\boldsymbol{x}_p; b, \boldsymbol{\alpha}) = b + \boldsymbol{k}_p^T\boldsymbol{\alpha} = b + \sum_{p'=1}^{P} k(\boldsymbol{x}_p, \boldsymbol{x}_{p'})\,\alpha_{p'}$$
+
+where $k(\boldsymbol{x}_p, \boldsymbol{x}_{p'}) = \boldsymbol{f}_p^T\boldsymbol{f}_{p'}$ is the **kernel** — the inner product of the two feature vectors in the basis space — and $\boldsymbol{k}_p \in \mathbb{R}^P$ is the vector of kernel values between $\boldsymbol{x}_p$ and all training points. The $P \times P$ symmetric **kernel matrix** $\mathbf{K}$ collects all pairwise kernel values: $K_{pp'} = k(\boldsymbol{x}_p, \boldsymbol{x}_{p'})$.
+
+**What is the actual benefit?** The weight vector $\boldsymbol{w}$ lives in $\mathbb{R}^B$, and $B$ can be enormous or even infinite. The dual vector $\boldsymbol{\alpha}$ lives in $\mathbb{R}^P$, and $P$ is just the number of training points — typically far smaller than $B$. More importantly, computing a single kernel entry $k(\boldsymbol{x}_p, \boldsymbol{x}_{p'}) = \boldsymbol{f}_p^T\boldsymbol{f}_{p'}$ often reduces to a simple closed-form formula in the original inputs $\boldsymbol{x}_p, \boldsymbol{x}_{p'} \in \mathbb{R}^N$, costing only $O(N)$ — regardless of how large $B$ is. The explicit feature vectors $\boldsymbol{f}_p$ are never constructed. This is the kernel trick: you implicitly work in a very high (or infinite) dimensional feature space, while only ever computing $O(N)$ inner products.
+
+**Popular kernels.** All three are written in terms of a pair of training inputs $\boldsymbol{x}_p, \boldsymbol{x}_{p'} \in \mathbb{R}^N$:
+
+- **Polynomial kernel** of degree $D$: $k(\boldsymbol{x}_p, \boldsymbol{x}_{p'}) = (1 + \boldsymbol{x}_p^T\boldsymbol{x}_{p'})^D - 1$. Implicitly evaluates all monomials up to degree $D$ at cost $O(N)$ per entry, regardless of the $B = (D+1)^N$ explicit features.
+- **Fourier (Dirichlet) kernel** (1D, $N=1$, scalar inputs $x_p, x_{p'} \in \mathbb{R}$): $k(x_p, x_{p'}) = \dfrac{\sin\!\left[(2D+1)\pi(x_p - x_{p'})\right]}{\sin\!\left[\pi(x_p - x_{p'})\right]} - 1$. Arises in band-limited signal reconstruction, lattice sums, and diffraction patterns.
+- **RBF (Gaussian) kernel**: $k(\boldsymbol{x}_p, \boldsymbol{x}_{p'}) = e^{-\beta\|\boldsymbol{x}_p - \boldsymbol{x}_{p'}\|_2^2}$, where $\beta > 0$ controls the length scale. Small $\beta$ gives broad Gaussians (smooth, risk of underfitting); large $\beta$ gives narrow Gaussians (localized, risk of overfitting). Corresponds to an infinite-dimensional feature map.
+
+The choice of kernel encodes the notion of similarity appropriate for the data. For physics applications: translation-invariant phenomena suit Fourier or RBF; distance-based atomic-environment descriptors (as in GAP, FCHL) suit RBF.
+
+## 4.3 Kernel Ridge Regression (KRR)
+
+**The conceptual picture.** Suppose you have $P$ training atomic environments with known energies $y_1, \ldots, y_P$, and you want to predict the energy of a new environment described by $\boldsymbol{x}_*$. The core idea of KRR is simple: the prediction is a weighted sum of similarities to all training environments,
+
+$$\hat{f}(\boldsymbol{x}_*) = \sum_{p=1}^{P} \alpha_p\, k(\boldsymbol{x}_*, \boldsymbol{x}_p),$$
+
+where $k(\boldsymbol{x}_*, \boldsymbol{x}_p)$ measures how similar the new environment is to training environment $p$, and $\alpha_p$ is a learned coefficient. If $\boldsymbol{x}_*$ closely resembles training point $p$, that point contributes strongly to the prediction; distant training points contribute little. The kernel function $k$ encodes what "similar" means — with SOAP descriptors and an RBF kernel, two environments are similar if their SOAP vectors are close in Euclidean distance, which corresponds to physically similar local geometries.
+
+Training amounts to finding the right coefficients $\boldsymbol{\alpha} = (\alpha_1, \ldots, \alpha_P)^T$. The pipeline in practice is:
+1. Compute a descriptor $\boldsymbol{x}_p \in \mathbb{R}^d$ (e.g. SOAP or ACE) for each training environment $p = 1,\ldots,P$.
+2. Evaluate the kernel on all $P^2$ pairs to build the $P \times P$ kernel matrix $\mathbf{K}$ with $K_{pp'} = k(\boldsymbol{x}_p, \boldsymbol{x}_{p'})$.
+3. Solve for $\boldsymbol{\alpha}$ (one matrix inversion — no gradient descent, no epochs).
+4. Predict for any new environment by computing $\mathbf{k}_*$ and taking the dot product $\mathbf{k}_*^T\boldsymbol{\alpha}$.
+
+**Derivation.** Using the kernelized prediction $\hat{f}(\boldsymbol{x}_p; \boldsymbol{\alpha}) = \boldsymbol{k}_p^T\boldsymbol{\alpha}$ from Section 4.2 (absorbing the bias for brevity), the regularized squared loss is
+
+$$g(\boldsymbol{\alpha}) = (\mathbf{K}\boldsymbol{\alpha} - \boldsymbol{y})^T(\mathbf{K}\boldsymbol{\alpha} - \boldsymbol{y}) + \lambda\,\boldsymbol{\alpha}^T\mathbf{K}\boldsymbol{\alpha}$$
+
+The first term is the total squared prediction error — the vector of all training predictions is $\mathbf{K}\boldsymbol{\alpha}$ since $\hat{f}(\boldsymbol{x}_p) = (\mathbf{K}\boldsymbol{\alpha})_p$. The second term penalizes large coefficients. Setting $\nabla_{\boldsymbol{\alpha}} g = 0$:
+
+$$2\mathbf{K}(\mathbf{K}\boldsymbol{\alpha} - \boldsymbol{y}) + 2\lambda\mathbf{K}\boldsymbol{\alpha} = 0$$
+
+Since $\mathbf{K}$ is symmetric positive semi-definite we can factor it out, giving the linear system $(\mathbf{K} + \lambda\mathbf{I})\boldsymbol{\alpha} = \boldsymbol{y}$, with solution
+
+$$\boldsymbol{\alpha} = (\mathbf{K} + \lambda\mathbf{I})^{-1}\boldsymbol{y}$$
+
+where $\lambda \geq 0$ is the regularization parameter — the same $\lambda$ as in Section 4.5. Prediction at any new point uses $\mathbf{k}_* \in \mathbb{R}^P$ with $(\mathbf{k}_*)_p = k(\boldsymbol{x}_*, \boldsymbol{x}_p)$:
+
+$$\hat{f}(\boldsymbol{x}_*) = \mathbf{k}_*^T\boldsymbol{\alpha} = \sum_{p=1}^{P} \alpha_p\, k(\boldsymbol{x}_*, \boldsymbol{x}_p)$$
+
+**How the kernels plug in.** The derivation never assumed anything specific about $k$ — it only appears when filling $\mathbf{K}$ entry by entry. This is exactly where the kernel trick pays off: each entry costs $\mathcal{O}(N)$ to evaluate regardless of the implicit feature space dimension. For the polynomial kernel that implicit space has $(D+1)^N$ dimensions; for the RBF kernel it is infinite — yet $\mathbf{K}$ is always a finite $P \times P$ matrix. Once $\mathbf{K}$ is built, the solve $\boldsymbol{\alpha} = (\mathbf{K}+\lambda\mathbf{I})^{-1}\boldsymbol{y}$ is identical no matter which kernel was used. Swapping kernels changes the inductive bias (what notion of similarity is used) without changing the training algorithm. For SOAP descriptors, the RBF kernel is natural: physically similar local environments → nearby SOAP vectors → high $k$ → strong influence on predictions near that environment.
+
+**Computational cost and scaling.** KRR requires forming the $P \times P$ kernel matrix $\mathbf{K}$ and inverting it once. This costs $\mathcal{O}(P^3)$ in time and $\mathcal{O}(P^2)$ in memory. Crucially, the training procedure is a single matrix solve — there are no epochs, no gradient descent, no hyperparameters like learning rate. This is simple and numerically reproducible, which matters for scientific applications.
+
+The $\mathcal{O}(P^3)$ scaling is, however, a hard limit. If you double the training set, training time increases eightfold. At $P \sim 10^3$ the solve takes milliseconds; at $P \sim 10^4$ it becomes slow; at $P \sim 10^5$ it is infeasible on standard hardware. For comparison, a deep learning model like MACE trains via mini-batch stochastic gradient descent: each update touches only a small batch of structures and the cost per step scales roughly linearly in the batch size and number of neighbors per atom (controlled by $r_\text{cut}$). The number of model parameters is fixed regardless of dataset size. This allows MACE to train on datasets of $10^6$ or more structures — a regime completely inaccessible to exact KRR. The trade-off is that KRR gives an analytic, globally optimal solution (for fixed $\lambda$), whereas MACE requires iterative optimization over many epochs and is sensitive to initialization and optimizer hyperparameters.
+
+## 4.4 Gaussian Process Regression (GPR)
+
+**The conceptual picture.** GPR is the Bayesian version of KRR. Instead of just finding a single best-fit function, GPR maintains a probability distribution over all functions consistent with the training data. Before seeing any data you specify a **prior** over functions — a belief about what the function looks like. After observing the training labels you update this to a **posterior** via Bayes' theorem. The posterior gives both a mean prediction (identical to KRR) and a principled uncertainty estimate: how confident the model is at each test point. The uncertainty is large where training data is sparse and small where data is dense — automatically, without any extra computation beyond what KRR already does.
+
+**What is a Gaussian process?** A Gaussian process (GP) is a probability distribution over functions. The defining property is that for any finite collection of inputs $\{\boldsymbol{x}_1, \ldots, \boldsymbol{x}_P\}$, the corresponding function values $\boldsymbol{f} = (f(\boldsymbol{x}_1), \ldots, f(\boldsymbol{x}_P))^T$ follow a multivariate Gaussian distribution. A GP is fully specified by two objects:
+
+- a **mean function** $m(\boldsymbol{x}) = \mathbb{E}[f(\boldsymbol{x})]$, set to zero in most regression applications
+- a **covariance kernel** $k(\boldsymbol{x}, \boldsymbol{x}') = \mathrm{Cov}[f(\boldsymbol{x}), f(\boldsymbol{x}')]$, which encodes how strongly function values at two inputs are correlated
+
+We write $f \sim \mathcal{GP}(0, k)$. For any finite set of training inputs, the prior over $\boldsymbol{f}$ is then $\boldsymbol{f} \sim \mathcal{N}(\boldsymbol{0}, \mathbf{K})$, where $\mathbf{K}$ is the $P \times P$ kernel matrix with $K_{pp'} = k(\boldsymbol{x}_p, \boldsymbol{x}_{p'})$ — exactly the same matrix as in KRR.
+
+The kernel hyperparameters carry physical meaning. For the RBF kernel $k(\boldsymbol{x},\boldsymbol{x}') = v\,e^{-\sum_i (x_i - x_i')^2 / (2\ell_i^2)}$: $v > 0$ is the **signal variance**, controlling how much $f$ fluctuates about its mean; $\ell_i > 0$ is the **length scale** in the $i$-th input dimension, controlling smoothness — larger $\ell_i$ means the function varies more slowly along that direction.
+
+**From prior to posterior.** Suppose we observe $P$ noisy measurements $\boldsymbol{y} = \boldsymbol{f} + \boldsymbol{\varepsilon}$ where $\boldsymbol{\varepsilon} \sim \mathcal{N}(\boldsymbol{0}, \lambda\mathbf{I})$ is independent Gaussian noise with variance $\lambda$. The joint distribution of the training observations $\boldsymbol{y}$ and the function value $f_* = f(\boldsymbol{x}_*)$ at a new test point $\boldsymbol{x}_*$ is
+
+$$\begin{pmatrix} \boldsymbol{y} \\ f_* \end{pmatrix} \sim \mathcal{N}\!\left(\boldsymbol{0},\; \begin{pmatrix} \mathbf{K} + \lambda\mathbf{I} & \mathbf{k}_* \\ \mathbf{k}_*^T & k_{**} \end{pmatrix}\right)$$
+
+where $\mathbf{k}_* \in \mathbb{R}^P$ is the same test-point kernel vector defined in Section 4.3, with entries $(\mathbf{k}_*)_p = k(\boldsymbol{x}_*, \boldsymbol{x}_p)$, and $k_{**} = k(\boldsymbol{x}_*, \boldsymbol{x}_*)$ is the prior variance at the test point. Conditioning this joint Gaussian on the observed $\boldsymbol{y}$ — using the standard Gaussian conditioning formula — yields the posterior, which is also Gaussian with mean and variance:
+
+$$\mu(\boldsymbol{x}_*) = \mathbf{k}_*^T(\mathbf{K} + \lambda\mathbf{I})^{-1}\boldsymbol{y}$$
+
+$$\sigma^2(\boldsymbol{x}_*) = k_{**} - \mathbf{k}_*^T(\mathbf{K} + \lambda\mathbf{I})^{-1}\mathbf{k}_*$$
+
+The predictive mean $\mu(\boldsymbol{x}_*) = \mathbf{k}_*^T\boldsymbol{\alpha}$ is identical to the KRR prediction from Section 4.3 — GPR and KRR agree on the mean, but GPR additionally provides a principled uncertainty estimate. The predictive variance $\sigma^2(\boldsymbol{x}_*)$ has a clear interpretation: the first term $k_{**}$ is the prior variance (how uncertain we were before seeing any data), and the second term $\mathbf{k}_*^T(\mathbf{K}+\lambda\mathbf{I})^{-1}\mathbf{k}_* \geq 0$ is the variance reduction due to the training data. In data-dense regions $\mathbf{k}_*$ is large and the reduction is large, giving low uncertainty; in data-sparse regions $\mathbf{k}_* \approx \boldsymbol{0}$ and $\sigma^2 \approx k_{**}$, recovering the prior uncertainty.
+
+**Hyperparameter tuning.** The kernel hyperparameters ($v$, $\ell_i$) and noise level $\lambda$ can be optimized by maximizing the **log-marginal likelihood** of the training data:
+
+$$\log p(\boldsymbol{y}) = -\tfrac{1}{2}\boldsymbol{y}^T(\mathbf{K}+\lambda\mathbf{I})^{-1}\boldsymbol{y} - \tfrac{1}{2}\log\det(\mathbf{K}+\lambda\mathbf{I}) - \tfrac{P}{2}\log 2\pi$$
+
+This is a single, principled objective that balances data fit (first term) against model complexity (second term, the log-determinant). KRR has no equivalent — $\lambda$ must be set by cross-validation.
+
+**Practical limitation and comparison to deep learning.** Both GPR and KRR require forming and inverting the $P \times P$ kernel matrix, which scales as $\mathcal{O}(P^3)$ in time and $\mathcal{O}(P^2)$ in memory. This limits exact GPR/KRR to training sets of order $P \sim 10^3$–$10^4$ atomic environments — typical for high-quality DFT datasets used in MLIPs. Beyond this, deep learning models are necessary. A GNN such as MACE trains via mini-batch SGD with cost per step linear in batch size and neighbor count, and a fixed parameter count independent of $P$, making it viable at $P \sim 10^6$. The advantage of GPR over deep learning is that uncertainty quantification is analytic and free: $\sigma^2(\boldsymbol{x}_*)$ comes out of the same matrix inversion already performed for prediction. In a GNN, obtaining comparable uncertainty estimates requires additional machinery such as deep ensembles or Monte Carlo dropout. In the MLIP context, GPR with a SOAP kernel is exactly the GAP (Gaussian Approximation Potential) framework — see Section 7.
+
+## 4.5 Model Selection, Cross-Validation & Ensemble Methods
+
+Two key questions arise when building any regression model: (1) what is the optimal model capacity (how many and what type of basis functions)? and (2) how finely should the weights be optimized? Both questions are answered empirically via **cross-validation** (CV) — a procedure that estimates generalization error using only the available labeled data.
+
+**Overfitting** occurs when a high-capacity model fits training noise in addition to the true signal, yielding low training error but high validation error. It is worsened by having too many features, features that correlate poorly with labels, or an over-optimized weight vector.
+
+Five distinct CV strategies exist, each suited to different situations:
+
+**1. Naive cross-validation.** Partition the dataset once into a training set and a hold-out validation set. Train the model on the training set and evaluate it on the validation set. Simple, but the result depends heavily on the particular split chosen, may miss the ideal model, and is expensive if the model must be trained from scratch for every candidate hyperparameter.
+
+**2. Cross-validation via boosting.** Rather than training a full high-capacity model at once, build it "one unit at a time": start by optimizing only a few parameters (the rest are frozen), then unfreeze more units and optimize more parameters in each successive CV round. Subsequent rounds are cheap because the model is already partially trained. This provides fine-grained control over capacity and is the standard approach for tree-based models.
+
+**3. Cross-validation via regularization — two strategies:**
+- *Early stopping*: initialize a high-capacity model with small weights and train it; monitor validation error and stop as soon as it begins to rise. The learning rate must be tuned carefully. Effective for neural networks.
+- *Regularized loss*: modify the objective to $g(\Theta) + \lambda h(\Theta)$, where $h(\Theta)$ is a penalty (e.g. $\|\boldsymbol{w}\|^2$ for ridge / Tikhonov regularization) and $\lambda \geq 0$ controls its strength. Begin with large $\lambda$ (simple model), decrease it gradually while fully optimizing each time, and select the $\lambda$ that minimizes validation error. The KRR parameter $\lambda$ in Section 4.3 is exactly this regularizer.
+
+**4. Bagging of cross-validated models.** Train multiple models on different bootstrap subsets (random samples with replacement) of the training data. In regression, take the mean or median of their predictions; in classification, take a majority vote. Models can even be drawn from different model families (different universal approximators). Bagging is embarrassingly parallel and reduces variance, but the resulting ensemble is harder to interpret.
+
+**5. K-fold cross-validation.** Partition the $P$ data points into $K$ equally-sized folds. In each of $K$ rounds, train on the $K-1$ remaining folds and evaluate on the held-out fold. The generalization error estimate is the mean error across rounds, and its standard deviation quantifies uncertainty in the estimate. K-fold CV is used for model validation (accuracy and standard deviation), hyperparameter optimization (grid search or random search), outlier detection, and diagnosing unbalanced datasets. Typical values are $K = 5$ or $K = 10$.
+
+**Leave-one-out cross-validation (LOOCV)** is the limiting case $K = P$: each training run uses all but one data point, and that single held-out point is the validation set. LOOCV is nearly unbiased (it trains on almost the full dataset each time) but has high variance and costs $P$ full training runs — practical only for small datasets or cheap models.
+
+**Ensemble methods** combine multiple models to reduce bias and variance simultaneously and, for free, provide an estimate of predictive uncertainty:
+
+| Method | Core idea | Notes |
+|--------|-----------|-------|
+| Bagging | Train on bootstrap subsets; average predictions | Embarrassingly parallel |
+| Boosting | Sequentially fit residuals; combine weak learners | Standard for trees |
+| Stacking | Base-model predictions feed a meta-model | Strongest ensembles |
+| Voting/Averaging | Simple average or majority vote over existing models | No retraining needed |
+| Deep ensembles | Multiple NNs with different random seeds | Standard UQ for NNs |
+| Mixtures of experts | Gating network routes inputs to specialist sub-models | Central to LLMs |
+
+Bagging and boosting are complementary: bagging trains models in parallel on resampled data, reducing variance; boosting trains sequentially to reduce bias.
+
+## 4.6 Kernel Methods for ML Interatomic Potentials
+
+Many state-of-the-art ML interatomic potentials (GAP, FCHL, sGDML) are built directly on kernel methods. They work because: (1) atomic-environment descriptors give a moderate feature dimension $N$, while training sets are small enough ($P \ll N$ often) that the $O(P^3)$ cost is manageable; (2) the RBF kernel encodes a physically natural notion of similarity between environments; and (3) the convex training problem is numerically reproducible — important for scientific reproducibility. When training sets grow into the millions, kernel methods fail and neural-network potentials take over (covered in L7–L8).
+
+---
+

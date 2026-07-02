@@ -1,3 +1,5 @@
 lectures/
 *.bak
 .DS_Store
+site/
+.venv-mkdocs-test/
