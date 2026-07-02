@@ -110,3 +110,56 @@
   opacity: 1;
   background-color: hsla(0, 0%, 100%, 0.25);
 }
+
+/* Collapsible left nav / right TOC panels, injected by
+   javascripts/collapsible-sidebars.js. Collapsing shrinks the panel
+   to a slim strip (not 0) so the toggle stays reachable, and fades
+   its contents out rather than clipping them abruptly. */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar {
+    transition: width 0.2s ease;
+    position: sticky;
+  }
+
+  .md-sidebar--collapsed {
+    width: 1.4rem !important;
+    overflow: hidden;
+  }
+
+  .md-sidebar--collapsed .md-sidebar__scrollwrap {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+  }
+
+  .md-sidebar__toggle {
+    appearance: none;
+    background: var(--md-default-bg-color);
+    border: 0.075rem solid var(--md-accent-fg-color);
+    color: var(--md-accent-fg-color);
+    position: absolute;
+    top: 0.6rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    line-height: 1;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: var(--md-shadow-z1);
+  }
+
+  .md-sidebar__toggle:hover {
+    background: var(--md-accent-fg-color);
+    color: var(--md-default-bg-color);
+  }
+
+  .md-sidebar--primary .md-sidebar__toggle {
+    right: -0.6rem;
+  }
+
+  .md-sidebar--secondary .md-sidebar__toggle {
+    left: -0.6rem;
+  }
+}
