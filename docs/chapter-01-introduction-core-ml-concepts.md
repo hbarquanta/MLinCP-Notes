@@ -88,30 +88,51 @@ $$\ell_\text{reg}(\hat{f}) = \ell(\hat{f}) + \lambda\, R(\hat{f})$$
 
 where $\lambda > 0$ controls the regularization strength. Common choices: $R = \|w\|_2^2$ (L2/Ridge, penalizes large weights) and $R = \|w\|_1$ (L1/Lasso, promotes sparsity).
 
-The figure below shows polynomial regression on noisy samples from $f(x) = \sin(2\pi x)$. At low degree the model lacks capacity (underfitting); at high degree it interpolates the training noise and the test error explodes (overfitting). The degree at which test error is minimal is the sweet spot.
+The widget below fits a degree-$d$ polynomial to noisy samples of $f(x) = \sin(2\pi x)$ and predicts $\hat{f}(x)$ at all $x \in [0,1]$ (the red curve). The right panel tracks train and test MSE across all degrees up to 20. Use the sliders to see how dataset size and the train/test split shift the overfitting profile, and resample to draw a fresh noise realization.
 
 <div id="overfit-widget" style="margin:1.5rem 0;">
-  <div style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;margin-bottom:0.6rem;">
-    <span style="font-size:0.93rem;font-weight:600;">Polynomial degree</span>
-    <input type="range" id="ov-deg" min="1" max="10" value="3" step="1"
-           oninput="ovUpdate(+this.value)" style="width:180px;accent-color:#BA5A5A;">
-    <span id="ov-deg-val" style="font-weight:700;min-width:1.4em;">3</span>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:0.45rem 1.1rem;align-items:center;margin-bottom:0.85rem;font-size:0.91rem;">
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <span style="font-weight:600;white-space:nowrap;">Degree</span>
+      <input type="range" id="ov-deg" min="1" max="20" value="3" step="1"
+             oninput="ovUpdate()" style="width:110px;accent-color:#BA5A5A;">
+      <span id="ov-deg-val" style="font-weight:700;min-width:1.6em;color:#BA5A5A;">3</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <span style="font-weight:600;white-space:nowrap;">Data points</span>
+      <input type="range" id="ov-n" min="10" max="80" value="20" step="5"
+             oninput="ovUpdate()" style="width:110px;accent-color:#86BCBD;">
+      <span id="ov-n-val" style="font-weight:700;min-width:1.6em;color:#86BCBD;">20</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <span style="font-weight:600;white-space:nowrap;">Train %</span>
+      <input type="range" id="ov-frac" min="50" max="90" value="75" step="5"
+             oninput="ovUpdate()" style="width:110px;accent-color:#A4CE8B;">
+      <span id="ov-frac-val" style="font-weight:700;min-width:2.8em;color:#A4CE8B;">75 %</span>
+    </div>
+    <button onclick="ovResample()" style="padding:0.3rem 0.9rem;border:1.5px solid #F7E49B;border-radius:6px;background:rgba(247,228,155,0.15);color:inherit;cursor:pointer;font-size:0.88rem;font-weight:600;">&#x27F3; Resample</button>
   </div>
-  <div id="ov-plot" style="width:100%;height:420px;"></div>
+  <div id="ov-plot" style="width:100%;height:460px;"></div>
 </div>
 
 <script>
 (function(){
-  var N=20;
-  var _noise=[0.12,-0.18,0.07,-0.22,0.15,0.09,-0.14,0.21,-0.08,0.17,
-              -0.19,0.11,0.23,-0.06,0.18,-0.13,0.08,-0.21,0.16,-0.10];
-  var _xs=Array.from({length:N},function(_,i){return i/(N-1);});
-  var _ys=_xs.map(function(x,i){return Math.sin(2*Math.PI*x)+_noise[i];});
-  var _xTr=[],_yTr=[],_xTe=[],_yTe=[];
-  _xs.forEach(function(x,i){
-    if(i%3!==0){_xTr.push(x);_yTr.push(_ys[i]);}
-    else{_xTe.push(x);_yTe.push(_ys[i]);}
-  });
+  var _seed=42, _deg=3, _N=20, _trainPct=75;
+
+  function _lcgNext(s){return(Math.imul(1664525,s)+1013904223)>>>0;}
+  function _lcgFloat(s){return _lcgNext(s)/4294967296;}
+
+  function _genData(){
+    var step=Math.max(2,Math.round(100/(100-_trainPct)));
+    var xTr=[],yTr=[],xTe=[],yTe=[],s=_seed;
+    for(var i=0;i<_N;i++){
+      s=_lcgNext(s);
+      var x=i/Math.max(_N-1,1);
+      var y=Math.sin(2*Math.PI*x)+(_lcgFloat(s)-0.5)*0.6;
+      if(i%step===0){xTe.push(x);yTe.push(y);}else{xTr.push(x);yTr.push(y);}
+    }
+    return{xTr:xTr,yTr:yTr,xTe:xTe,yTe:yTe};
+  }
 
   function _vand(xs,deg){
     return xs.map(function(x){
@@ -155,65 +176,90 @@ The figure below shows polynomial regression on noisy samples from $f(x) = \sin(
   function _mse(c,xs,ys){
     return xs.reduce(function(s,x,i){var d=_eval(c,x)-ys[i];return s+d*d;},0)/xs.length;
   }
-
-  var _degs=Array.from({length:10},function(_,i){return i+1;});
-  var _errTr=[],_errTe=[];
-  _degs.forEach(function(d){
-    var c=_fit(_xTr,_yTr,d);
-    _errTr.push(_mse(c,_xTr,_yTr));
-    _errTe.push(_mse(c,_xTe,_yTe));
-  });
-
   function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
 
-  function _draw(deg){
+  function _draw(){
     var el=document.getElementById('ov-plot');
     if(!el||!window.Plotly)return;
-    var c=_fit(_xTr,_yTr,deg);
+    var data=_genData();
+    var xTr=data.xTr,yTr=data.yTr,xTe=data.xTe,yTe=data.yTe;
+    if(!xTr.length)return;
+    var maxDeg=Math.min(_deg,xTr.length-1);
+
+    var coef=null;
+    try{coef=_fit(xTr,yTr,maxDeg);}catch(e){return;}
+
     var xL=Array.from({length:200},function(_,i){return i/199;});
-    var yL=xL.map(function(x){return _eval(c,x);});
+    var yL=xL.map(function(x){return _eval(coef,x);});
     var yTrue=xL.map(function(x){return Math.sin(2*Math.PI*x);});
+
+    var maxPlotDeg=Math.min(20,xTr.length-1);
+    var degs=[],errTr=[],errTe=[];
+    for(var d=1;d<=maxPlotDeg;d++){
+      try{
+        var c=_fit(xTr,yTr,d);
+        var mTr=_mse(c,xTr,yTr),mTe=_mse(c,xTe,yTe);
+        if(isFinite(mTr)&&isFinite(mTe)){degs.push(d);errTr.push(mTr);errTe.push(mTe);}
+      }catch(e){}
+    }
+    var eMax=(errTe.length?Math.max.apply(null,errTe):1)*1.3;
+    eMax=Math.max(eMax,0.05);
+
     var dk=_dark(),bg=dk?'#1e2228':'#ffffff',fg=dk?'#e0e0e0':'#333333';
     var gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
-    var eMax=Math.max.apply(null,_errTe)*1.2;
-    var label=deg<=2?'underfitting':deg>=7?'overfitting':'good fit';
+    var label=_deg<=2?'underfitting':_deg>=7?'overfitting':'good fit';
+    var fs=14;
 
     Plotly.react('ov-plot',[
       {x:xL,y:yTrue,mode:'lines',name:'true f(x)',
        line:{color:'#86BCBD',width:1.5,dash:'dash'},xaxis:'x',yaxis:'y'},
-      {x:xL,y:yL,mode:'lines',name:'degree '+deg,
+      {x:xL,y:yL,mode:'lines',name:'degree '+maxDeg+' fit',
        line:{color:'#BA5A5A',width:2.5},xaxis:'x',yaxis:'y'},
-      {x:_xTr,y:_yTr,mode:'markers',name:'train',
+      {x:xTr,y:yTr,mode:'markers',name:'train ('+xTr.length+')',
        marker:{color:'#A4CE8B',size:7,line:{color:'rgba(0,0,0,0.25)',width:1}},xaxis:'x',yaxis:'y'},
-      {x:_xTe,y:_yTe,mode:'markers',name:'test',
+      {x:xTe,y:yTe,mode:'markers',name:'test ('+xTe.length+')',
        marker:{symbol:'diamond',color:'#F7E49B',size:8,line:{color:'rgba(0,0,0,0.4)',width:1}},xaxis:'x',yaxis:'y'},
-      {x:_degs,y:_errTr,mode:'lines+markers',name:'train MSE',
+      {x:degs,y:errTr,mode:'lines+markers',name:'train MSE',
        line:{color:'#A4CE8B',width:2},marker:{color:'#A4CE8B',size:5},xaxis:'x2',yaxis:'y2'},
-      {x:_degs,y:_errTe,mode:'lines+markers',name:'test MSE',
+      {x:degs,y:errTe,mode:'lines+markers',name:'test MSE',
        line:{color:'#BA5A5A',width:2},marker:{color:'#BA5A5A',size:5},xaxis:'x2',yaxis:'y2'},
-      {x:[deg,deg],y:[0,eMax],mode:'lines',showlegend:false,
+      {x:[maxDeg,maxDeg],y:[0,eMax],mode:'lines',showlegend:false,
        line:{color:'#86BCBD',width:1.5,dash:'dot'},xaxis:'x2',yaxis:'y2'},
     ],{
       paper_bgcolor:bg,plot_bgcolor:bg,
-      font:{color:fg,family:'inherit',size:12},
-      margin:{t:45,b:48,l:55,r:15},
+      font:{color:fg,family:'inherit',size:fs},
+      margin:{t:50,b:58,l:62,r:68},
       annotations:[
-        {text:'Fit to noisy data ( '+label+' )',xref:'paper',yref:'paper',
-         x:0.22,y:1.06,showarrow:false,font:{size:12,color:fg}},
-        {text:'Training vs. test error',xref:'paper',yref:'paper',
-         x:0.78,y:1.06,showarrow:false,font:{size:12,color:fg}},
+        {text:'Polynomial fit to sin(2π<i>x</i>) + noise — <b>'+label+'</b>',
+         xref:'paper',yref:'paper',x:0.21,y:1.06,showarrow:false,font:{size:13,color:fg}},
+        {text:'Train vs. test MSE by degree',
+         xref:'paper',yref:'paper',x:0.79,y:1.06,showarrow:false,font:{size:13,color:fg}},
       ],
-      xaxis:{title:'x',range:[-0.02,1.02],domain:[0,0.44],gridcolor:gc,zerolinecolor:gc},
-      yaxis:{title:'y',range:[-2.2,2.2],gridcolor:gc,zerolinecolor:gc},
-      xaxis2:{title:'degree',range:[0.5,10.5],dtick:1,domain:[0.56,1],gridcolor:gc,zerolinecolor:gc},
-      yaxis2:{title:'MSE',range:[0,eMax],gridcolor:gc,zerolinecolor:gc},
-      legend:{x:0.01,y:0.02,bgcolor:'rgba(0,0,0,0)',font:{size:10}},
+      xaxis:{title:{text:'<i>x</i>',font:{size:fs+1}},range:[-0.02,1.02],domain:[0,0.43],
+             gridcolor:gc,zerolinecolor:gc,tickfont:{size:fs-1}},
+      yaxis:{title:{text:'<i>y</i>',font:{size:fs+1}},range:[-2.5,2.5],
+             gridcolor:gc,zerolinecolor:gc,tickfont:{size:fs-1}},
+      xaxis2:{title:{text:'Polynomial degree',font:{size:fs+1}},
+              range:[0.5,maxPlotDeg+0.5],dtick:Math.max(1,Math.floor(maxPlotDeg/10)),
+              domain:[0.57,1],gridcolor:gc,zerolinecolor:gc,tickfont:{size:fs-1}},
+      yaxis2:{title:{text:'MSE',font:{size:fs+1}},range:[0,eMax],
+              anchor:'x2',side:'right',gridcolor:gc,zerolinecolor:gc,tickfont:{size:fs-1}},
+      legend:{x:0.01,y:0.02,bgcolor:'rgba(0,0,0,0)',font:{size:fs-2}},
     },{displayModeBar:false,responsive:true});
   }
 
-  window.ovUpdate=function(deg){
-    document.getElementById('ov-deg-val').textContent=deg;
-    _draw(deg);
+  window.ovUpdate=function(){
+    _deg=+document.getElementById('ov-deg').value||3;
+    _N=+document.getElementById('ov-n').value||20;
+    _trainPct=+document.getElementById('ov-frac').value||75;
+    document.getElementById('ov-deg-val').textContent=_deg;
+    document.getElementById('ov-n-val').textContent=_N;
+    document.getElementById('ov-frac-val').textContent=_trainPct+' %';
+    _draw();
+  };
+  window.ovResample=function(){
+    _seed=_lcgNext(_seed^1013904223);
+    ovUpdate();
   };
 
   function _init(){
@@ -223,12 +269,10 @@ The figure below shows polynomial regression on noisy samples from $f(x) = \sin(
         var s=document.createElement('script');
         s.id='plotly-cdn';
         s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
-        s.onload=function(){_draw(3);};
+        s.onload=function(){_draw();};
         document.head.appendChild(s);
       }
-    } else {
-      _draw(parseInt(document.getElementById('ov-deg').value)||3);
-    }
+    }else{_draw();}
   }
 
   if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
