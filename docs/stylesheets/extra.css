@@ -48,3 +48,47 @@
 .md-search__input {
   background-color: hsla(25, 30%, 96%, 0.35);
 }
+
+/* Widen the primary sidebar — the default 12.1rem wraps chapter
+   titles onto 2-3 lines. Material lays it out with flexbox, so
+   widening it here is enough; the content column reflows on its own.
+   Scoped to the same desktop breakpoint Material itself uses for the
+   sidebar, so the mobile off-canvas drawer (which reuses this class)
+   is untouched. */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar {
+    width: 17rem;
+  }
+}
+
+/* Simple +/- text-size control, injected into the header by
+   javascripts/font-size.js. Scales the whole page (rem-based), and
+   the choice persists across visits via localStorage. */
+.md-font-size {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-right: 0.4rem;
+}
+
+.md-font-size button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--md-primary-bg-color);
+  font-family: var(--md-text-font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+
+.md-font-size button:hover {
+  opacity: 1;
+  background-color: hsla(0, 0%, 100%, 0.25);
+}
