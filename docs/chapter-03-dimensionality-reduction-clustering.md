@@ -2,11 +2,6 @@
 
 Unsupervised learning extracts structure from unlabeled data $\{x^{(p)}\}_{p=1}^P$, where $x^{(p)} \in \mathbb{R}^D$. The two central tasks are **dimensionality reduction** — finding a compact low-dimensional representation $z^{(p)} \in \mathbb{R}^d$ with $d \ll D$ — and **clustering** — partitioning the data into groups of similar points.
 
----
-
-
----
-
 ## 3.1 Principal Component Analysis (PCA)
 
 PCA finds the $K$-dimensional **linear subspace** of $\mathbb{R}^N$ that retains the maximum variance of the data, where $N$ is the feature dimension and $K < N$ is the target (reduced) dimension. The method is motivated by the following observation: if we want to encode data $x_p \in \mathbb{R}^N$ (data point index $p = 1,\ldots,M$, where $M$ is the number of samples) via a spanning set of $K$ orthonormal vectors $c_1,\ldots,c_K \in \mathbb{R}^N$, then the optimal encoding $w_p = C^T x_p \in \mathbb{R}^K$ and decoding $C w_p \approx x_p$ (where $C = [c_1|\cdots|c_K] \in \mathbb{R}^{N\times K}$) minimize the reconstruction loss
@@ -132,6 +127,8 @@ The **KL divergence** $\text{KL}(P\|Q)$ measures how much distribution $Q$ diffe
 
 t-SNE focuses on preserving small pairwise similarities (local structure); PCA instead maximizes large pairwise distances (global variance). As a consequence, global distances and inter-cluster separations in the t-SNE embedding are not meaningful and should not be interpreted.
 
+The distill.pub article [*How to Use t-SNE Effectively*](https://distill.pub/2016/misread-tsne/) provides interactive examples of how perplexity and random seed affect the embedding, and is worth reading before applying t-SNE to real data.
+
 ---
 
 ## 3.5 UMAP (Uniform Manifold Approximation and Projection)
@@ -156,10 +153,7 @@ Here $M$ = number of data points, $N$ = feature dimension (PCA context); for t-S
 
 ---
 
-
 Clustering partitions a dataset $\{x^{(p)}\}_{p=1}^P$ into groups of similar points without any labels. We discuss five families of methods.
-
----
 
 ## 3.6 K-Means Clustering
 
@@ -187,6 +181,164 @@ where $\mu_k = \frac{1}{|C_k|}\sum_{i \in C_k} x_i$ is the centroid (mean) of cl
 3. **Unpredictability**: the algorithm is random and finds only local minima.
 
 Additionally, K-means implicitly assumes clusters are convex and roughly spherical — it fails on non-convex shapes (crescents, rings) and is sensitive to outliers (which pull centroids toward them).
+
+The widget below lets you vary $K$ and the dataset. Note how *Moons* and *Rings* fool K-means regardless of $K$. The "Re-run" button re-initializes with a different random seed — repeated runs on *Blobs* with large $K$ will sometimes settle at different local minima.
+
+<div id="km-widget" style="margin:1.5rem 0;">
+  <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:0.6rem;">
+    <div style="display:flex;gap:5px;" id="km-btns">
+      <button id="km-btn-blobs" onclick="kmSetData('blobs')"
+        style="padding:3px 12px;border-radius:20px;border:1.5px solid #86BCBD;
+               background:#86BCBD;color:#fff;font-size:0.8rem;cursor:pointer;font-weight:600;">Blobs</button>
+      <button id="km-btn-moons" onclick="kmSetData('moons')"
+        style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;
+               background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">Moons</button>
+      <button id="km-btn-rings" onclick="kmSetData('rings')"
+        style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;
+               background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">Rings</button>
+    </div>
+    <span style="font-size:0.93rem;font-weight:600;">K =</span>
+    <input type="range" id="km-k" min="2" max="8" value="3" step="1"
+           oninput="kmSetK(+this.value)" style="width:130px;accent-color:#BA5A5A;">
+    <span id="km-k-val" style="font-weight:700;min-width:1.2em;">3</span>
+    <button onclick="kmRun()"
+      style="padding:3px 12px;border-radius:20px;border:1.5px solid #BA5A5A;
+             background:transparent;color:#BA5A5A;font-size:0.8rem;cursor:pointer;">Re-run</button>
+  </div>
+  <div id="km-plot" style="width:100%;height:360px;"></div>
+</div>
+
+<script>
+(function(){
+  var _dat='blobs', _K=3, _seed=42;
+  var _PAL=['#BA5A5A','#A4CE8B','#86BCBD','#F7E49B','#D48AAA','#C2D48A','#A4CDD4','#F0CF80'];
+
+  function _rng(s){
+    var st=s>>>0;
+    return function(){st=(st*1664525+1013904223)>>>0;return st/0x100000000;};
+  }
+  function _genBlobs(){
+    var r=_rng(12345),pts=[],centers=[[-2,2],[2,2],[0,-2.5]];
+    for(var i=0;i<150;i++){
+      var c=centers[i%3],u1=r()+1e-10,u2=r(),nr=Math.sqrt(-2*Math.log(u1));
+      pts.push([c[0]+nr*Math.cos(2*Math.PI*u2)*0.65,c[1]+nr*Math.sin(2*Math.PI*u2)*0.65]);
+    }
+    return pts;
+  }
+  function _genMoons(){
+    var r=_rng(54321),pts=[];
+    for(var i=0;i<150;i++){
+      var angle=r()*Math.PI,nr=(r()-0.5)*0.2;
+      if(i<75) pts.push([Math.cos(angle)+nr,-Math.sin(angle)+nr]);
+      else pts.push([1-Math.cos(angle)+nr,Math.sin(angle)-0.5+nr]);
+    }
+    return pts;
+  }
+  function _genRings(){
+    var r=_rng(99887),pts=[];
+    for(var i=0;i<150;i++){
+      var angle=r()*2*Math.PI,rad=(i<75)?(1.2+r()*0.1):(2.5+r()*0.1);
+      pts.push([rad*Math.cos(angle),rad*Math.sin(angle)]);
+    }
+    return pts;
+  }
+  function _getData(){return _dat==='blobs'?_genBlobs():_dat==='moons'?_genMoons():_genRings();}
+
+  function _kmeans(pts,K,seed){
+    var n=pts.length,r=_rng(seed);
+    var ci=[Math.floor(r()*n)];
+    while(ci.length<K){
+      var dists=pts.map(function(p){
+        return Math.min.apply(null,ci.map(function(idx){
+          var dx=p[0]-pts[idx][0],dy=p[1]-pts[idx][1];return dx*dx+dy*dy;
+        }));
+      });
+      var tot=dists.reduce(function(a,b){return a+b;},0),t=r()*tot;
+      for(var i=0;i<n;i++){t-=dists[i];if(t<=0){ci.push(i);break;}}
+      if(ci.length<K) ci.push(Math.floor(r()*n));
+    }
+    var centroids=ci.slice(0,K).map(function(i){return pts[i].slice();});
+    var labels=new Array(n).fill(0);
+    for(var iter=0;iter<200;iter++){
+      var changed=false;
+      for(var i=0;i<n;i++){
+        var best=0,bestD=Infinity;
+        for(var k=0;k<K;k++){
+          var dx=pts[i][0]-centroids[k][0],dy=pts[i][1]-centroids[k][1],d=dx*dx+dy*dy;
+          if(d<bestD){bestD=d;best=k;}
+        }
+        if(labels[i]!==best){labels[i]=best;changed=true;}
+      }
+      if(!changed)break;
+      for(var k=0;k<K;k++){
+        var sx=0,sy=0,cnt=0;
+        for(var i=0;i<n;i++) if(labels[i]===k){sx+=pts[i][0];sy+=pts[i][1];cnt++;}
+        if(cnt>0)centroids[k]=[sx/cnt,sy/cnt];
+      }
+    }
+    return {labels:labels,centroids:centroids};
+  }
+
+  function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
+
+  function _draw(){
+    var el=document.getElementById('km-plot');
+    if(!el||!window.Plotly)return;
+    var pts=_getData(),res=_kmeans(pts,_K,_seed);
+    var dk=_dark(),bg=dk?'#1e2228':'#ffffff',fg=dk?'#e0e0e0':'#333333';
+    var gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+    var traces=[];
+    for(var k=0;k<_K;k++){
+      var px=[],py=[];
+      for(var i=0;i<pts.length;i++) if(res.labels[i]===k){px.push(pts[i][0]);py.push(pts[i][1]);}
+      traces.push({x:px,y:py,mode:'markers',showlegend:false,
+        marker:{color:_PAL[k%_PAL.length],size:5.5,opacity:0.8,
+                line:{color:'rgba(0,0,0,0.15)',width:0.5}}});
+    }
+    for(var k=0;k<_K;k++){
+      traces.push({x:[res.centroids[k][0]],y:[res.centroids[k][1]],
+        mode:'markers',showlegend:false,
+        marker:{symbol:'star',size:16,color:_PAL[k%_PAL.length],
+                line:{color:'#fff',width:2}}});
+    }
+    Plotly.react('km-plot',traces,{
+      paper_bgcolor:bg,plot_bgcolor:bg,
+      font:{color:fg,family:'inherit',size:12},
+      margin:{t:15,b:30,l:30,r:15},
+      xaxis:{gridcolor:gc,zerolinecolor:gc,showticklabels:false},
+      yaxis:{gridcolor:gc,zerolinecolor:gc,showticklabels:false,scaleanchor:'x'},
+    },{displayModeBar:false,responsive:true});
+  }
+
+  function _setBtn(active){
+    ['blobs','moons','rings'].forEach(function(n){
+      var b=document.getElementById('km-btn-'+n);if(!b)return;
+      if(n===active){b.style.background='#86BCBD';b.style.color='#fff';
+        b.style.borderColor='#86BCBD';b.style.fontWeight='600';}
+      else{b.style.background='transparent';b.style.color='var(--md-default-fg-color)';
+        b.style.borderColor='#8886';b.style.fontWeight='normal';}
+    });
+  }
+
+  window.kmSetData=function(d){_dat=d;_seed=42;_setBtn(d);_draw();};
+  window.kmSetK=function(k){_K=k;document.getElementById('km-k-val').textContent=k;_seed=42;_draw();};
+  window.kmRun=function(){_seed=Math.floor(Math.random()*99999)+1;_draw();};
+
+  function _init(){
+    if(!document.getElementById('km-plot'))return;
+    if(!window.Plotly){
+      if(!document.getElementById('plotly-cdn')){
+        var s=document.createElement('script');s.id='plotly-cdn';
+        s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+        s.onload=function(){_draw();};document.head.appendChild(s);
+      }
+    } else {_draw();}
+  }
+  if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
+  else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
+  else{_init();}
+})();
+</script>
 
 **Gaussian Mixture Models (GMMs) — soft K-means.** GMMs model the data as a mixture of $K$ Gaussians:
 

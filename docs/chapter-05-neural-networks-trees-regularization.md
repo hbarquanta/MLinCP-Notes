@@ -46,6 +46,8 @@ where $w_{i,0}^{(k)}$ is a bias, $w_{i,j}^{(k)}$ is the weight from unit $j$ in 
 
 The entire parameter set is $\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \omega^{(\text{out})}\}$. By the universal approximation theorem, a single hidden layer with sufficiently many units can approximate any continuous function; in practice, depth is more parameter-efficient than width, and deep architectures learn hierarchical representations.
 
+[TensorFlow Playground](https://playground.tensorflow.org) provides an interactive browser-based visualization of how depth, width, activation choice, and regularization affect the decision boundary of a network trained on 2D data — useful for building intuition before working through the math.
+
 ## 5.5 Activation Functions
 
 The activation function $\sigma$ is the source of nonlinearity. Four standard choices are:

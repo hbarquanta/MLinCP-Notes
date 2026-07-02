@@ -437,8 +437,6 @@ Here ✓ = satisfied, ✗ = fails, ~ = conditional, ≈ = equivariant (energy is
 
 ---
 
----
-
 ## References
 
 <a id="ref-bp07"></a>

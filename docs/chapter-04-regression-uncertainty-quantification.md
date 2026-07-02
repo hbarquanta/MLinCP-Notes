@@ -117,7 +117,159 @@ $$\log p(\boldsymbol{y}) = -\tfrac{1}{2}\boldsymbol{y}^T(\mathbf{K}+\lambda\math
 
 This is a single, principled objective that balances data fit (first term) against model complexity (second term, the log-determinant). KRR has no equivalent — $\lambda$ must be set by cross-validation.
 
-**Practical limitation and comparison to deep learning.** Both GPR and KRR require forming and inverting the $P \times P$ kernel matrix, which scales as $\mathcal{O}(P^3)$ in time and $\mathcal{O}(P^2)$ in memory. This limits exact GPR/KRR to training sets of order $P \sim 10^3$–$10^4$ atomic environments — typical for high-quality DFT datasets used in MLIPs. Beyond this, deep learning models are necessary. A GNN such as MACE trains via mini-batch SGD with cost per step linear in batch size and neighbor count, and a fixed parameter count independent of $P$, making it viable at $P \sim 10^6$. The advantage of GPR over deep learning is that uncertainty quantification is analytic and free: $\sigma^2(\boldsymbol{x}_*)$ comes out of the same matrix inversion already performed for prediction. In a GNN, obtaining comparable uncertainty estimates requires additional machinery such as deep ensembles or Monte Carlo dropout. In the MLIP context, GPR with a SOAP kernel is exactly the GAP (Gaussian Approximation Potential) framework — see Section 7.
+**Practical limitation and comparison to deep learning.** Both GPR and KRR require forming and inverting the $P \times P$ kernel matrix, which scales as $\mathcal{O}(P^3)$ in time and $\mathcal{O}(P^2)$ in memory. This limits exact GPR/KRR to training sets of order $P \sim 10^3$–$10^4$ atomic environments — typical for high-quality DFT datasets used in MLIPs. Beyond this, deep learning models are necessary. A GNN such as MACE trains via mini-batch SGD with cost per step linear in batch size and neighbor count, and a fixed parameter count independent of $P$, making it viable at $P \sim 10^6$. The advantage of GPR over deep learning is that uncertainty quantification is analytic and free: $\sigma^2(\boldsymbol{x}_*)$ comes out of the same matrix inversion already performed for prediction. In a GNN, obtaining comparable uncertainty estimates requires additional machinery such as deep ensembles or Monte Carlo dropout. In the MLIP context, GPR with a SOAP kernel is exactly the GAP (Gaussian Approximation Potential) framework — see Chapter 7.
+
+The widget below makes the posterior update tangible. Click anywhere in the plot to add a training point; the shaded band is the ±2σ predictive uncertainty. In empty regions it falls back to the prior (flat band of width $2\sqrt{\sigma_v^2}$); near data it collapses. Adjust the length scale ℓ and noise σₙ to see how they control smoothness and interpolation vs. smoothing behaviour.
+
+<div id="gpr-widget" style="margin:1.5rem 0;">
+  <div style="font-size:0.83rem;margin-bottom:0.5rem;opacity:0.75;">
+    Click on the plot to place training points — posterior updates immediately.
+  </div>
+  <div id="gpr-plot" style="width:100%;height:380px;cursor:crosshair;"></div>
+  <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-end;margin-top:0.7rem;">
+    <div style="font-size:0.85rem;">
+      <label>ℓ = <span id="gv-ell">1.00</span></label><br>
+      <input type="range" id="gs-ell" min="0.05" max="2" step="0.05" value="1"
+             oninput="gprUpdate('ell',+this.value)" style="width:130px;accent-color:#86BCBD;">
+    </div>
+    <div style="font-size:0.85rem;">
+      <label>σᵥ = <span id="gv-sv">1.0</span></label><br>
+      <input type="range" id="gs-sv" min="0.1" max="3" step="0.1" value="1"
+             oninput="gprUpdate('sv',+this.value)" style="width:110px;accent-color:#86BCBD;">
+    </div>
+    <div style="font-size:0.85rem;">
+      <label>σₙ = <span id="gv-sn">0.100</span></label><br>
+      <input type="range" id="gs-sn" min="0.001" max="0.8" step="0.005" value="0.1"
+             oninput="gprUpdate('sn',+this.value)" style="width:110px;accent-color:#86BCBD;">
+    </div>
+    <button onclick="gprClear()"
+      style="padding:4px 14px;border-radius:20px;border:1.5px solid #BA5A5A;
+             background:transparent;color:#BA5A5A;cursor:pointer;font-size:0.82rem;margin-bottom:2px;">
+      Clear
+    </button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var _xTr=[], _yTr=[];
+  var _ell=1.0, _sv=1.0, _sn=0.1;
+  var _xG=Array.from({length:200},function(_,i){return i/199;});
+  var _ready=false;
+
+  function _k(x1,x2){var d=x1-x2;return _sv*Math.exp(-0.5*d*d/(_ell*_ell));}
+
+  function _matvec(M,v){
+    return M.map(function(r){return r.reduce(function(s,m,j){return s+m*v[j];},0);});
+  }
+  function _matInv(M){
+    var n=M.length;
+    var a=M.map(function(r,i){
+      var row=r.slice();for(var j=0;j<n;j++)row.push(j===i?1:0);return row;
+    });
+    for(var col=0;col<n;col++){
+      var mx=col;
+      for(var row=col+1;row<n;row++)if(Math.abs(a[row][col])>Math.abs(a[mx][col]))mx=row;
+      var tmp=a[col];a[col]=a[mx];a[mx]=tmp;
+      var piv=a[col][col];if(Math.abs(piv)<1e-12)continue;
+      for(var j=0;j<2*n;j++)a[col][j]/=piv;
+      for(var row=0;row<n;row++){
+        if(row===col)continue;
+        var f=a[row][col];
+        for(var j=0;j<2*n;j++)a[row][j]-=f*a[col][j];
+      }
+    }
+    return a.map(function(r){return r.slice(n);});
+  }
+
+  function _gpr(){
+    var n=_xTr.length;
+    if(n===0){
+      var s=Math.sqrt(_sv);
+      return{means:_xG.map(function(){return 0;}),stds:_xG.map(function(){return s;})};
+    }
+    var K=_xTr.map(function(xi){return _xTr.map(function(xj){return _k(xi,xj);});});
+    for(var i=0;i<n;i++)K[i][i]+=_sn;
+    var Kinv=_matInv(K);
+    var alpha=_matvec(Kinv,_yTr);
+    var means=_xG.map(function(xs){
+      var ks=_xTr.map(function(xi){return _k(xs,xi);});
+      return ks.reduce(function(s,k,i){return s+k*alpha[i];},0);
+    });
+    var stds=_xG.map(function(xs){
+      var ks=_xTr.map(function(xi){return _k(xs,xi);});
+      var Kk=_matvec(Kinv,ks);
+      var v=_sv-ks.reduce(function(s,k,i){return s+k*Kk[i];},0);
+      return Math.sqrt(Math.max(0,v));
+    });
+    return{means:means,stds:stds};
+  }
+
+  function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
+
+  function _draw(){
+    var el=document.getElementById('gpr-plot');
+    if(!el||!window.Plotly)return;
+    var res=_gpr();
+    var dk=_dark(),bg=dk?'#1e2228':'#ffffff',fg=dk?'#e0e0e0':'#333333';
+    var gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+    var hi=res.means.map(function(m,i){return m+2*res.stds[i];});
+    var lo=res.means.map(function(m,i){return m-2*res.stds[i];});
+
+    Plotly.react('gpr-plot',[
+      {x:_xG.concat(_xG.slice().reverse()),y:hi.concat(lo.slice().reverse()),
+       mode:'lines',fill:'toself',fillcolor:'rgba(134,188,189,0.25)',
+       line:{color:'transparent'},showlegend:false,hoverinfo:'skip'},
+      {x:_xG,y:res.means,mode:'lines',name:'mean',
+       line:{color:'#86BCBD',width:2.5},showlegend:false},
+      {x:_xTr,y:_yTr,mode:'markers',name:'data',
+       marker:{color:'#BA5A5A',size:9,line:{color:'#fff',width:1.5}},showlegend:false},
+    ],{
+      paper_bgcolor:bg,plot_bgcolor:bg,
+      font:{color:fg,family:'inherit',size:12},
+      margin:{t:12,b:45,l:50,r:15},
+      xaxis:{title:'x',range:[0,1],gridcolor:gc,zerolinecolor:gc},
+      yaxis:{title:'y',range:[-4,4],gridcolor:gc,zerolinecolor:gc},
+    },{displayModeBar:false,responsive:true});
+
+    if(!_ready){
+      _ready=true;
+      el.addEventListener('click',function(e){
+        var fl=el._fullLayout;if(!fl)return;
+        var rect=el.getBoundingClientRect();
+        var xp=e.clientX-rect.left,yp=e.clientY-rect.top;
+        var xa=fl.xaxis,ya=fl.yaxis;
+        var xd=xa.range[0]+(xp-xa._offset)/xa._length*(xa.range[1]-xa.range[0]);
+        var yd=ya.range[1]-(yp-ya._offset)/ya._length*(ya.range[1]-ya.range[0]);
+        if(xd>=0&&xd<=1&&yd>=-4&&yd<=4){_xTr.push(xd);_yTr.push(yd);_draw();}
+      });
+    }
+  }
+
+  window.gprUpdate=function(key,val){
+    if(key==='ell'){_ell=val;document.getElementById('gv-ell').textContent=val.toFixed(2);}
+    if(key==='sv') {_sv =val;document.getElementById('gv-sv').textContent =val.toFixed(1);}
+    if(key==='sn') {_sn =val;document.getElementById('gv-sn').textContent =val.toFixed(3);}
+    _draw();
+  };
+  window.gprClear=function(){_xTr=[];_yTr=[];_draw();};
+
+  function _init(){
+    if(!document.getElementById('gpr-plot'))return;
+    _ready=false;
+    if(!window.Plotly){
+      if(!document.getElementById('plotly-cdn')){
+        var s=document.createElement('script');s.id='plotly-cdn';
+        s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+        s.onload=function(){_draw();};document.head.appendChild(s);
+      }
+    } else{_draw();}
+  }
+  if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
+  else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
+  else{_init();}
+})();
+</script>
 
 ## 4.5 Model Selection, Cross-Validation & Ensemble Methods
 
@@ -156,7 +308,7 @@ Bagging and boosting are complementary: bagging trains models in parallel on res
 
 ## 4.6 Kernel Methods for ML Interatomic Potentials
 
-Many state-of-the-art ML interatomic potentials (GAP, FCHL, sGDML) are built directly on kernel methods. They work because: (1) atomic-environment descriptors give a moderate feature dimension $N$, while training sets are small enough ($P \ll N$ often) that the $O(P^3)$ cost is manageable; (2) the RBF kernel encodes a physically natural notion of similarity between environments; and (3) the convex training problem is numerically reproducible — important for scientific reproducibility. When training sets grow into the millions, kernel methods fail and neural-network potentials take over (covered in L7–L8).
+Many state-of-the-art ML interatomic potentials (GAP, FCHL, sGDML) are built directly on kernel methods. They work because: (1) atomic-environment descriptors give a moderate feature dimension $N$, while training sets are small enough ($P \ll N$ often) that the $O(P^3)$ cost is manageable; (2) the RBF kernel encodes a physically natural notion of similarity between environments; and (3) the convex training problem is numerically reproducible — important for scientific reproducibility. When training sets grow into the millions, kernel methods fail and neural-network potentials take over (covered in Chapter 7 and Chapter 8).
 
 ---
 
