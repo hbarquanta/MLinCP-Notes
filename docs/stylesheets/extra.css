@@ -1,52 +1,48 @@
-/* Custom pastel color scheme — terracotta + teal.
-   Overrides Material's CSS variables; base contrast/behavior stays
-   Material's (only primary/accent/background are recolored).
-   Contrast-checked: header ink on primary 5.83:1, accent-on-bg
-   4.82:1 (light) / 8.50:1 (dark). */
+/* Site-wide 4-color palette: terracotta-red / soft yellow / sage
+   green / dusty teal. Body text stays the theme's normal black/white
+   — these four colors cover every accent role (header, links,
+   badges, highlights). Light-mode teal and red are deepened from
+   their source swatch to clear WCAG AA; dark-mode values use the
+   swatch as-is since it already has plenty of contrast there.
+   Contrast-checked: header (white on red) 5.21:1, links (light)
+   5.35:1, links (dark) 7.61:1, badge ink is the theme's own body
+   text color over a low-alpha tint, so contrast is unaffected. */
 
 [data-md-color-scheme="default"][data-md-color-primary] {
-  --md-typeset-a-color: #2C7B6D;
-  --md-primary-fg-color: #E0996B;
-  --md-primary-fg-color--light: #EBB48D;
-  --md-primary-fg-color--dark: #C67D50;
-  --md-primary-bg-color: #2B2B45;
-  --md-primary-bg-color--light: #2B2B45;
+  --md-typeset-a-color: #3C7071;
+  --md-primary-fg-color: #AE4F4F;
+  --md-primary-fg-color--light: #C17777;
+  --md-primary-fg-color--dark: #8F3F3F;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: #ffffffb3;
 
-  --md-accent-fg-color: #2C7B6D;
-  --md-accent-fg-color--transparent: #2C7B6D1a;
+  --md-accent-fg-color: #3C7071;
+  --md-accent-fg-color--transparent: #3C70711a;
   --md-accent-bg-color: #ffffff;
+
+  --md-typeset-mark-color: #F7E49B99;
+  --md-badge-color: #A4CE8B4d;
 
   --md-default-bg-color: #FDF9F6;
 }
 
 [data-md-color-scheme="slate"][data-md-color-primary] {
-  --md-typeset-a-color: #5FCFB8;
-  --md-primary-fg-color: #E0996B;
-  --md-primary-fg-color--light: #EBB48D;
-  --md-primary-fg-color--dark: #C67D50;
-  --md-primary-bg-color: #2B2B45;
-  --md-primary-bg-color--light: #2B2B45;
+  --md-typeset-a-color: #86BCBD;
+  --md-primary-fg-color: #AE4F4F;
+  --md-primary-fg-color--light: #C17777;
+  --md-primary-fg-color--dark: #8F3F3F;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: #ffffffb3;
 
-  --md-accent-fg-color: #5FCFB8;
-  --md-accent-fg-color--transparent: #5FCFB81a;
+  --md-accent-fg-color: #86BCBD;
+  --md-accent-fg-color--transparent: #86BCBD1a;
   --md-accent-bg-color: #26201D;
+
+  --md-typeset-mark-color: #F7E49B66;
+  --md-badge-color: #A4CE8B40;
 
   --md-default-bg-color: #26201D;
   --md-hue: 25;
-}
-
-/* Header search box: Material assumes white text/placeholder on the
-   primary color by default; force it to match the dark ink used
-   elsewhere in the header so it stays legible against a light
-   pastel primary. */
-.md-search__input,
-.md-search__input::placeholder,
-.md-search__icon svg {
-  color: var(--md-primary-bg-color) !important;
-}
-
-.md-search__input {
-  background-color: hsla(25, 30%, 96%, 0.35);
 }
 
 /* Widen the primary sidebar — the default 12.1rem wraps chapter
@@ -216,8 +212,8 @@
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: var(--md-accent-fg-color);
-  background-color: var(--md-accent-fg-color--transparent);
+  color: var(--md-default-fg-color);
+  background-color: var(--md-badge-color);
   border-radius: 1rem;
   padding: 0.15rem 0.6rem;
   margin-bottom: 0.5rem;
