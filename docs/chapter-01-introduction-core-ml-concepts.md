@@ -517,31 +517,41 @@ The H200 carries the same compute die as the H100 but nearly doubles the memory 
 
 **HPC hierarchy.** Supercomputing resources span several tiers. Named examples from the June 2026 TOP500 and major facility lists are shown below:
 
-<div style="margin:1.6rem 0 2.2rem;max-width:620px;margin-left:auto;margin-right:auto;font-size:0.77rem;line-height:1.5;">
+<div style="margin:1.8rem 0 2.5rem;max-width:660px;margin-left:auto;margin-right:auto;font-size:0.75rem;line-height:1.5;">
 
-<div style="width:30%;margin:0 auto 4px;padding:0.5rem 0.6rem;background:rgba(186,90,90,0.16);border:1.5px solid #BA5A5A;border-radius:7px;text-align:center;box-sizing:border-box;">
-<span style="display:block;font-weight:700;font-size:0.65rem;color:#BA5A5A;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Exascale (&gt;1 EF/s)</span>
-LineShine (China, #1, 2.20 EF/s)<br>El Capitan (USA, #2, 1.81 EF/s)<br>Frontier (USA, ~1.2 EF/s)<br>Aurora (USA, 1.01 EF/s)<br>JUPITER (Germany/EU, 1.00 EF/s)
+<!-- Tier 0: Exascale — narrowest trapezoid (top 22%–78%, bottom 14%–86%) -->
+<div style="clip-path:polygon(22% 0%,78% 0%,86% 100%,14% 100%);background:rgba(186,90,90,0.30);padding:0.75rem 23%;text-align:center;min-height:5.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;">
+<span style="font-weight:700;font-size:0.6rem;color:#8B2020;text-transform:uppercase;letter-spacing:0.09em;">Tier 0 &nbsp;·&nbsp; Exascale (&gt;1 EF/s)</span>
+<span>LineShine (China, #1, 2.20 EF/s) · El Capitan (USA, #2, 1.81 EF/s)</span>
+<span>Frontier (USA, ~1.2 EF/s) · Aurora (USA, 1.01 EF/s) · JUPITER (Germany/EU, 1.00 EF/s)</span>
 </div>
 
-<div style="width:50%;margin:0 auto 4px;padding:0.5rem 0.7rem;background:rgba(186,90,90,0.09);border:1.5px solid #BA5A5A;border-radius:7px;text-align:center;box-sizing:border-box;">
-<span style="display:block;font-weight:700;font-size:0.65rem;color:#BA5A5A;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Pre-exascale Flagship (100–999 PF/s)</span>
-MareNostrum 5 (Spain/EU, 314 PF)<br>LUMI (Finland/EU, 309 PF)<br>Leonardo (Italy/EU, 238 PF)<br>Perlmutter (USA/NERSC, 70 PF)
+<!-- Tier 1: Pre-exascale (top 14%–86%, bottom 7%–93%) -->
+<div style="clip-path:polygon(14% 0%,86% 0%,93% 100%,7% 100%);background:rgba(186,90,90,0.18);padding:0.75rem 15%;text-align:center;min-height:5.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
+<span style="font-weight:700;font-size:0.6rem;color:#8B2020;text-transform:uppercase;letter-spacing:0.09em;">Tier 1 &nbsp;·&nbsp; Pre-exascale Flagship (100–999 PF/s)</span>
+<span>MareNostrum 5 (Spain/EU, 314 PF) · LUMI (Finland/EU, 309 PF) · Leonardo (Italy/EU, 238 PF)</span>
+<span>JUWELS Booster (Germany/Jülich, 71 PF) · Perlmutter (USA/NERSC, 70 PF)</span>
 </div>
 
-<div style="width:67%;margin:0 auto 4px;padding:0.5rem 0.8rem;background:rgba(247,228,155,0.14);border:1.5px solid #C8A840;border-radius:7px;text-align:center;box-sizing:border-box;">
-<span style="display:block;font-weight:700;font-size:0.65rem;color:#A88020;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">National HPC Facilities (5–100 PF/s)</span>
-ARCHER2 (UK, 28 PF) · Hawk (Germany/HLRS, 26 PF)<br>Gadi (Australia/NCI) · Cedar (Canada/Compute Canada)<br>Shaheen III (Saudi Arabia/KAUST) · Mahti (Finland/CSC)
+<!-- Tier 2: National (top 7%–93%, bottom 0%–100%) -->
+<div style="clip-path:polygon(7% 0%,93% 0%,100% 100%,0% 100%);background:rgba(247,228,155,0.38);padding:0.75rem 8%;text-align:center;min-height:5.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
+<span style="font-weight:700;font-size:0.6rem;color:#6A5000;text-transform:uppercase;letter-spacing:0.09em;">Tier 2 &nbsp;·&nbsp; National HPC Facilities (1–100 PF/s)</span>
+<span>MUSICA (Austria, 40 PF) · VSC-5 (Austria, national consortium, 4.3 PF) · ARCHER2 (UK, 28 PF)</span>
+<span>Hawk (Germany/HLRS, 26 PF) · SuperMUC-NG (Germany/LRZ Munich) · Gadi (Australia/NCI)</span>
+<span>Cedar (Canada/Compute Canada) · Shaheen III (Saudi Arabia/KAUST) · Mahti (Finland/CSC)</span>
 </div>
 
-<div style="width:83%;margin:0 auto 4px;padding:0.5rem 0.9rem;background:rgba(164,206,139,0.14);border:1.5px solid #A4CE8B;border-radius:7px;text-align:center;box-sizing:border-box;">
-<span style="display:block;font-weight:700;font-size:0.65rem;color:#5A8E45;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">University / Institutional Clusters</span>
-bwUniCluster 2.0 (Germany) · CSD3 (UK, Cambridge)<br>Narval (Canada) · ALICE (Netherlands, Leiden)<br>10–500 GPUs, SLURM scheduler, shared allocation
+<!-- Tier 3: Institutional — full-width rectangle (base of pyramid) -->
+<div style="background:rgba(164,206,139,0.35);padding:0.75rem 2%;text-align:center;min-height:4.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
+<span style="font-weight:700;font-size:0.6rem;color:#2A5A1A;text-transform:uppercase;letter-spacing:0.09em;">Tier 3 &nbsp;·&nbsp; University / Institutional Clusters</span>
+<span>bwUniCluster 2.0 (Germany) · CSD3 (UK, Cambridge) · Narval (Canada) · ALICE (Netherlands, Leiden)</span>
+<span>10–500 GPUs, SLURM scheduler, shared allocation</span>
 </div>
 
-<div style="width:100%;margin:0 auto;padding:0.5rem 1rem;background:rgba(134,188,189,0.14);border:1.5px solid #86BCBD;border-radius:7px;text-align:center;box-sizing:border-box;">
-<span style="display:block;font-weight:700;font-size:0.65rem;color:#2A7A7C;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.25rem;">Local Workstation / Lab Server</span>
-NVIDIA DGX H100 · single/multi-GPU servers · laptop or desktop CPU<br>development, prototyping, and small-scale experiments
+<!-- Tier 4: Local — base -->
+<div style="background:rgba(134,188,189,0.35);padding:0.75rem 2%;text-align:center;min-height:4rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
+<span style="font-weight:700;font-size:0.6rem;color:#1A5A5C;text-transform:uppercase;letter-spacing:0.09em;">Tier 4 &nbsp;·&nbsp; Local Workstation / Lab Server</span>
+<span>NVIDIA DGX H100 · single/multi-GPU servers · laptop or desktop CPU · development &amp; prototyping</span>
 </div>
 
 </div>
