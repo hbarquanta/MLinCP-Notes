@@ -1,13 +1,13 @@
 # Chapter 9 — Generative Models
 
-## Problem Statement
+## 9.1 Problem Statement
 Given data $x \in X$ distributed with $\mu_X(x)$, draw new samples $x' \sim \mu_X$.
 
 **Two regimes**:
 - **Learning unknown distributions from data** (molecules, crystals, proteins)
 - **Sampling from known distributions** (Boltzmann: $\rho(x) \propto e^{-\beta U(x)}$)
 
-## Taxonomy of Generative Models
+## 9.2 Taxonomy of Generative Models
 ```
 Generative Models
 ├── Explicit Density
@@ -24,7 +24,7 @@ Generative Models
     └── Flow Matching
 ```
 
-## Generative Adversarial Networks (GANs)
+## 9.3 Generative Adversarial Networks (GANs)
 
 GANs learn to generate realistic samples by training two networks adversarially against each other, with no explicit probability model. The **generator** $g(z;\theta^g)$ maps random noise $z\sim\mathcal{N}(0,I)$ to data space — it never sees real data directly. The **discriminator** $d(x;\theta^d) \in [0,1]$ tries to tell real from fake. They play a minimax game:
 
@@ -34,7 +34,7 @@ $$(\theta^g, \theta^d)^* = \arg\min_{\theta^g}\max_{\theta^d}\, v$$
 
 At Nash equilibrium: generator reproduces $p_\text{data}$ exactly and $d(x)=\tfrac{1}{2}$ everywhere. Because there is no explicit $P(x;\theta)$, GANs are **implicit density models** — good at generating, cannot evaluate likelihoods. Training is unstable: (1) **oscillations** from non-convex minimax, (2) **vanishing gradients** when discriminator dominates early (JS-divergence saturates), (3) **mode collapse** when the generator fixates on a subset of modes that fools the discriminator.
 
-## Variational Autoencoders (VAEs)
+## 9.4 Variational Autoencoders (VAEs)
 
 A standard **autoencoder** compresses $x$ into a low-dimensional code $z$ (the **latent space**) and reconstructs it. The latent space is irregular — you cannot sample a random $z$ and decode something meaningful, so standard AEs cannot generate new data.
 
@@ -76,7 +76,7 @@ Now $z$ is a deterministic function of $\phi$, and gradients flow through $\mu_\
 
 **Application**: molecular design (Gómez-Bombarelli et al., ACS Cent. Sci. 2018) — encode SMILES strings into a smooth latent $z$, do gradient ascent on a predicted property, decode back to a molecule.
 
-## Autoregressive Models
+## 9.5 Autoregressive Models
 
 An autoregressive model generates data sequentially: each new value is predicted from all previously generated values, so the model only ever needs to learn conditional distributions rather than the full joint distribution at once. Unlike VAEs or GANs, this gives an **exact, tractable likelihood** with no approximations:
 
@@ -96,7 +96,7 @@ The same columns of $W$ are reused for every $h_i$. This makes NADE both express
 
 **Application**: **cG-SchNet** applies autoregressive generation to molecules — places atoms one by one, conditioned on target properties (HOMO-LUMO gap, polarizability). Enables inverse molecular design.
 
-## Large Language Models (LLMs)
+## 9.6 Large Language Models (LLMs)
 
 LLMs are autoregressive models over discrete **tokens** (subwords), using a Transformer to compute context-dependent features. They model:
 
@@ -104,7 +104,7 @@ $$P(x;\theta) = \prod_{t=1}^T P(x_t|x_{<t};\theta), \qquad h_t = \text{Transform
 
 The Transformer allows each token to attend to all previous tokens in parallel during training (teacher forcing), making LLMs far more scalable than earlier RNNs. In chemistry: protein language models (ESM) predict structure from sequence; other LLMs generate crystal structures and stable inorganic materials.
 
-## The Transformer Architecture (Vaswani et al. "Attention Is All You Need", 2017)
+## 9.7 The Transformer Architecture (Vaswani et al. "Attention Is All You Need", 2017)
 
 ### From Token to Prediction: Dimensions Throughout
 
@@ -177,11 +177,11 @@ For autoregressive generation, a token must not attend to future tokens (that wo
 
 LLMs (GPT-style) use decoder-only blocks with causal masking throughout.
 
-## The Problem of Sampling Physical Configurations
+## 9.8 The Problem of Sampling Physical Configurations
 
 Standard simulation methods for sampling a target distribution $\mu_X(x) \propto e^{-\beta U(x)}$ — Monte Carlo (random moves accepted by Metropolis criterion) and Molecular Dynamics (Langevin integration) — both require many force evaluations per independent sample. Even with MLIPs reducing the cost per evaluation, these methods remain expensive for high-dimensional systems due to the large number of steps needed to generate decorrelated configurations. This motivates **latent generative models** that directly map simple noise to samples, producing decorrelated configurations in one forward pass.
 
-## Normalizing Flows
+## 9.9 Normalizing Flows
 
 A normalizing flow is an **invertible** neural network $F(\cdot;\theta): \mathbb{R}^n \to \mathbb{R}^n$ that maps samples from a simple **prior** $\mu_Z$ (typically a standard Gaussian) to samples that approximate a complex **target** distribution — in physics, the Boltzmann distribution $\mu_X(x) \propto e^{-\beta U(x)}$. Invertibility plus the change-of-variables formula gives exact access to the induced likelihood in both directions:
 
@@ -295,13 +295,13 @@ Computing $\text{Tr}\{J\}$ exactly costs $\mathcal{O}(n^2)$ (one backward pass p
 
 ---
 
-## Diffusion Models
+## 9.10 Diffusion Models
 
 The core idea of diffusion models is simple: **gradually destroy structure by adding noise, then learn to reverse this process**. Training is stable and scalable (no adversarial game, no encoder approximations), which is why diffusion models have become the dominant generative framework for images, molecules, and physical configurations.
 
 There are two main formulations — discrete-time (DDPMs) and continuous-time (score-based SDEs) — which are deeply connected.
 
-## Denoising Diffusion Probabilistic Models (DDPMs)
+### Denoising Diffusion Probabilistic Models (DDPMs)
 
 A DDPM is a **latent variable model** with $T$ latent variables $x_1, \ldots, x_T$, where each latent is a progressively noisier version of the data $x_0$. The model has two parts: a fixed **encoder** (the forward noising process) and a learned **decoder** (the reverse denoising process). At generation time you start from pure noise $x_T \sim \mathcal{N}(0,I)$ and iteratively denoise to produce a sample $x_0$.
 
@@ -349,7 +349,7 @@ where $\alpha_t = 1-\beta_t$. The network $\varepsilon_\theta$ predicts the nois
 
 **Connection to VAEs**: A DDPM is essentially a VAE with $T$ latent layers and a non-learnable (fixed) encoder. The latent variables are $\{x_1,\ldots,x_T\}$, the encoder is the fixed forward diffusion process $q$, and only the decoder (reverse chain) is learned.
 
-## Score-Based Diffusion Models
+### Score-Based Diffusion Models
 
 The reason denoising works can be understood via the **score function** $s(x) = \nabla_x \log p(x)$. For the Boltzmann target $\mu_X(x) \propto e^{-\beta U(x)}$, the score is proportional to the force:
 
@@ -375,7 +375,7 @@ $$dx = \left[f(x,t) - \tfrac{1}{2}\,g(t)^2\,s_t(x)\right]dt$$
 
 This defines a velocity field $v(x,t) = f(x,t) - \frac{1}{2}g(t)^2 s_t(x)$. Integrating it numerically from $x_T \sim \mathcal{N}(0,I)$ back to $t=0$ yields samples — exactly as in a CNF, but derived from the diffusion model.
 
-## Flow Matching
+## 9.11 Flow Matching
 
 CNFs (introduced above under Normalizing Flows) are expensive to train because computing the likelihood requires simulating the ODE. **Flow Matching** provides a direct training objective that avoids this. Given a pair $(z, x)$ from the prior and data respectively, define the linear interpolant:
 

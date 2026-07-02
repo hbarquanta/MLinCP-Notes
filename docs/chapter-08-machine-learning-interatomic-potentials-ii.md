@@ -113,7 +113,7 @@ Different MLIP architectures occupy different points in the speed–accuracy tra
 
 The speed gap between SchNet/PaiNN and MACE/ACE is mainly architectural: equivariance requires CG tensor contractions at every message-passing step, but MACE recovers speed through GPU efficiency and the fact that its many-body expansion is computed in a single pass. ACE is the fastest non-DFT option because inference reduces to a single dot product once the B-basis is precomputed.
 
-## 8.6 Foundation Models
+## 8.5 Foundation Models
 
 Training a separate MLIP for every chemical system is unsustainable. The foundation model approach instead trains a single large model on a massively diverse dataset spanning many elements and chemical environments, aiming for zero-shot generalization to new systems — much like large language models generalize across tasks. The first notable example was M3GNet (Chen & Ong, *Nat. Comput. Sci.*, 2022), trained on the Materials Project database. The most widely adopted model in this paradigm is **MACE-MP-0** (Batatia et al., 2024): trained on 89 elements and ~1.5M configurations from the Materials Project (XC = PBE+U), using 2 MACE layers, $l_\text{max}=3$, correlation order 3 (4-body), 128 channels, and $R_\text{cut}=6$ Å. It demonstrated that a single model can provide reasonable accuracy across inorganic materials without system-specific retraining, though it requires fine-tuning for demanding applications such as surface chemistry.
 
@@ -133,7 +133,7 @@ $$y = \sum_k \alpha_k (W_k x) = \underbrace{\left(\sum_k \alpha_k W_k\right)}_{W
 
 The routing weights $\alpha_k$ depend only on global, time-invariant information (element composition, charge, spin, DFT task) — not on atomic positions. So $W^*$ is precomputed once before the simulation and reused at every MD step. The model gains the capacity of $K$ experts at the inference cost of one. UMA-M has 1.4B total parameters but only 50M active per step.
 
-## 8.7 Transfer Learning and Fine-Tuning
+## 8.6 Transfer Learning and Fine-Tuning
 
 **Transfer learning** is the idea of taking a model pre-trained on a large, general dataset and adapting it to a specific downstream task, rather than training from scratch. The pretrained model has already learned useful representations — in the MLIP context, a foundation model like MACE-MP-0 has learned general interatomic interactions across 89 elements. Fine-tuning then steers those representations toward a specific system (e.g. a particular surface or molecule) using a small amount of system-specific DFT data. This is far more data-efficient than training from scratch because the network does not need to relearn chemistry from zero.
 
@@ -153,7 +153,7 @@ where $B \in \mathbb{R}^{d \times r}$ and $A \in \mathbb{R}^{r \times k}$ with $
 
 **In the MLIP context** (Radova et al., 2025): fine-tuning MACE-MP-0 on just 10% of system-specific data outperforms training ACE from scratch on the full dataset, and beats a from-scratch MACE trained on fewer than 200 DFT points. MACE-MP-0 out of the box is inadequate for surface chemistry — fine-tuning bridges that gap efficiently. A practical workflow is MACE-MP-0 → fine-tuned MACE → distill into ACE for fast production MD.
 
-## 8.8 Long-Range Interactions
+## 8.7 Long-Range Interactions
 
 GNNs and MLIPs are inherently local: the energy of atom $i$ depends only on atoms within a cutoff radius $R_\text{cut}$ (typically 5–12 Å). The dominant physical interaction that decays slowly enough to require special treatment is **electrostatics** ($E \sim 1/r$, essentially infinite range). Dispersion ($E \sim 1/r^6$) decays much faster and is often adequately captured within the cutoff or handled with a simple analytic correction (e.g. Grimme D3); it is not the primary motivation for the approaches below.
 
@@ -185,7 +185,7 @@ $$E_\text{LR} = \frac{1}{\Omega}\sum_{0<|\mathbf{k}|<k_\text{cut}}\frac{1}{k^2}e
 
 where $\Omega$ is the simulation cell volume, $\mathbf{k}$ are reciprocal lattice vectors, and $\sigma$ controls the Gaussian damping that separates short-range from long-range contributions. The inner sum $\sum_i q_i^\text{les} e^{-i\mathbf{k}\cdot\mathbf{r}_i}$ is the structure factor at wavevector $\mathbf{k}$; it couples all atoms simultaneously in reciprocal space, giving the model global sensitivity.
 
-## 8.9 Beyond MLIPs: Electronic Structure ML
+## 8.8 Beyond MLIPs: Electronic Structure ML
 
 Standard MLIPs learn the mapping $\{R_I, Z_I\} \to E$, from which forces follow by differentiation. The next level of ambition is to learn the **quantum mechanical Hamiltonian** directly:
 

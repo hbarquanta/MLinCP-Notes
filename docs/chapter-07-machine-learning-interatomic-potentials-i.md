@@ -110,7 +110,7 @@ $$\mathbf{F}_i = -\frac{\partial E_\text{tot}}{\partial \mathbf{r}_i}.$$
 
 This guarantees energy conservation in MD (no energy drift) and ensures force equivariance automatically: if you rotate the structure, the forces rotate the same way because they are derived from a scalar energy.
 
-## Epochs of MLIP Development
+### Development Timeline
 | Era | Method | Key Feature |
 |-----|--------|-------------|
 | pre-2007 | Custom FFs / Tersoff / EAM | Analytical, limited transferability |
@@ -130,7 +130,7 @@ The first MLIP era to use neural networks was launched by Behler & Parrinello (*
 
 **Limitation.** The quality of the potential is bottlenecked by the expressiveness of the ACSFs. Choosing good symmetry functions for a new system requires domain expertise. This motivated the move toward architectures that learn their own representations directly from atomic positions.
 
-## GAP (Gaussian Approximation Potentials)
+## 7.7 GAP (Gaussian Approximation Potentials)
 
 GAP (Bartók et al., *Phys. Rev. Lett.* **104**, 136403, 2010) is not a new method on top of SOAP and GPR — it *is* SOAP combined with GPR, packaged as a complete MLIP. The three ingredients and how they connect:
 
@@ -146,7 +146,7 @@ where the sum over $s$ runs over training (or sparse representative) points. For
 
 GAP inherits all the properties of GPR: uncertainty estimates, exact kernel interpolation in the limit $\lambda \to 0$, and hyperparameter tuning via log-marginal likelihood. It also inherits the $O(P^3)$ scaling bottleneck of KRR — in practice, a sparse approximation (selecting $M \ll P$ representative environments) reduces this to $O(PM^2)$, but GAP remains limited to datasets of order $10^4$ structures, compared to $10^6$ for deep learning MLIPs like MACE.
 
-## ACE (Atomic Cluster Expansion)
+## 7.8 ACE (Atomic Cluster Expansion as MLIP)
 
 ACE (Drautz, *Phys. Rev. B* **99**, 014104, 2019) provides a systematic way to expand the atomic energy $\varepsilon_i$ in a complete, symmetry-adapted basis of many-body functions — without explicitly looping over all pairs, triplets, and quadruplets of neighbors as empirical FFs do.
 

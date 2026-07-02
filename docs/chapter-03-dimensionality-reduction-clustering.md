@@ -4,11 +4,10 @@ Unsupervised learning extracts structure from unlabeled data $\{x^{(p)}\}_{p=1}^
 
 ---
 
-## Part 1: Dimensionality Reduction
 
 ---
 
-### 3.1 Principal Component Analysis (PCA)
+## 3.1 Principal Component Analysis (PCA)
 
 PCA finds the $K$-dimensional **linear subspace** of $\mathbb{R}^N$ that retains the maximum variance of the data, where $N$ is the feature dimension and $K < N$ is the target (reduced) dimension. The method is motivated by the following observation: if we want to encode data $x_p \in \mathbb{R}^N$ (data point index $p = 1,\ldots,M$, where $M$ is the number of samples) via a spanning set of $K$ orthonormal vectors $c_1,\ldots,c_K \in \mathbb{R}^N$, then the optimal encoding $w_p = C^T x_p \in \mathbb{R}^K$ and decoding $C w_p \approx x_p$ (where $C = [c_1|\cdots|c_K] \in \mathbb{R}^{N\times K}$) minimize the reconstruction loss
 
@@ -62,7 +61,7 @@ The per-point reconstruction error is $\|x_p - \hat{x}_p\|^2$; the total equals 
 
 ---
 
-### 3.2 Kernel PCA
+## 3.2 Kernel PCA
 
 Kernel PCA extends PCA to nonlinear manifolds using the **kernel trick**: data is implicitly mapped into a high-dimensional feature space $\mathcal{H}$ via $\phi: \mathbb{R}^N \to \mathcal{H}$, and PCA is performed there. The mapping $\phi$ never needs to be computed explicitly — only pairwise inner products $k(x_i, x_j) = \langle \phi(x_i), \phi(x_j) \rangle_\mathcal{H}$ are needed.
 
@@ -86,7 +85,7 @@ Kernel PCA can capture nonlinear structure, but requires $\mathcal{O}(M^2)$ memo
 
 ---
 
-### 3.3 Autoencoders (Nonlinear Dimensionality Reduction)
+## 3.3 Autoencoders (Nonlinear Dimensionality Reduction)
 
 The linear autoencoder formulation from PCA — encoding $w_p = C^T x_p$ and decoding $C w_p \approx x_p$ — generalizes directly to nonlinear models. A **nonlinear autoencoder** replaces the linear spanning set $C$ with neural networks:
 
@@ -101,7 +100,7 @@ If the encoder and decoder are linear (no activations), the autoencoder's optima
 
 ---
 
-### 3.4 t-SNE (t-distributed Stochastic Neighbor Embedding)
+## 3.4 t-SNE (t-distributed Stochastic Neighbor Embedding)
 
 t-SNE maps high-dimensional data $X = \{x_1, \ldots, x_N\}$ (where $N$ is the number of data points, each $x_i \in \mathbb{R}^D$ with feature dimension $D$) to a low-dimensional visualization $\{w_i\}$ with $w_i \in \mathbb{R}^2$ or $\mathbb{R}^3$, preserving local neighborhood structure. It should not be used for general dimensionality reduction — **it is primarily a visualization tool**.
 
@@ -135,7 +134,7 @@ t-SNE focuses on preserving small pairwise similarities (local structure); PCA i
 
 ---
 
-### 3.5 UMAP (Uniform Manifold Approximation and Projection)
+## 3.5 UMAP (Uniform Manifold Approximation and Projection)
 
 UMAP uses tools from topological data analysis to build a fuzzy graph representation of the manifold underlying the data, then optimizes a low-dimensional embedding to match it. Compared to t-SNE, UMAP is faster and better preserves global structure, while both are primarily used for visualization. The axes of either embedding carry no direct physical meaning.
 
@@ -157,13 +156,12 @@ Here $M$ = number of data points, $N$ = feature dimension (PCA context); for t-S
 
 ---
 
-## Part 2: Clustering
 
 Clustering partitions a dataset $\{x^{(p)}\}_{p=1}^P$ into groups of similar points without any labels. We discuss five families of methods.
 
 ---
 
-### 3.6 K-Means Clustering
+## 3.6 K-Means Clustering
 
 K-means places $N$ observations into $K$ sets $\mathcal{C} = \{C_1, C_2, \ldots, C_K\}$ (where $N$ is the number of data points, each $x_i \in \mathbb{R}^D$ with feature dimension $D$) by minimizing the total internal cluster variance:
 
@@ -198,7 +196,7 @@ where $\pi_k > 0$ are mixing weights with $\sum_k \pi_k = 1$, $\mu_k \in \mathbb
 
 ---
 
-### 3.7 Hierarchical Clustering
+## 3.7 Hierarchical Clustering
 
 Hierarchical clustering produces a tree of nested cluster merges (agglomerative, bottom-up) or splits (divisive, top-down), represented as a **dendrogram**. The desired number of clusters $K$ need not be specified in advance; one cuts the dendrogram at a chosen height to obtain any $K$ from 1 to $N$.
 
@@ -224,7 +222,7 @@ The choice of **linkage criterion** defines $d(A,B)$ and strongly affects the sh
 
 ---
 
-### 3.8 Density-Based Clustering: DBSCAN
+## 3.8 Density-Based Clustering: DBSCAN
 
 DBSCAN (Density-Based Spatial Clustering of Applications with Noise) defines clusters as **dense connected regions**, separated by sparse regions. Points in sparse regions are treated as noise rather than forced into a cluster.
 
@@ -247,7 +245,7 @@ DBSCAN (Density-Based Spatial Clustering of Applications with Noise) defines clu
 
 ---
 
-### 3.9 HDBSCAN (Hierarchical DBSCAN)
+## 3.9 HDBSCAN (Hierarchical DBSCAN)
 
 HDBSCAN addresses DBSCAN's main limitation — a single global $\varepsilon$ fails when clusters have varying densities — by running DBSCAN over all scales $\varepsilon$ simultaneously, building a cluster hierarchy, and extracting the most persistent (stable) clusters.
 
@@ -279,7 +277,7 @@ where $\lambda_C^\mathrm{in}$ is the $\lambda$-value at which cluster $C$ was bo
 
 ---
 
-### 3.10 Clustering Method Summary
+## 3.10 Clustering Method Summary
 
 | Method | Cluster shape | Requires $K$? | Handles outliers | Best suited for |
 |--------|-------------|--------------|-----------------|-----------------|

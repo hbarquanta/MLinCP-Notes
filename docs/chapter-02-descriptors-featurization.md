@@ -24,25 +24,188 @@ In atomistic machine learning, the inputs $x^{(p)}$ describe atomic structures: 
 
 ## 2.3 Atom-Centered Symmetry Functions (ACSFs) — Behler & Parrinello (2007)
 
-ACSFs encode the local chemical environment of atom $i$ by summing Gaussian-weighted contributions from all neighbors within a cutoff radius $R_c$. Two families of symmetry functions are defined.
+ACSFs encode the local chemical environment of atom $i$ by summing contributions from all neighbors within a cutoff radius $R_c$. All functions are constructed to be invariant under translation, rotation, and permutation of like atoms.
 
-**Radial (2-body) symmetry functions** capture the distribution of neighbor distances:
+### Cutoff Function
 
-$$G_i^{(2)} = \sum_{j \neq i} \exp\!\left[-\eta\left(r_{ij} - \mu_s\right)^2\right] f_c(r_{ij})$$
-
-Here $r_{ij} = |\mathbf{R}_j - \mathbf{R}_i|$ is the distance between atoms $i$ and $j$, $\eta > 0$ controls the width of the Gaussian, and $\mu_s \ge 0$ shifts its center. The sum runs over all atoms $j$ within the cutoff.
-
-**Angular (3-body) symmetry functions** additionally encode angular information through the angle $\theta_{ijk}$ at atom $i$ subtended by the pair of neighbors $j$ and $k$:
-
-$$G_i^{(4)} = 2^{1-\zeta}\sum_{\substack{j,k \neq i \\ j < k}}\left(1 + \lambda\cos\theta_{ijk}\right)^\zeta \exp\!\left[-\eta\left(r_{ij}^2 + r_{ik}^2 + r_{jk}^2\right)\right] f_c(r_{ij})\,f_c(r_{ik})\,f_c(r_{jk})$$
-
-Here $\zeta > 0$ controls the angular resolution, $\lambda \in \{-1, +1\}$ shifts the angular peak, and the sum runs over all ordered pairs of distinct neighbors.
-
-The **smooth cutoff function** ensures that all symmetry functions and their derivatives vanish continuously at $r = R_c$:
+Every ACSF is multiplied by a smooth cutoff that forces all functions and their derivatives to zero at $R_c$:
 
 $$f_c(r) = \begin{cases} \dfrac{1}{2}\!\left[\cos\!\left(\dfrac{\pi r}{R_c}\right) + 1\right] & r \le R_c \\ 0 & r > R_c \end{cases}$$
 
-The full ACSF fingerprint of atom $i$ is the concatenation of many $G^{(2)}$ and $G^{(4)}$ values evaluated at different combinations of $(\eta, \mu_s)$ and $(\eta, \zeta, \lambda)$, giving a fixed-length vector that uniquely encodes the local environment. One such vector is computed per atom and per element species. These vectors are then fed as inputs to element-specific neural networks whose outputs are summed to give the total energy (the Behler-Parrinello neural network potential architecture).
+This ensures the descriptor is smooth and that forces (derivatives of the energy with respect to atomic positions) are continuous.
+
+### Radial Symmetry Functions (2-body)
+
+Three radial functions probe the distribution of neighbor distances $r_{ij} = |\mathbf{R}_j - \mathbf{R}_i|$.
+
+**$G^{(1)}$ — neighbor count.** The simplest function, with no free parameters beyond the cutoff:
+
+$$G_i^{(1)} = \sum_{j \neq i} f_c(r_{ij})$$
+
+It counts the effective number of neighbors within $R_c$, weighted by their distance. This gives a rough measure of coordination number.
+
+**$G^{(2)}$ — Gaussian radial.** The most widely used radial function:
+
+$$G_i^{(2)} = \sum_{j \neq i} \exp\!\left[-\eta\left(r_{ij} - \mu_s\right)^2\right] f_c(r_{ij})$$
+
+The parameter $\eta > 0$ controls the width of the Gaussian peak and $\mu_s \ge 0$ shifts its center along $r$. By using many $(η, \mu_s)$ pairs, the full radial distribution of neighbors can be probed at different distances and resolutions.
+
+**$G^{(3)}$ — cosine radial.** An oscillatory alternative to the Gaussian:
+
+$$G_i^{(3)} = \sum_{j \neq i} \cos(\kappa\, r_{ij})\, f_c(r_{ij})$$
+
+The frequency $\kappa$ controls how rapidly the function oscillates with distance. Less commonly used than $G^{(2)}$ in practice.
+
+### Angular Symmetry Functions (3-body)
+
+Angular functions additionally encode the angle $\theta_{ijk}$ at atom $i$ subtended by neighbor pair $(j, k)$, giving access to 3-body correlations.
+
+**$G^{(4)}$ — angular with $r_{jk}$.** The full angular function:
+
+$$G_i^{(4)} = 2^{1-\zeta}\sum_{\substack{j,k \neq i \\ j < k}}\left(1 + \lambda\cos\theta_{ijk}\right)^\zeta \exp\!\left[-\eta\left(r_{ij}^2 + r_{ik}^2 + r_{jk}^2\right)\right] f_c(r_{ij})\,f_c(r_{ik})\,f_c(r_{jk})$$
+
+The parameter $\zeta > 0$ controls angular resolution (larger $\zeta$ gives sharper angular peaks), $\lambda \in \{-1, +1\}$ shifts the peak to $\theta = 0$ or $\theta = \pi$, and $\eta$ controls the radial decay. Including $r_{jk}$ makes the function sensitive to the distance between the two neighbors as well.
+
+**$G^{(5)}$ — angular without $r_{jk}$.** Identical to $G^{(4)}$ but drops the $j$–$k$ distance term:
+
+$$G_i^{(5)} = 2^{1-\zeta}\sum_{\substack{j,k \neq i \\ j < k}}\left(1 + \lambda\cos\theta_{ijk}\right)^\zeta \exp\!\left[-\eta\left(r_{ij}^2 + r_{ik}^2\right)\right] f_c(r_{ij})\,f_c(r_{ik})$$
+
+Omitting $r_{jk}$ and $f_c(r_{jk})$ makes the function less sensitive to the separation between the two neighbors and somewhat cheaper to evaluate.
+
+### Fingerprint Construction
+
+The full ACSF fingerprint of atom $i$ is the concatenation of many symmetry function values evaluated at different parameter combinations — e.g. many $(\eta, \mu_s)$ pairs for $G^{(2)}$ and many $(\eta, \zeta, \lambda)$ combinations for $G^{(4)}$ or $G^{(5)}$. This gives a fixed-length vector that encodes the local chemical environment. One vector is computed per atom and per element species, then fed into an element-specific feedforward neural network whose output is the atomic energy contribution $\varepsilon_i$. The total energy is $E = \sum_i \varepsilon_i$.
+
+### Interactive Explorer
+
+<div id="acsf-widget" style="border:1px solid #8884; border-radius:8px; padding:1.2rem; margin:1.2rem 0; background:var(--md-code-bg-color,#f5f5f5);">
+<p style="margin:0 0 0.9rem 0; font-weight:600; font-size:0.95rem; color:var(--md-default-fg-color);">ACSF Function Explorer</p>
+<div style="display:flex; gap:1.5rem; flex-wrap:wrap; align-items:flex-start;">
+<div style="flex:0 0 auto; min-width:210px;">
+  <label style="font-size:0.82rem; font-weight:600; color:var(--md-default-fg-color);">Function</label><br>
+  <select id="acsf-fn" style="margin:0.25rem 0 0.9rem; width:100%; padding:5px 6px; border-radius:5px; border:1px solid #8886; background:var(--md-default-bg-color); color:var(--md-default-fg-color); font-size:0.82rem;" onchange="acsfSetFn(this.value)">
+    <option value="g1">G¹ — neighbor count</option>
+    <option value="g2" selected>G² — Gaussian radial</option>
+    <option value="g3">G³ — cosine radial</option>
+    <option value="g4">G⁴ — angular (with r_jk)</option>
+    <option value="g5">G⁵ — angular (no r_jk)</option>
+  </select>
+  <div id="acsf-controls"></div>
+</div>
+<div id="acsf-plot" style="flex:1 1 280px; min-width:250px; height:300px;"></div>
+</div>
+</div>
+
+<script>
+(function() {
+  var S = { fn:'g2', Rc:6, eta:0.5, mus:2.0, kappa:1.0, zeta:4, lam:1 };
+
+  function fc(r){ return r>=S.Rc ? 0 : 0.5*(Math.cos(Math.PI*r/S.Rc)+1); }
+
+  function linspace(a,b,n){ var arr=[]; for(var i=0;i<n;i++) arr.push(a+(b-a)*i/(n-1)); return arr; }
+
+  function plotData(){
+    var isDark = document.body.getAttribute('data-md-color-scheme')==='slate';
+    var fg = isDark ? '#ccc' : '#333';
+    var gridcol = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+    var accent = '#2979ff';
+
+    var trace, layout;
+    if(['g1','g2','g3'].includes(S.fn)){
+      var rs = linspace(0, S.Rc*1.05, 300);
+      var yf = rs.map(function(r){ return fc(r); });
+      var yg = rs.map(function(r){
+        if(S.fn==='g1') return fc(r);
+        if(S.fn==='g2') return Math.exp(-S.eta*Math.pow(r-S.mus,2))*fc(r);
+        if(S.fn==='g3') return Math.cos(S.kappa*r)*fc(r);
+      });
+      trace = [
+        { x:rs, y:yf, mode:'lines', name:'f_c(r)', line:{color:'#aaa', dash:'dot', width:1.5} },
+        { x:rs, y:yg, mode:'lines', name:S.fn.toUpperCase(), line:{color:accent, width:2.5} }
+      ];
+      layout = {
+        xaxis:{ title:'r (Å)', color:fg, gridcolor:gridcol, zeroline:false, range:[0,S.Rc*1.05] },
+        yaxis:{ title:'value', color:fg, gridcolor:gridcol, zeroline:true, zerolinecolor:gridcol },
+        showlegend:true, legend:{font:{color:fg},bgcolor:'rgba(0,0,0,0)'},
+        margin:{l:50,r:20,t:20,b:50}
+      };
+    } else {
+      var thetas = linspace(0, Math.PI, 300);
+      var degs = thetas.map(function(t){ return t*180/Math.PI; });
+      var ya = thetas.map(function(t){ return Math.pow(Math.max(0, 1+S.lam*Math.cos(t)), S.zeta); });
+      trace = [{ x:degs, y:ya, mode:'lines', name:'angular factor', line:{color:accent, width:2.5} }];
+      layout = {
+        xaxis:{ title:'θ (°)', color:fg, gridcolor:gridcol, zeroline:false, range:[0,180],
+                tickvals:[0,30,60,90,120,150,180] },
+        yaxis:{ title:'(1 + λ cos θ)^ζ', color:fg, gridcolor:gridcol, zeroline:true, zerolinecolor:gridcol },
+        showlegend:false, margin:{l:60,r:20,t:20,b:50}
+      };
+    }
+
+    layout.paper_bgcolor = 'rgba(0,0,0,0)';
+    layout.plot_bgcolor  = 'rgba(0,0,0,0)';
+    layout.font = { color:fg, size:12 };
+    Plotly.react('acsf-plot', trace, layout, {responsive:true, displayModeBar:false});
+  }
+
+  function slider(id, label, min, max, step, val, fmt){
+    return '<div style="margin-bottom:0.6rem;">'
+      +'<label style="font-size:0.8rem;color:var(--md-default-fg-color);">'+label
+      +' = <span id="v-'+id+'">'+fmt(val)+'</span></label><br>'
+      +'<input type="range" id="s-'+id+'" min="'+min+'" max="'+max+'" step="'+step
+      +'" value="'+val+'" style="width:100%;accent-color:#2979ff;"'
+      +' oninput="document.getElementById(\'v-'+id+'\').textContent='+fmt.toString()+'(parseFloat(this.value));'
+      +'S.'+id+'=parseFloat(this.value);plotData();">'
+      +'</div>';
+  }
+
+  window.acsfSetFn = function(fn){
+    S.fn = fn;
+    renderControls();
+    plotData();
+  };
+
+  function lamToggle(){
+    return '<div style="margin-bottom:0.6rem;">'
+      +'<label style="font-size:0.8rem;color:var(--md-default-fg-color);">λ = <span id="v-lam">'+S.lam+'</span></label><br>'
+      +'<button onclick="S.lam*=-1;document.getElementById(\'v-lam\').textContent=S.lam;plotData();" '
+      +'style="padding:3px 10px;border-radius:4px;border:1px solid #8886;background:var(--md-default-bg-color);'
+      +'color:var(--md-default-fg-color);cursor:pointer;font-size:0.8rem;">Toggle +1 / −1</button>'
+      +'</div>';
+  }
+
+  function renderControls(){
+    var fn = S.fn; var html = '';
+    var f2 = function(v){ return v.toFixed(2); };
+    var f1 = function(v){ return v.toFixed(1); };
+    html += slider('Rc','R_c',2,10,0.5,S.Rc,f1);
+    if(fn==='g2'){ html+=slider('eta','η',0.05,3,0.05,S.eta,f2); html+=slider('mus','μ_s',0,8,0.1,S.mus,f1); }
+    if(fn==='g3'){ html+=slider('kappa','κ',0.1,5,0.1,S.kappa,f1); }
+    if(fn==='g4'||fn==='g5'){ html+=slider('eta','η',0.01,1,0.01,S.eta,f2); html+=slider('zeta','ζ',0.5,16,0.5,S.zeta,f1); html+=lamToggle(); }
+    document.getElementById('acsf-controls').innerHTML = html;
+  }
+
+  function init(){
+    if(!document.getElementById('acsf-plot')) return;
+    if(window.Plotly){ renderControls(); plotData(); return; }
+    var s=document.createElement('script');
+    s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+    s.onload=function(){ renderControls(); plotData(); };
+    document.head.appendChild(s);
+  }
+
+  if(typeof document$!=='undefined'){
+    document$.subscribe(init);
+  } else {
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded', init);
+    } else { init(); }
+  }
+
+  window.S = S;
+  window.plotData = plotData;
+})();
+</script>
 
 ---
 
