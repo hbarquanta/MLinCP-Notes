@@ -61,6 +61,24 @@
   }
 }
 
+/* Material caps the whole page (sidebars + content) at 61rem, so
+   widening the sidebars above squeezed the content column down to
+   a sliver. Widen the overall grid to give content real room back. */
+@media screen and (min-width: 76.25em) {
+  .md-grid {
+    max-width: 90rem;
+  }
+}
+
+/* Justified body text ("Blocksatz"). Scoped to prose (paragraphs,
+   list items) — headings, code and tables are left alone since
+   justify looks wrong on short lines and monospace content. */
+.md-typeset p,
+.md-typeset li {
+  text-align: justify;
+  hyphens: auto;
+}
+
 /* Simple +/- text-size control, injected into the header by
    javascripts/font-size.js. Scales the whole page (rem-based), and
    the choice persists across visits via localStorage. */

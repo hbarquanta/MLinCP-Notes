@@ -1,3 +1,9 @@
+---
+hide:
+  - navigation
+  - toc
+---
+
 # Machine Learning in Computational Physics
 
 Lecture notes for the Machine Learning in Computational Physics course.
