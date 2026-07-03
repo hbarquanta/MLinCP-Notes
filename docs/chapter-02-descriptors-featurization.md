@@ -88,6 +88,246 @@ where $g_k(i,j,\ldots)$ is the geometric function evaluated for the atom tuple, 
 
 The full MBTR vector is the concatenation of $D(x, g_1)$, $D(x, g_2)$, $D(x, g_3)$ evaluated on fine grids. The 3-body term costs $\mathcal{O}(N_\text{at}^3)$ in the number of atoms. Because the descriptor sums over all atoms globally, it is not directly applicable to large periodic systems or for computing atom-wise (local) energies.
 
+### Interactive Explorer
+
+<div id="mbtr-widget" style="border:1px solid #8884;border-radius:8px;padding:1.2rem;margin:1.4rem 0;background:var(--md-code-bg-color,#f5f5f5);">
+
+<div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;flex-wrap:wrap;">
+  <span style="font-weight:600;font-size:0.95rem;color:var(--md-default-fg-color);">MBTR Explorer</span>
+  <div style="display:flex;gap:5px;">
+    <button id="mbtr-btn-h2o" onclick="mbtrSetMol('h2o')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #86BCBD;background:#86BCBD;color:#fff;font-size:0.8rem;cursor:pointer;font-weight:600;">H₂O</button>
+    <button id="mbtr-btn-co2" onclick="mbtrSetMol('co2')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">CO₂</button>
+    <button id="mbtr-btn-nh3" onclick="mbtrSetMol('nh3')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">NH₃*</button>
+  </div>
+  <span style="font-size:0.75rem;color:#999;">* NH₃ approximated as bent H₂X geometry</span>
+</div>
+
+<div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
+
+  <!-- Molecule SVG + controls -->
+  <div style="flex:0 0 auto;min-width:195px;max-width:220px;">
+    <svg id="mbtr-svg" viewBox="0 0 220 185" width="220" height="185" style="display:block;margin:0 auto;">
+      <!-- H–H or end-end dashed distance line -->
+      <line id="mb-b3" stroke="#aaa" stroke-width="0.8" stroke-dasharray="4,3"/>
+      <!-- bonds -->
+      <line id="mb-b1" stroke="#777" stroke-width="3.5" stroke-linecap="round"/>
+      <line id="mb-b2" stroke="#777" stroke-width="3.5" stroke-linecap="round"/>
+      <!-- angle arc -->
+      <path id="mb-arc" fill="none" stroke="#F7E49B" stroke-width="1.5"/>
+      <!-- atoms (drawn last so they're on top) -->
+      <circle id="mb-cn" r="16" stroke-width="1.5"/>
+      <circle id="mb-e1" r="13" stroke-width="1.5"/>
+      <circle id="mb-e2" r="13" stroke-width="1.5"/>
+      <!-- atom labels -->
+      <text id="mb-tcn" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="white"/>
+      <text id="mb-te1" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="middle"/>
+      <text id="mb-te2" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="middle"/>
+      <!-- dimension annotations -->
+      <text id="mb-lr"  font-size="9" fill="#aaa" text-anchor="middle" font-style="italic"/>
+      <text id="mb-lth" font-size="9" fill="#F7E49B" text-anchor="middle"/>
+      <text id="mb-lee" font-size="9" fill="#aaa" text-anchor="middle" font-style="italic"/>
+    </svg>
+    <div id="mb-info" style="font-size:0.77rem;color:#888;text-align:center;margin:0.1rem 0 0.7rem;line-height:1.6;"></div>
+    <div id="mbtr-ctrl" style="max-width:220px;"></div>
+  </div>
+
+  <!-- k=2 and k=3 plots -->
+  <div style="flex:1 1 280px;min-width:250px;">
+    <div id="mbtr-k2" style="height:205px;"></div>
+    <div id="mbtr-k3" style="height:205px;margin-top:4px;"></div>
+  </div>
+
+</div>
+</div>
+
+<script>
+var _MB={mol:'h2o',r:0.96,theta:104.5,sigma:0.04};
+
+var _MMOLS={
+  h2o:{r:0.96,theta:104.5,Zc:8,Ze:1,colc:'#C04040',cole:'#D8D8D8',strokec:'#881818',strokee:'#999',
+       lc:'O',le:'H',chk2:['H–H','H–O'],chk3:['H–O–H','O–H–H'],
+       rlabel:'r(O–H)',tlabel:'θ(H–O–H)',eelabel:'r(H···H)'},
+  co2:{r:1.16,theta:180,Zc:6,Ze:8,colc:'#444',cole:'#C04040',strokec:'#222',strokee:'#881818',
+       lc:'C',le:'O',chk2:['C–O','O–O'],chk3:['O–C–O','C–O–O'],
+       rlabel:'r(C=O)',tlabel:'θ(O–C–O)',eelabel:'r(O···O)'},
+  nh3:{r:1.01,theta:107.8,Zc:7,Ze:1,colc:'#3366AA',cole:'#D8D8D8',strokec:'#224488',strokee:'#999',
+       lc:'N',le:'H',chk2:['H–H','H–N'],chk3:['H–N–H','N–H–H'],
+       rlabel:'r(N–H)',tlabel:'θ(H–N–H)',eelabel:'r(H···H)'},
+};
+
+var _MK2COL=['#86BCBD','#BA5A5A','#A4CE8B'];
+var _MK3COL=['#BA5A5A','#86BCBD','#A4CE8B'];
+
+function _mbDark(){return document.body.getAttribute('data-md-color-scheme')==='slate';}
+function _mbClr(){var d=_mbDark();return{fg:d?'#ddd':'#333',grid:d?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)'}}
+function _mbLs(a,b,n){return Array.from({length:n},function(_,i){return a+(b-a)*i/(n-1);});}
+function _mbG(x,mu,s){return Math.exp(-0.5*Math.pow((x-mu)/s,2));}
+function _mbLayout(xl,yl,title){
+  var c=_mbClr();
+  return{title:{text:title,font:{size:11,color:c.fg},x:0.5,xanchor:'center',pad:{t:2}},
+    xaxis:{title:{text:xl,font:{size:11}},color:c.fg,gridcolor:c.grid,zeroline:false},
+    yaxis:{title:{text:yl,font:{size:11}},color:c.fg,gridcolor:c.grid,zeroline:false},
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{color:c.fg,size:11},
+    showlegend:true,legend:{font:{color:c.fg,size:10},bgcolor:'rgba(0,0,0,0)',x:1,xanchor:'right',y:1,yanchor:'top'},
+    margin:{l:48,r:12,t:30,b:44}};
+}
+
+/* geometry helpers */
+function _mbRee(){return 2*_MB.r*Math.sin(_MB.theta*Math.PI/360);}
+function _mbCosCenter(){return Math.cos(_MB.theta*Math.PI/180);}
+function _mbCosEnd(){return Math.sin(_MB.theta*Math.PI/360);}  /* = sin(θ/2) */
+
+function mbtrPlotK2(){
+  if(!document.getElementById('mbtr-k2')||!window.Plotly) return;
+  var mol=_MMOLS[_MB.mol], s=_MB.sigma, xs=_mbLs(0,1.8,500), traces=[];
+  var inv_r=1/_MB.r, inv_ree=1/_mbRee();
+  /* channel 0: end–end pair (H-H or O-O or H-H) */
+  traces.push({x:xs,y:xs.map(function(x){return _mbG(x,inv_ree,s);}),
+    mode:'lines',name:mol.chk2[0],line:{color:_MK2COL[0],width:2.5}});
+  /* channel 1: center–end pair (2 equivalent pairs → amplitude 2) */
+  traces.push({x:xs,y:xs.map(function(x){return 2*_mbG(x,inv_r,s);}),
+    mode:'lines',name:mol.chk2[1],line:{color:_MK2COL[1],width:2.5}});
+  /* vertical markers at peak positions */
+  var shapes=[
+    {type:'line',x0:inv_ree,x1:inv_ree,y0:0,y1:1,yref:'paper',layer:'below',line:{color:_MK2COL[0],width:1,dash:'dot'}},
+    {type:'line',x0:inv_r,x1:inv_r,y0:0,y1:1,yref:'paper',layer:'below',line:{color:_MK2COL[1],width:1,dash:'dot'}},
+  ];
+  var L=_mbLayout('1/r  (Å⁻¹)','D(x, g₂)  (a.u.)','k = 2  —  pairwise inverse distances');
+  L.xaxis.range=[0,1.8]; L.shapes=shapes;
+  Plotly.react('mbtr-k2',traces,L,{responsive:true,displayModeBar:false});
+}
+
+function mbtrPlotK3(){
+  if(!document.getElementById('mbtr-k3')||!window.Plotly) return;
+  var mol=_MMOLS[_MB.mol], s=_MB.sigma*2.5, xs=_mbLs(-1,1,500), traces=[];
+  var cosC=_mbCosCenter(), cosE=_mbCosEnd();
+  var linearMol=Math.abs(_MB.theta-180)<0.5;
+  /* channel 0: end–center–end (angle at center) */
+  traces.push({x:xs,y:xs.map(function(x){return _mbG(x,cosC,s);}),
+    mode:'lines',name:mol.chk3[0],line:{color:_MK3COL[0],width:2.5}});
+  /* channel 1: center–end–end (2 equivalent triples) */
+  traces.push({x:xs,y:xs.map(function(x){return 2*_mbG(x,cosE,s);}),
+    mode:'lines',name:mol.chk3[1],line:{color:_MK3COL[1],width:2.5,dash:linearMol?'solid':'solid'}});
+  var shapes=[
+    {type:'line',x0:cosC,x1:cosC,y0:0,y1:1,yref:'paper',layer:'below',line:{color:_MK3COL[0],width:1,dash:'dot'}},
+    {type:'line',x0:cosE,x1:cosE,y0:0,y1:1,yref:'paper',layer:'below',line:{color:_MK3COL[1],width:1,dash:'dot'}},
+  ];
+  var L=_mbLayout('cos θ','D(x, g₃)  (a.u.)','k = 3  —  bond angles');
+  L.xaxis.range=[-1,1];
+  L.xaxis.tickvals=[-1,-0.5,0,0.5,1];
+  L.xaxis.ticktext=['-1','−½','0','½','1'];
+  L.shapes=shapes;
+  Plotly.react('mbtr-k3',traces,L,{responsive:true,displayModeBar:false});
+}
+
+function mbtrUpdateSVG(){
+  var mol=_MMOLS[_MB.mol],th=_MB.theta*Math.PI/180,r=_MB.r;
+  var cx=110,cy=118,sc=66; /* scale: 66 px / Å */
+  var x1=cx+sc*r*Math.sin(th/2), y1=cy-sc*r*Math.cos(th/2);
+  var x2=cx-sc*r*Math.sin(th/2), y2=y1;
+  var svg=document.getElementById('mbtr-svg');
+  if(!svg) return;
+  function sa(id,attrs){var e=svg.getElementById(id);if(!e) return;
+    Object.keys(attrs).forEach(function(k){e.setAttribute(k,attrs[k]);});}
+  /* bonds */
+  sa('mb-b1',{x1:cx,y1:cy,x2:x1,y2:y1});
+  sa('mb-b2',{x1:cx,y1:cy,x2:x2,y2:y2});
+  sa('mb-b3',{x1:x1,y1:y1,x2:x2,y2:y2});
+  /* atoms */
+  sa('mb-cn',{cx:cx,cy:cy,fill:mol.colc,stroke:mol.strokec});
+  sa('mb-e1',{cx:x1,cy:y1,fill:mol.cole,stroke:mol.strokee});
+  sa('mb-e2',{cx:x2,cy:y2,fill:mol.cole,stroke:mol.strokee});
+  /* atom labels */
+  var tcn=svg.getElementById('mb-tcn');if(tcn){tcn.setAttribute('x',cx);tcn.setAttribute('y',cy);tcn.textContent=mol.lc;}
+  var te1=svg.getElementById('mb-te1');if(te1){te1.setAttribute('x',x1);te1.setAttribute('y',y1);te1.textContent=mol.le;}
+  var te2=svg.getElementById('mb-te2');if(te2){te2.setAttribute('x',x2);te2.setAttribute('y',y2);te2.textContent=mol.le;}
+  /* r bond label: midpoint of bond 1, offset perpendicular */
+  var mxr=(cx+x1)/2, myr=(cy+y1)/2;
+  var dx=x1-cx,dy=y1-cy,len=Math.sqrt(dx*dx+dy*dy)||1;
+  sa('mb-lr',{x:mxr+8*dy/len,y:myr-8*dx/len});
+  var lr=svg.getElementById('mb-lr');if(lr) lr.textContent='r';
+  /* angle arc */
+  var aR=22;
+  var ax1=cx+aR*Math.sin(th/2),ay1=cy-aR*Math.cos(th/2);
+  var ax2=cx-aR*Math.sin(th/2),ay2=ay1;
+  var showArc=_MB.theta<175;
+  var arc=svg.getElementById('mb-arc');
+  if(arc){
+    if(showArc) arc.setAttribute('d','M '+ax1.toFixed(1)+' '+ay1.toFixed(1)+' A '+aR+' '+aR+' 0 0 0 '+ax2.toFixed(1)+' '+ay2.toFixed(1));
+    else arc.setAttribute('d','');
+  }
+  /* θ label */
+  var lth=svg.getElementById('mb-lth');
+  if(lth){lth.setAttribute('x',cx);lth.setAttribute('y',cy-aR-6);lth.textContent=showArc?'θ':'';}
+  /* end-end dashed label */
+  var midex=(x1+x2)/2, midey=Math.min(y1,y2)-9;
+  var lee=svg.getElementById('mb-lee');
+  if(lee){lee.setAttribute('x',midex);lee.setAttribute('y',midey);
+    lee.textContent=_mbRee().toFixed(2)+' Å';}
+  /* info text */
+  var m=_MMOLS[_MB.mol];
+  var info=document.getElementById('mb-info');
+  if(info) info.innerHTML=m.rlabel+'&nbsp;=&nbsp;<strong>'+_MB.r.toFixed(2)+'</strong>&nbsp;Å&nbsp;&nbsp;·&nbsp;&nbsp;'+
+    m.tlabel+'&nbsp;=&nbsp;<strong>'+_MB.theta.toFixed(1)+'°</strong><br>'+
+    m.eelabel+'&nbsp;=&nbsp;<strong>'+_mbRee().toFixed(2)+'</strong>&nbsp;Å';
+}
+
+function mbtrUpdate(k,v){
+  _MB[k]=+v;
+  var fmts={r:2,theta:1,sigma:3};
+  var el=document.getElementById('mbv-'+k);
+  if(el) el.textContent=(+_MB[k]).toFixed(fmts[k]);
+  mbtrUpdateSVG(); mbtrPlotK2(); mbtrPlotK3();
+}
+
+function mbtrSetMol(mol){
+  _MB.mol=mol;
+  var m=_MMOLS[mol];
+  _MB.r=m.r; _MB.theta=m.theta;
+  ['h2o','co2','nh3'].forEach(function(id){
+    var btn=document.getElementById('mbtr-btn-'+id);
+    if(!btn) return;
+    if(id===mol){btn.style.background='#86BCBD';btn.style.color='#fff';
+      btn.style.border='1.5px solid #86BCBD';btn.style.fontWeight='600';}
+    else{btn.style.background='transparent';btn.style.color='var(--md-default-fg-color)';
+      btn.style.border='1.5px solid #8886';btn.style.fontWeight='normal';}
+  });
+  _renderMbtrCtrl(); mbtrUpdateSVG(); mbtrPlotK2(); mbtrPlotK3();
+}
+
+function _mbSlider(k,label,min,max,step,dp){
+  return '<div style="margin-bottom:0.5rem;">'
+    +'<label style="font-size:0.82rem;color:var(--md-default-fg-color);">'+label
+    +' = <span id="mbv-'+k+'">'+(+_MB[k]).toFixed(dp)+'</span></label><br>'
+    +'<input type="range" min="'+min+'" max="'+max+'" step="'+step+'" value="'+_MB[k]
+    +'" style="width:100%;accent-color:#86BCBD;" oninput="mbtrUpdate(\''+k+'\',this.value)">'
+    +'</div>';
+}
+
+function _renderMbtrCtrl(){
+  var h='';
+  h+=_mbSlider('r','r<sub>bond</sub> (Å)',0.80,1.60,0.01,2);
+  h+=_mbSlider('theta','θ (°)',60,180,0.5,1);
+  h+=_mbSlider('sigma','σ (Å⁻¹)',0.01,0.10,0.005,3);
+  var el=document.getElementById('mbtr-ctrl');
+  if(el) el.innerHTML=h;
+}
+
+function _mbtrInit(){
+  if(!document.getElementById('mbtr-k2')) return;
+  function _run(){_renderMbtrCtrl();mbtrUpdateSVG();mbtrPlotK2();mbtrPlotK3();}
+  if(window.Plotly){_run();return;}
+  var s=document.createElement('script');
+  s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+  s.onload=_run; document.head.appendChild(s);
+}
+if(typeof document$!=='undefined'){document$.subscribe(_mbtrInit);}
+else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_mbtrInit);}
+else{_mbtrInit();}
+</script>
+
+
+
 ---
 
 
