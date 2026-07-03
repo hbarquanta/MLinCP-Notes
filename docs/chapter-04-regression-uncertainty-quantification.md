@@ -282,97 +282,7 @@ Two key questions arise when building any regression model: (1) what is the opti
 
 **Overfitting** occurs when a high-capacity model fits training noise in addition to the true signal, yielding low training error but high validation error. It is worsened by having too many features, features that correlate poorly with labels, or an over-optimized weight vector.
 
-The widget below makes this concrete: drag the degree slider to watch the polynomial fit change and the error curves evolve. At low $D$ the model underfits (both errors high); at high $D$ it overfits (train error low, generalisation error high); the optimal $D$ minimizes the generalisation curve.
-
-<div id="ov-widget" style="margin:1.5rem 0;">
-  <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.65rem;flex-wrap:wrap;">
-    <span style="font-size:0.88rem;font-weight:600;">Polynomial degree <em>D</em> =</span>
-    <input type="range" id="ov-slider" min="1" max="12" value="3" step="1"
-           oninput="ovSetD(+this.value)" style="width:150px;accent-color:#BA5A5A;">
-    <span id="ov-dval" style="font-weight:700;min-width:1.5em;">3</span>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
-    <div id="ov-fit" style="height:280px;"></div>
-    <div id="ov-err" style="height:280px;"></div>
-  </div>
-  <div style="font-size:0.8rem;opacity:0.65;margin-top:0.35rem;">True function: sin(2&#960;x). Left: polynomial fit (blue) vs true function (dashed green) and 16 noisy training points (red). Right: train MSE and generalisation MSE vs degree; dotted line marks current <em>D</em>.</div>
-</div>
-
-<script>
-(function(){
-  function _rng(s){var st=s>>>0;return function(){st=(st*1664525+1013904223)>>>0;return st/0x100000000;};}
-  var r=_rng(271828),_N=16,_xTr=[],_yTr=[];
-  function _true(x){return Math.sin(2*Math.PI*x);}
-  for(var i=0;i<_N;i++){var xi=r();_xTr.push(xi);_yTr.push(_true(xi)+(r()-0.5)*0.7);}
-  var _NF=80,_xF=[],_yF=[];
-  for(var i=0;i<_NF;i++){var xf=i/(_NF-1);_xF.push(xf);_yF.push(_true(xf));}
-
-  function _mInv(M){
-    var n=M.length,a=M.map(function(r,i){var row=r.slice();for(var j=0;j<n;j++)row.push(j===i?1:0);return row;});
-    for(var col=0;col<n;col++){
-      var mx=col;for(var row=col+1;row<n;row++)if(Math.abs(a[row][col])>Math.abs(a[mx][col]))mx=row;
-      var tmp=a[col];a[col]=a[mx];a[mx]=tmp;
-      var piv=a[col][col];if(Math.abs(piv)<1e-12)continue;
-      for(var j=0;j<2*n;j++)a[col][j]/=piv;
-      for(var row=0;row<n;row++){if(row===col)continue;var f=a[row][col];for(var j=0;j<2*n;j++)a[row][j]-=f*a[col][j];}
-    }
-    return a.map(function(r){return r.slice(n);});
-  }
-  function _mv(M,v){return M.map(function(r){return r.reduce(function(s,m,j){return s+m*v[j];},0);});}
-  function _mm(A,B){return A.map(function(ai){return Array.from({length:B[0].length},function(_,j){return ai.reduce(function(s,_,l){return s+ai[l]*B[l][j];},0);});});}
-  function _vander(xs,D){return xs.map(function(x){return Array.from({length:D+1},function(_,i){return Math.pow(x,i);});});}
-  function _fit(xs,ys,D){
-    var V=_vander(xs,D),Vt=V[0].map(function(_,j){return V.map(function(r){return r[j];});});
-    var VtV=_mm(Vt,V);for(var i=0;i<=D;i++)VtV[i][i]+=1e-8;
-    return _mv(_mInv(VtV),_mv(Vt,ys));
-  }
-  function _pred(xs,w){return xs.map(function(x){return w.reduce(function(s,wi,i){return s+wi*Math.pow(x,i);},0);});}
-  function _mse(a,b){return a.reduce(function(s,ai,i){return s+(ai-b[i])*(ai-b[i]);},0)/a.length;}
-
-  var _MAXD=12,_eTr=[],_eG=[],_ds=[];
-  for(var d=1;d<=_MAXD;d++){_ds.push(d);var w=_fit(_xTr,_yTr,d);_eTr.push(_mse(_yTr,_pred(_xTr,w)));_eG.push(_mse(_yF,_pred(_xF,w)));}
-  var _D=3;
-
-  function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
-  function _draw(){
-    var fe=document.getElementById('ov-fit'),ee=document.getElementById('ov-err');
-    if(!fe||!ee||!window.Plotly)return;
-    var dk=_dark(),bg=dk?'#1e2228':'#fff',fg=dk?'#e0e0e0':'#333',gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
-    var w=_fit(_xTr,_yTr,_D),yFit=_pred(_xF,w).map(function(y){return Math.max(-2.5,Math.min(2.5,y));});
-    Plotly.react(fe,[
-      {x:_xF,y:_yF,mode:'lines',name:'true f(x)',line:{color:'#A4CE8B',width:1.8,dash:'dot'},showlegend:true},
-      {x:_xF,y:yFit,mode:'lines',name:'D = '+_D,line:{color:'#86BCBD',width:2.5},showlegend:true},
-      {x:_xTr,y:_yTr,mode:'markers',name:'train',marker:{color:'#BA5A5A',size:7,line:{color:'#fff',width:1}},showlegend:true},
-    ],{paper_bgcolor:bg,plot_bgcolor:bg,font:{color:fg,size:10.5},margin:{t:10,b:38,l:38,r:10},
-       xaxis:{range:[0,1],title:'x',gridcolor:gc,zerolinecolor:gc},
-       yaxis:{range:[-2.5,2.5],title:'y',gridcolor:gc,zerolinecolor:gc},
-       legend:{x:0.01,y:0.99,bgcolor:'transparent',font:{size:9.5}},
-    },{displayModeBar:false,responsive:true});
-    var maxE=Math.max.apply(null,_eG)*1.3||1;
-    Plotly.react(ee,[
-      {x:_ds,y:_eTr,mode:'lines+markers',name:'train MSE',line:{color:'#A4CE8B',width:2},marker:{size:5}},
-      {x:_ds,y:_eG,mode:'lines+markers',name:'generalisation MSE',line:{color:'#BA5A5A',width:2},marker:{size:5}},
-      {x:[_D,_D],y:[0,maxE],mode:'lines',line:{color:fg,width:1.2,dash:'dot'},showlegend:false,hoverinfo:'skip'},
-    ],{paper_bgcolor:bg,plot_bgcolor:bg,font:{color:fg,size:10.5},margin:{t:10,b:38,l:48,r:10},
-       xaxis:{title:'degree D',dtick:2,gridcolor:gc,zerolinecolor:gc},
-       yaxis:{title:'MSE',type:'log',gridcolor:gc,zerolinecolor:gc},
-       legend:{x:0.98,y:0.98,xanchor:'right',bgcolor:'transparent',font:{size:9.5}},
-    },{displayModeBar:false,responsive:true});
-  }
-  window.ovSetD=function(d){_D=d;document.getElementById('ov-dval').textContent=d;_draw();};
-  function _init(){
-    if(!document.getElementById('ov-fit'))return;
-    if(!window.Plotly){
-      if(!document.getElementById('plotly-cdn')){var s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';s.onload=function(){_draw();};document.head.appendChild(s);}
-    }else{_draw();}
-  }
-  if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
-  else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
-  else{_init();}
-})();
-</script>
-
-Five distinct CV strategies exist, each suited to different situations:
+Five distinct CV strategies existFive distinct CV strategies exist, each suited to different situations:
 
 **1. Naive cross-validation.** Partition the dataset once into a training set and a hold-out validation set. Train the model on the training set and evaluate it on the validation set. Simple, but the result depends heavily on the particular split chosen, may miss the ideal model, and is expensive if the model must be trained from scratch for every candidate hyperparameter.
 
@@ -385,19 +295,16 @@ Five distinct CV strategies exist, each suited to different situations:
 **4. Bagging of cross-validated models.** Train multiple models on different bootstrap subsets (random samples with replacement) of the training data. In regression, take the mean or median of their predictions; in classification, take a majority vote. Models can even be drawn from different model families (different universal approximators). Bagging is embarrassingly parallel and reduces variance, but the resulting ensemble is harder to interpret.
 
 **5. K-fold cross-validation.** Partition the $P$ data points into $K$ equally-sized folds. In each of $K$ rounds, train on the $K-1$ remaining folds and evaluate on the held-out fold. The generalization error estimate is the mean error across rounds, and its standard deviation quantifies uncertainty in the estimate. K-fold CV is used for model validation (accuracy and standard deviation), hyperparameter optimization (grid search or random search), outlier detection, and diagnosing unbalanced datasets. Typical values are $K = 5$ or $K = 10$.
-
-**Leave-one-out cross-validation (LOOCV)** is the limiting case $K = P$: each training run uses all but one data point, and that single held-out point is the validation set. LOOCV is nearly unbiased (it trains on almost the full dataset each time) but has high variance and costs $P$ full training runs, practical only for small datasets or cheap models.
-
-<div id="kf-widget" style="margin:1.5rem 0;">
-  <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.9rem;flex-wrap:wrap;">
+<div id="kf-widget" style="margin:1.5rem 0;display:flex;flex-direction:column;align-items:center;">
+  <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.9rem;flex-wrap:wrap;justify-content:center;">
     <span style="font-size:0.88rem;font-weight:600;"><em>K</em> =</span>
     <input type="range" id="kf-slider" min="2" max="10" value="5" step="1"
            oninput="kfRedraw(+this.value)" style="width:130px;accent-color:#86BCBD;">
     <span id="kf-kval" style="font-weight:700;min-width:1.2em;">5</span>
     <span style="font-size:0.8rem;opacity:0.65;">folds</span>
   </div>
-  <div id="kf-grid" style="overflow-x:auto;"></div>
-  <div style="display:flex;gap:1.5rem;margin-top:0.65rem;font-size:0.82rem;flex-wrap:wrap;">
+  <div id="kf-grid" style="overflow-x:auto;display:flex;justify-content:center;"></div>
+  <div style="display:flex;gap:1.5rem;margin-top:0.65rem;font-size:0.82rem;flex-wrap:wrap;justify-content:center;">
     <span><span style="display:inline-block;width:13px;height:13px;background:#A4CE8B;border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Training</span>
     <span><span style="display:inline-block;width:13px;height:13px;background:#86BCBD;border-radius:3px;vertical-align:middle;margin-right:4px;"></span>Validation</span>
   </div>
@@ -415,7 +322,7 @@ Five distinct CV strategies exist, each suited to different situations:
     var fW=Math.max(48,Math.floor(340/k))+'px';
     var html='<table style="border-collapse:separate;border-spacing:4px;font-size:0.8rem;">';
     html+='<tr><th style="color:'+fg+';padding:2px 6px;font-weight:600;text-align:left;">Split</th>';
-    for(var j=1;j<=k;j++)html+='<th style="color:'+fg+';padding:2px 4px;font-weight:500;text-align:center;min-width:'+fW+'">Fold '+j+'</th>';
+    for(var j=1;j<=k;j++)html+='<th style="color:'+fg+';padding:2px 4px;font-weight:500;text-align:center;min-width:'+fW+'">Fold '+j+'</th>';
     html+='<th></th></tr>';
     for(var i=1;i<=k;i++){
       html+='<tr><td style="color:'+fg+';padding:3px 6px;font-weight:600;">'+i+'</td>';
@@ -426,7 +333,7 @@ Five distinct CV strategies exist, each suited to different situations:
       html+='<td style="color:'+fg+';padding:3px 6px;font-size:0.78rem;white-space:nowrap;">→ sp<sub>'+i+'</sub></td></tr>';
     }
     html+='</table>';
-    html+='<p style="margin:0.5rem 0 0;font-size:0.82rem;color:'+fg+';opacity:0.8;">Mean of sp<sub>1</sub>…sp<sub>K</sub> estimates generalisation error; the hyperparameter setting that minimizes this mean is selected.</p>';
+    html+='<p style="margin:0.5rem 0 0;font-size:0.82rem;color:'+fg+';opacity:0.8;text-align:center;">Mean of sp<sub>1</sub>…sp<sub>K</sub> estimates generalisation error; the hyperparameter setting that minimizes this mean is selected.</p>';
     grid.innerHTML=html;
   }
   window.kfRedraw=kfRedraw;
@@ -436,6 +343,8 @@ Five distinct CV strategies exist, each suited to different situations:
   else{_init();}
 })();
 </script>
+
+**Leave-one-out cross-validation (LOOCV)** is the limiting case $K = P$: each training run uses all but one data point, and that single held-out point is the validation set. LOOCV is nearly unbiased (it trains on almost the full dataset each time) but has high variance and costs $P$ full training runs, practical only for small datasets or cheap models.
 
 **Ensemble methods** combine multiple models to reduce bias and variance simultaneously and, for free, provide an estimate of predictive uncertainty:
 
