@@ -97,9 +97,7 @@ The full MBTR vector is the concatenation of $D(x, g_1)$, $D(x, g_2)$, $D(x, g_3
   <div style="display:flex;gap:5px;">
     <button id="mbtr-btn-h2o" onclick="mbtrSetMol('h2o')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #86BCBD;background:#86BCBD;color:#fff;font-size:0.8rem;cursor:pointer;font-weight:600;">H₂O</button>
     <button id="mbtr-btn-co2" onclick="mbtrSetMol('co2')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">CO₂</button>
-    <button id="mbtr-btn-nh3" onclick="mbtrSetMol('nh3')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">NH₃*</button>
   </div>
-  <span style="font-size:0.75rem;color:#999;">* NH₃ approximated as bent H₂X geometry</span>
 </div>
 
 <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
@@ -149,10 +147,7 @@ var _MMOLS={
        rlabel:'r(O–H)',tlabel:'θ(H–O–H)',eelabel:'r(H···H)'},
   co2:{r:1.16,theta:180,Zc:6,Ze:8,colc:'#444',cole:'#C04040',strokec:'#222',strokee:'#881818',
        lc:'C',le:'O',chk2:['C–O','O–O'],chk3:['O–C–O','C–O–O'],
-       rlabel:'r(C=O)',tlabel:'θ(O–C–O)',eelabel:'r(O···O)'},
-  nh3:{r:1.01,theta:107.8,Zc:7,Ze:1,colc:'#3366AA',cole:'#D8D8D8',strokec:'#224488',strokee:'#999',
-       lc:'N',le:'H',chk2:['H–H','H–N'],chk3:['H–N–H','N–H–H'],
-       rlabel:'r(N–H)',tlabel:'θ(H–N–H)',eelabel:'r(H···H)'},
+       rlabel:'r(C=O)',tlabel:'θ(O–C–O)',eelabel:'r(O···O)'}
 };
 
 var _MK2COL=['#86BCBD','#BA5A5A','#A4CE8B'];
@@ -284,7 +279,7 @@ function mbtrSetMol(mol){
   _MB.mol=mol;
   var m=_MMOLS[mol];
   _MB.r=m.r; _MB.theta=m.theta;
-  ['h2o','co2','nh3'].forEach(function(id){
+  ['h2o','co2'].forEach(function(id){
     var btn=document.getElementById('mbtr-btn-'+id);
     if(!btn) return;
     if(id===mol){btn.style.background='#86BCBD';btn.style.color='#fff';

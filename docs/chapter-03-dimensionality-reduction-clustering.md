@@ -1,8 +1,44 @@
-# Chapter 3 — Dimensionality Reduction & Clustering
+# Chapter 3: Dimensionality Reduction & Clustering
 
-Unsupervised learning extracts structure from unlabeled data $\{x^{(p)}\}_{p=1}^P$, where $x^{(p)} \in \mathbb{R}^D$. The two central tasks are **dimensionality reduction** — finding a compact low-dimensional representation $z^{(p)} \in \mathbb{R}^d$ with $d \ll D$ — and **clustering** — partitioning the data into groups of similar points.
+Unsupervised learning extracts structure from unlabeled data $\{x^{(p)}\}_{p=1}^P$, where $x^{(p)} \in \mathbb{R}^D$. The two central tasks are **dimensionality reduction**, which finds a compact low-dimensional representation $z^{(p)} \in \mathbb{R}^d$ with $d \ll D$, and **clustering**, which partitions the data into groups of similar points.
 
-## 3.1 Principal Component Analysis (PCA)
+## 3.1 Distance Measures and the Curse of Dimensionality
+
+Before choosing a dimensionality reduction method, it is worth understanding how to measure distances in feature space and why high-dimensional spaces are geometrically strange.
+
+**Distance measures.** Given two data points $x, y \in \mathbb{R}^D$, the three most common pairwise distances are:
+
+**Euclidean distance** is the straight-line distance:
+
+$$d_E(x, y) = \sqrt{\sum_{i=1}^D (x_i - y_i)^2}$$
+
+It is the default choice when features are continuous and on comparable scales. Most dimensionality reduction methods (PCA, t-SNE) and clustering algorithms (K-means) implicitly assume Euclidean geometry.
+
+**Manhattan distance** (the $L^1$ norm) sums absolute coordinate differences:
+
+$$d_M(x, y) = \sum_{i=1}^D |x_i - y_i|$$
+
+It is more robust when features have different scales or when data lie on a grid-like structure, because it does not square large individual differences the way Euclidean distance does.
+
+**Chebyshev distance** takes the maximum deviation over all dimensions:
+
+$$d_C(x, y) = \max_{i} |x_i - y_i|$$
+
+It emphasizes the single coordinate with the largest discrepancy, making it useful for highlighting extreme outliers in feature space.
+
+**The curse of dimensionality.** In high dimensions, geometric intuition breaks down. Consider two points $x$ and $y$ drawn uniformly at random from the unit hypercube $[0,1]^D$. The expected squared Euclidean distance between them is $D/6$, so:
+
+$$\mathbb{E}[d_E(x, y)] \approx \sqrt{D/6}$$
+
+The expected distance grows with dimension, but more critically, *all* pairwise distances converge toward the same value as $D$ increases: the ratio $d_\text{max}/d_\text{min} \to 1$. Points that differ in only a few features become indistinguishable from genuinely distant points, making nearest-neighbor queries meaningless.
+
+A second manifestation: in a $D$-dimensional ball of radius $r$, almost all the volume concentrates in a thin shell near the surface as $D \to \infty$. Equivalently, any local neighborhood must either contain exponentially few points or span a large fraction of the feature range, destroying the notion of locality that methods like K-means and t-SNE rely on.
+
+In computational chemistry and physics, molecular descriptors, electronic fingerprints, and force-field feature vectors routinely have hundreds to thousands of dimensions. Dimensionality reduction is not optional in such settings; it is the tool that makes local geometric analysis tractable.
+
+---
+
+## 3.2 Principal Component Analysis (PCA)
 
 PCA finds the $K$-dimensional **linear subspace** of $\mathbb{R}^N$ that retains the maximum variance of the data, where $N$ is the feature dimension and $K < N$ is the target (reduced) dimension. The method is motivated by the following observation: if we want to encode data $x_p \in \mathbb{R}^N$ (data point index $p = 1,\ldots,M$, where $M$ is the number of samples) via a spanning set of $K$ orthonormal vectors $c_1,\ldots,c_K \in \mathbb{R}^N$, then the optimal encoding $w_p = C^T x_p \in \mathbb{R}^K$ and decoding $C w_p \approx x_p$ (where $C = [c_1|\cdots|c_K] \in \mathbb{R}^{N\times K}$) minimize the reconstruction loss
 
@@ -10,40 +46,40 @@ $$\mathcal{L} = \sum_p \|x_p - C C^T x_p\|^2$$
 
 when $C$ contains the eigenvectors of the covariance matrix with the $K$ largest eigenvalues. This motivates the following steps.
 
-**Step 1 — Preprocess: center the data.**
+**Step 1. Preprocess:** center the data.
 Compute the sample mean $\bar{x} = \frac{1}{M}\sum_{p=1}^M x_p \in \mathbb{R}^N$ and subtract it. PCA requires the data to pass through the origin:
 
 $$x_p \leftarrow x_p - \bar{x}$$
 
 Stacking the (now centered) data points as columns gives the data matrix $X \in \mathbb{R}^{N \times M}$.
 
-**Step 2 — Covariance: compute the covariance matrix.**
+**Step 2. Covariance:** compute the covariance matrix.
 
 $$\Sigma = \frac{1}{M} X X^T \in \mathbb{R}^{N \times N}$$
 
 $\Sigma$ is symmetric and positive semi-definite. Its $(i,j)$ entry is the sample covariance between feature dimensions $i$ and $j$.
 
-**Step 3 — Eigen-decomposition: compute eigenvalues and eigenvectors.**
+**Step 3. Eigen-decomposition:** compute eigenvalues and eigenvectors.
 
 $$\Sigma = V D V^T$$
 
 where $V \in \mathbb{R}^{N \times N}$ is orthogonal (columns are eigenvectors $c_k$) and $D = \text{diag}(\lambda_1, \lambda_2, \ldots, \lambda_N)$ with eigenvalues sorted $\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_N \ge 0$. The eigenvector with the largest eigenvalue $\lambda_1$ is the 1st principal component; the $k$-th largest eigenvalue gives the $k$-th principal component.
 
-**Step 4 — Variance: choose the number of components $K$.**
+**Step 4. Variance:** choose the number of components $K$.
 The eigenvalue $\lambda_k$ equals the variance of the data projected onto $c_k$. The fraction of total variance retained by $K$ components is:
 
 $$\text{explained variance ratio} = \frac{\sum_{k=1}^K \lambda_k}{\sum_{k=1}^N \lambda_k}$$
 
-There is no single right answer — PCA is a tool for data exploration. Scree plots (plotting $\lambda_k$ vs. $k$) help identify an "elbow" where additional components yield diminishing returns.
+There is no single right answer; PCA is a tool for data exploration. Scree plots (plotting $\lambda_k$ vs. $k$) help identify an "elbow" where additional components yield diminishing returns.
 
-**Step 5 — Subspace projection.**
+**Step 5. Subspace projection.**
 Form the projection matrix $C = [c_1 | c_2 | \cdots | c_K] \in \mathbb{R}^{N\times K}$ from the $K$ selected eigenvectors. Encode each data point:
 
 $$w_p = C^T x_p \in \mathbb{R}^K$$
 
 The full dataset is encoded as $W = C^T X \in \mathbb{R}^{K\times M}$.
 
-**Step 6 — (Optional) Reconstruct.**
+**Step 6. (Optional) Reconstruct.**
 The approximate reconstruction from the low-dimensional code is:
 
 $$\hat{x}_p = C w_p = C C^T x_p \approx x_p$$
@@ -56,9 +92,9 @@ The per-point reconstruction error is $\|x_p - \hat{x}_p\|^2$; the total equals 
 
 ---
 
-## 3.2 Kernel PCA
+## 3.3 Kernel PCA
 
-Kernel PCA extends PCA to nonlinear manifolds using the **kernel trick**: data is implicitly mapped into a high-dimensional feature space $\mathcal{H}$ via $\phi: \mathbb{R}^N \to \mathcal{H}$, and PCA is performed there. The mapping $\phi$ never needs to be computed explicitly — only pairwise inner products $k(x_i, x_j) = \langle \phi(x_i), \phi(x_j) \rangle_\mathcal{H}$ are needed.
+Kernel PCA extends PCA to nonlinear manifolds using the **kernel trick**: data is implicitly mapped into a high-dimensional feature space $\mathcal{H}$ via $\phi: \mathbb{R}^N \to \mathcal{H}$, and PCA is performed there. The mapping $\phi$ never needs to be computed explicitly; only pairwise inner products $k(x_i, x_j) = \langle \phi(x_i), \phi(x_j) \rangle_\mathcal{H}$ are needed.
 
 **Gram (kernel) matrix.** Compute the $M \times M$ matrix:
 
@@ -76,30 +112,30 @@ $$w_k(x) = \sum_{p=1}^M \alpha_k^{(p)}\, k(x, x_p)$$
 
 Common kernels: RBF $k(x,x') = \exp(-\|x-x'\|^2 / 2\sigma^2)$; polynomial $k(x,x') = (x^T x' + c)^q$.
 
-Kernel PCA can capture nonlinear structure, but requires $\mathcal{O}(M^2)$ memory and $\mathcal{O}(M^3)$ compute — impractical for large datasets.
+Kernel PCA can capture nonlinear structure, but requires $\mathcal{O}(M^2)$ memory and $\mathcal{O}(M^3)$ compute, making it impractical for large datasets.
 
 ---
 
-## 3.3 Autoencoders (Nonlinear Dimensionality Reduction)
+## 3.4 Autoencoders (Nonlinear Dimensionality Reduction)
 
-The linear autoencoder formulation from PCA — encoding $w_p = C^T x_p$ and decoding $C w_p \approx x_p$ — generalizes directly to nonlinear models. A **nonlinear autoencoder** replaces the linear spanning set $C$ with neural networks:
+The linear autoencoder formulation from PCA (encoding $w_p = C^T x_p$ and decoding $C w_p \approx x_p$) generalizes directly to nonlinear models. A **nonlinear autoencoder** replaces the linear spanning set $C$ with neural networks:
 
 - An **encoder** compresses $x_p \in \mathbb{R}^N$ to a low-dimensional latent code $w_p \in \mathbb{R}^K$ through a stack of nonlinear layers.
 - A **decoder** reconstructs $\hat{x}_p \approx x_p$ from $w_p$ through a second nonlinear network.
 
-Training minimizes the same reconstruction loss $\mathcal{L} = \sum_p \|x_p - \hat{x}_p\|^2$. With nonlinear activations (e.g. ReLU, tanh), the encoder can map data lying on a curved manifold to a flat latent space — something PCA cannot do. The latent code $w_p$ can then be used for visualization, clustering, or downstream supervised learning.
+Training minimizes the same reconstruction loss $\mathcal{L} = \sum_p \|x_p - \hat{x}_p\|^2$. With nonlinear activations (e.g. ReLU, tanh), the encoder can map data lying on a curved manifold to a flat latent space, something PCA cannot do. The latent code $w_p$ can then be used for visualization, clustering, or downstream supervised learning.
 
-If the encoder and decoder are linear (no activations), the autoencoder's optimal solution is identical to PCA — confirming that PCA is a special case of the autoencoder framework.
+If the encoder and decoder are linear (no activations), the autoencoder's optimal solution is identical to PCA, confirming that PCA is a special case of the autoencoder framework.
 
 **Limitation.** The latent space of a standard autoencoder is not regularized and may be discontinuous or contain holes where the decoder produces unrealistic outputs. Variational autoencoders (VAEs, L9) address this by imposing a probabilistic prior on $w$.
 
 ---
 
-## 3.4 t-SNE (t-distributed Stochastic Neighbor Embedding)
+## 3.5 t-SNE (t-distributed Stochastic Neighbor Embedding)
 
-t-SNE maps high-dimensional data $X = \{x_1, \ldots, x_N\}$ (where $N$ is the number of data points, each $x_i \in \mathbb{R}^D$ with feature dimension $D$) to a low-dimensional visualization $\{w_i\}$ with $w_i \in \mathbb{R}^2$ or $\mathbb{R}^3$, preserving local neighborhood structure. It should not be used for general dimensionality reduction — **it is primarily a visualization tool**.
+t-SNE maps high-dimensional data $X = \{x_1, \ldots, x_N\}$ (where $N$ is the number of data points, each $x_i \in \mathbb{R}^D$ with feature dimension $D$) to a low-dimensional visualization $\{w_i\}$ with $w_i \in \mathbb{R}^2$ or $\mathbb{R}^3$, preserving local neighborhood structure. It should not be used for general dimensionality reduction; **it is primarily a visualization tool**.
 
-**Step 1 — Compute pairwise distances and similarity matrix in $X$.**
+**Step 1. Compute pairwise distances and similarity matrix in $X$.**
 
 Compute Euclidean pairwise distances $d(x_i, x_j)$ for all pairs. Convert to a joint probability distribution capturing pairwise similarities. The conditional probability that point $j$ is a neighbor of point $i$ under a Gaussian centered at $i$ is:
 
@@ -107,7 +143,7 @@ $$p_{j|i} = \frac{\exp\!\left(-d(x_i,x_j)^2 / 2\sigma_i^2\right)}{\displaystyle\
 
 The bandwidth $\sigma_i$ is chosen per point to achieve a target **perplexity** (typical values 5–50), which controls the effective number of neighbors. Symmetrize: $p_{ij} = (p_{j|i} + p_{i|j}) / 2N$.
 
-**Step 2 — Initialize and define low-dimensional similarities.**
+**Step 2. Initialize and define low-dimensional similarities.**
 
 Create an initial set of low-dimensional points $\{w_i\}$. Define similarities in the low-dimensional space using a Student-$t$ distribution with one degree of freedom:
 
@@ -115,7 +151,7 @@ $$q_{ij} = \frac{\left(1 + \|w_i - w_j\|^2\right)^{-1}}{\displaystyle\sum_{k \ne
 
 The heavy tail of the $t$-distribution alleviates the **crowding problem**: in low dimensions, insufficient volume would otherwise force moderately similar points too close together.
 
-**Step 3 — Minimize the Kullback-Leibler divergence.**
+**Step 3. Minimize the Kullback-Leibler divergence.**
 
 Optimize $\{w_i\}$ by minimizing:
 
@@ -123,7 +159,7 @@ $$\mathcal{L} = \text{KL}(P \| Q) = \sum_{i \neq j} p_{ij} \log \frac{p_{ij}}{q_
 
 via gradient descent.
 
-The **KL divergence** $\text{KL}(P\|Q)$ measures how much distribution $Q$ differs from a reference distribution $P$. It is always $\ge 0$, and equals zero only when $P = Q$. Importantly, it is **asymmetric**: $\text{KL}(P\|Q) \neq \text{KL}(Q\|P)$. The direction used here penalizes cases where $P$ assigns high probability but $Q$ does not — concretely, if two points are close in high dimensions ($p_{ij}$ large) but far apart in the embedding ($q_{ij}$ small), the log ratio $\log(p_{ij}/q_{ij})$ is large and the penalty is severe. The reverse — pairs that are close in the embedding but were far apart in high dimensions — contributes little to the loss. This asymmetry is what forces t-SNE to prioritize preserving local neighborhoods over global structure.
+The **KL divergence** $\text{KL}(P\|Q)$ measures how much distribution $Q$ differs from a reference distribution $P$. It is always $\ge 0$, and equals zero only when $P = Q$. Importantly, it is **asymmetric**: $\text{KL}(P\|Q) \neq \text{KL}(Q\|P)$. The direction used here penalizes cases where $P$ assigns high probability but $Q$ does not: if two points are close in high dimensions ($p_{ij}$ large) but far apart in the embedding ($q_{ij}$ small), the log ratio $\log(p_{ij}/q_{ij})$ is large and the penalty is severe. The reverse (pairs close in the embedding but far apart in high dimensions) contributes little to the loss. This asymmetry is what forces t-SNE to prioritize preserving local neighborhoods over global structure.
 
 t-SNE focuses on preserving small pairwise similarities (local structure); PCA instead maximizes large pairwise distances (global variance). As a consequence, global distances and inter-cluster separations in the t-SNE embedding are not meaningful and should not be interpreted.
 
@@ -131,7 +167,7 @@ The distill.pub article [*How to Use t-SNE Effectively*](https://distill.pub/201
 
 ---
 
-## 3.5 UMAP (Uniform Manifold Approximation and Projection)
+## 3.6 UMAP (Uniform Manifold Approximation and Projection)
 
 UMAP uses tools from topological data analysis to build a fuzzy graph representation of the manifold underlying the data, then optimizes a low-dimensional embedding to match it. Compared to t-SNE, UMAP is faster and better preserves global structure, while both are primarily used for visualization. The axes of either embedding carry no direct physical meaning.
 
@@ -153,9 +189,24 @@ Here $M$ = number of data points, $N$ = feature dimension (PCA context); for t-S
 
 ---
 
-Clustering partitions a dataset $\{x^{(p)}\}_{p=1}^P$ into groups of similar points without any labels. We discuss five families of methods.
 
-## 3.6 K-Means Clustering
+<div style="margin:3rem 0 2rem;border-top:3px solid #86BCBD;padding-top:0.5rem;">
+<span style="font-size:1.05rem;font-weight:700;color:#86BCBD;letter-spacing:0.04em;">PART II — CLUSTERING</span>
+</div>
+
+Clustering algorithms partition a dataset $\{x^{(p)}\}_{p=1}^P$ into groups of similar points without using any labels. Two broad families of methods exist, reflecting different geometric assumptions about cluster structure.
+
+## 3.7 Partition-Based and Density-Based Methods
+
+**Partition-based methods** (K-means, Gaussian mixture models) divide data into $K$ groups by optimizing a global objective: the within-cluster variance for K-means, or a likelihood for GMMs. The number of clusters $K$ must be specified in advance. These methods work best when clusters have roughly uniform size and convex shape, and they assign every point to exactly one cluster.
+
+**Density-based methods** (DBSCAN, HDBSCAN) define clusters as regions of high point density separated by sparse regions. They can find clusters of arbitrary shape and size, and explicitly identify **noise points** that do not belong to any dense region. No value of $K$ needs to be specified; clusters emerge from the local structure of the data.
+
+**Hierarchical clustering** sits between these two families. It produces a tree of nested partitions, the **dendrogram**, spanning all values of $K$ from 1 to $P$. A flat clustering at any desired granularity is obtained by cutting the dendrogram at a chosen height, without re-running the algorithm.
+
+---
+
+## 3.8 K-Means Clustering
 
 K-means places $N$ observations into $K$ sets $\mathcal{C} = \{C_1, C_2, \ldots, C_K\}$ (where $N$ is the number of data points, each $x_i \in \mathbb{R}^D$ with feature dimension $D$) by minimizing the total internal cluster variance:
 
@@ -169,20 +220,15 @@ where $\mu_k = \frac{1}{|C_k|}\sum_{i \in C_k} x_i$ is the centroid (mean) of cl
 3. **Centroid**: compute the centroid $\mu_k$ of each cluster.
 4. **Assignment**: reassign each point to the nearest centroid based on the chosen distance, iterating until the clusters stop changing.
 
-**Convergence.** The loss $\mathcal{L}$ decreases at every step; convergence is guaranteed because the number of possible assignments is finite. However, convergence is only to a **local minimum** — K-means is sensitive to initialization. Running multiple times with different random starts and keeping the lowest-loss result is standard practice.
+**Convergence.** The loss $\mathcal{L}$ decreases at every step; convergence is guaranteed because the number of possible assignments is finite. However, convergence is only to a **local minimum**; K-means is sensitive to initialization. Running multiple times with different random starts and keeping the lowest-loss result is standard practice.
 
 **Choosing $K$.**
 - **Elbow method**: plot $\mathcal{L}$ vs. $K$ and pick the "elbow" where adding more clusters yields diminishing improvement.
 - **Silhouette score**: for each point $i$, let $a_i$ = mean intra-cluster distance and $b_i$ = mean distance to the nearest other cluster. The silhouette coefficient $s_i = (b_i - a_i)/\max(a_i, b_i) \in [-1, 1]$; higher = better separated.
 
-**Limitations of K-means:**
-1. **No dual membership**: even boundary points must be assigned to exactly one cluster.
-2. **Clusters are discrete**: no overlap or nesting between clusters.
-3. **Unpredictability**: the algorithm is random and finds only local minima.
+**Limitations of K-means.** The algorithm's strength is its simplicity, but it comes with structural constraints. Points at cluster boundaries must be assigned to exactly one cluster, with no dual membership or soft assignment. Clusters are discrete and cannot overlap or nest within each other. The algorithm is non-deterministic: it finds only local minima of the objective, and different random initializations can yield qualitatively different clusterings; running K-means++ initialization with multiple random restarts mitigates but does not eliminate this problem. Beyond these structural constraints, K-means implicitly assumes clusters are convex and roughly spherical: it fails on non-convex shapes such as crescents or rings, and is sensitive to outliers that pull centroids toward them.
 
-Additionally, K-means implicitly assumes clusters are convex and roughly spherical — it fails on non-convex shapes (crescents, rings) and is sensitive to outliers (which pull centroids toward them).
-
-The widget below lets you vary $K$ and the dataset. Note how *Moons* and *Rings* fool K-means regardless of $K$. The "Re-run" button re-initializes with a different random seed — repeated runs on *Blobs* with large $K$ will sometimes settle at different local minima.
+The widget below lets you vary $K$ and the dataset. Note how *Moons* and *Rings* fool K-means regardless of $K$. The "Re-run" button re-initializes with a different random seed; repeated runs on *Blobs* with large $K$ will sometimes settle at different local minima.
 
 <div id="km-widget" style="margin:1.5rem 0;">
   <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:0.6rem;">
@@ -340,15 +386,24 @@ The widget below lets you vary $K$ and the dataset. Note how *Moons* and *Rings*
 })();
 </script>
 
-**Gaussian Mixture Models (GMMs) — soft K-means.** GMMs model the data as a mixture of $K$ Gaussians:
-
-$$p(x; \theta) = \sum_{k=1}^K \pi_k\, \mathcal{N}(x;\, \mu_k,\, \Sigma_k)$$
-
-where $\pi_k > 0$ are mixing weights with $\sum_k \pi_k = 1$, $\mu_k \in \mathbb{R}^D$ are cluster means, and $\Sigma_k \in \mathbb{R}^{D \times D}$ are covariance matrices. Unlike K-means, GMMs produce **soft assignments**: the responsibility $r_{ik} = p(z=k \,|\, x_i;\, \theta)$ quantifies the posterior probability that point $x_i$ belongs to cluster $k$. Parameters are estimated by the EM (Expectation-Maximization) algorithm: the E-step computes $r_{ik}$ given current parameters; the M-step updates $\pi_k$, $\mu_k$, $\Sigma_k$ to maximize expected log-likelihood. K-means is the hard-assignment limit of GMMs with isotropic covariances $\Sigma_k = \sigma^2 I$, $\sigma \to 0$.
 
 ---
 
-## 3.7 Hierarchical Clustering
+## 3.9 Gaussian Mixture Models
+
+**Gaussian mixture models (GMMs)** treat clustering as a probabilistic density estimation problem. The data are modeled as draws from a mixture of $K$ Gaussians:
+
+$$p(x; \theta) = \sum_{k=1}^K \pi_k\, \mathcal{N}(x;\, \mu_k,\, \Sigma_k)$$
+
+where $\pi_k > 0$ are **mixing weights** with $\sum_k \pi_k = 1$, $\mu_k \in \mathbb{R}^D$ are cluster means, and $\Sigma_k \in \mathbb{R}^{D \times D}$ are covariance matrices. Unlike K-means, GMMs produce **soft assignments**: the **responsibility** $r_{ik} = p(z=k \,|\, x_i;\, \theta)$ quantifies the posterior probability that point $x_i$ belongs to cluster $k$.
+
+Parameters are estimated by the **Expectation-Maximization (EM) algorithm**. The E-step computes responsibilities $r_{ik}$ given current parameter estimates via Bayes' rule. The M-step then updates $\pi_k$, $\mu_k$, and $\Sigma_k$ to maximize the expected log-likelihood under those responsibilities. These two steps alternate until convergence.
+
+K-means is the hard-assignment limit of a GMM with isotropic covariances $\Sigma_k = \sigma^2 I$ as $\sigma \to 0$: in this limit, each point is assigned entirely to its nearest centroid (responsibility collapses to 0 or 1), and the M-step reduces to recomputing the centroid mean.
+
+---
+
+## 3.10 Hierarchical Clustering
 
 Hierarchical clustering produces a tree of nested cluster merges (agglomerative, bottom-up) or splits (divisive, top-down), represented as a **dendrogram**. The desired number of clusters $K$ need not be specified in advance; one cuts the dendrogram at a chosen height to obtain any $K$ from 1 to $N$.
 
@@ -374,7 +429,7 @@ The choice of **linkage criterion** defines $d(A,B)$ and strongly affects the sh
 
 ---
 
-## 3.8 Density-Based Clustering: DBSCAN
+## 3.11 Density-Based Clustering: DBSCAN
 
 DBSCAN (Density-Based Spatial Clustering of Applications with Noise) defines clusters as **dense connected regions**, separated by sparse regions. Points in sparse regions are treated as noise rather than forced into a cluster.
 
@@ -397,9 +452,9 @@ DBSCAN (Density-Based Spatial Clustering of Applications with Noise) defines clu
 
 ---
 
-## 3.9 HDBSCAN (Hierarchical DBSCAN)
+## 3.12 HDBSCAN (Hierarchical DBSCAN)
 
-HDBSCAN addresses DBSCAN's main limitation — a single global $\varepsilon$ fails when clusters have varying densities — by running DBSCAN over all scales $\varepsilon$ simultaneously, building a cluster hierarchy, and extracting the most persistent (stable) clusters.
+HDBSCAN addresses DBSCAN's main limitation: a single global $\varepsilon$ fails when clusters have varying densities. It does so by running DBSCAN over all scales $\varepsilon$ simultaneously, building a cluster hierarchy, and extracting the most persistent (stable) clusters.
 
 **Core distance.** The core distance of point $x_i$ with respect to $\mathrm{MinPts}$ is the distance to its $\mathrm{MinPts}$-th nearest neighbor:
 
@@ -415,7 +470,7 @@ This inflates distances for sparse points (whose large core distances dominate),
 
 **Algorithm:**
 1. Build the minimum spanning tree (MST) of the complete graph on $\{x_i\}$ with edge weights $d_\mathrm{mreach}(i,j)$.
-2. Construct the cluster hierarchy (dendrogram) by removing MST edges in decreasing weight order — each removal splits a component into two.
+2. Construct the cluster hierarchy (dendrogram) by removing MST edges in decreasing weight order; each removal splits a component into two.
 3. **Condense the tree**: track cluster membership as the density scale increases. When a split produces a child with fewer than $\mathrm{MinPts}$ points, those points fall out as noise rather than forming a new cluster.
 4. **Extract stable clusters**: define $\lambda = 1/\varepsilon$ (higher $\lambda$ = denser neighborhood). For each cluster $C$ in the condensed tree, the stability is:
 
@@ -429,7 +484,31 @@ where $\lambda_C^\mathrm{in}$ is the $\lambda$-value at which cluster $C$ was bo
 
 ---
 
-## 3.10 Clustering Method Summary
+## 3.13 Cluster Sampling
+
+Clustering is not only a descriptive tool; it also provides a principled way to draw representative subsets from large datasets. This is especially valuable in computational chemistry, where exhaustive evaluation of a database with $10^{180}$ candidate molecules is computationally impossible.
+
+**Subsampling from clusters.** After partitioning data into $K$ clusters, draw a fixed number of samples from each cluster. This ensures broad coverage of the data distribution regardless of whether the original dataset is strongly imbalanced: dense, well-sampled regions of chemical space do not crowd out sparse regions in the training set.
+
+**Centroid proximity sampling.** From each cluster $C_k$, select structures in order of increasing distance from the centroid $\mu_k$. Three cases arise. If only one structure per cluster is needed, select the structure closest to $\mu_k$. If $k > 1$ structures are needed, sort all points in $C_k$ by distance from $\mu_k$ and take the $k$ nearest. If $k$ exceeds the cluster size, all points in the cluster are included.
+
+When applied to building training sets for machine learning interatomic potentials, this approach is called **stratified sampling** (Stark et al., J. Phys. Chem. C 127, 24168). It yields training sets that efficiently tile configurational space without near-duplicate structures that would otherwise dominate a random draw.
+
+---
+
+## 3.14 Notes on Clustering
+
+Three practical considerations apply across all clustering methods.
+
+**Sensitivity.** Small choices can have large effects on results. Whether features are normalized or raw, which distance metric is used, how centroids are initialized, and which linkage criterion is chosen in hierarchical clustering can all substantially change which clusters emerge. These choices should be reported explicitly, treated as modeling decisions, and justified where possible.
+
+**Exploration.** It is rarely sufficient to run a single clustering. Varying the number of clusters $K$, the method, the distance metric, and the feature normalization reveals which structures appear consistently across different settings. Running the same method on different subsets of the data also tests whether patterns are reproducible or artifacts of a particular split.
+
+**Reporting.** Clustering results are not ground truth. They reflect the geometry imposed by the chosen method and metric, and can shift substantially with different choices. Treat clusters as hypotheses: starting points for further investigation and validation on independent data, not as established categories.
+
+---
+
+## 3.15 Clustering Method Summary
 
 | Method | Cluster shape | Requires $K$? | Handles outliers | Best suited for |
 |--------|-------------|--------------|-----------------|-----------------|
@@ -437,7 +516,7 @@ where $\lambda_C^\mathrm{in}$ is the $\lambda$-value at which cluster $C$ was bo
 | GMM | Elliptical | Yes | No | Soft assignments, probabilistic model |
 | Hierarchical | Any | No (post-hoc cut) | No | Small data, hierarchical structure |
 | DBSCAN | Any | No | Yes | Arbitrary shapes, uniform density, outliers |
-| HDBSCAN | Any | No | Yes | Arbitrary shapes, varying density — most general |
+| HDBSCAN | Any | No | Yes | Arbitrary shapes, varying density (most general) |
 
 ---
 
