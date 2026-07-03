@@ -2,6 +2,14 @@
 
 Unsupervised learning extracts structure from unlabeled data $\{x^{(p)}\}_{p=1}^P$, where $x^{(p)} \in \mathbb{R}^D$. The two central tasks are **dimensionality reduction**, which finds a compact low-dimensional representation $z^{(p)} \in \mathbb{R}^d$ with $d \ll D$, and **clustering**, which partitions the data into groups of similar points.
 
+<div style="margin:2rem 0 2.5rem;">
+  <div style="background:linear-gradient(135deg,#BA5A5A 0%,#a04848 100%);border-radius:10px;padding:1.6rem 2rem;box-shadow:0 4px 16px rgba(186,90,90,0.3);">
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.75);margin-bottom:0.35rem;">Part I</div>
+    <div style="font-size:1.9rem;font-weight:700;color:#fff;line-height:1.15;margin-bottom:0.4rem;">Dimensionality Reduction</div>
+    <div style="font-size:0.9rem;color:rgba(255,255,255,0.88);font-style:italic;">Finding compact low-dimensional representations of high-dimensional data</div>
+  </div>
+</div>
+
 ## 3.1 Distance Measures and the Curse of Dimensionality
 
 Before choosing a dimensionality reduction method, it is worth understanding how to measure distances in feature space and why high-dimensional spaces are geometrically strange.
@@ -190,8 +198,12 @@ Here $M$ = number of data points, $N$ = feature dimension (PCA context); for t-S
 ---
 
 
-<div style="margin:3rem 0 2rem;border-top:3px solid #86BCBD;padding-top:0.5rem;">
-<span style="font-size:1.05rem;font-weight:700;color:#86BCBD;letter-spacing:0.04em;">PART II — CLUSTERING</span>
+<div style="margin:3.5rem 0 2.5rem;">
+  <div style="background:linear-gradient(135deg,#86BCBD 0%,#6ba5a6 100%);border-radius:10px;padding:1.6rem 2rem;box-shadow:0 4px 16px rgba(134,188,189,0.3);">
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.75);margin-bottom:0.35rem;">Part II</div>
+    <div style="font-size:1.9rem;font-weight:700;color:#fff;line-height:1.15;margin-bottom:0.4rem;">Clustering</div>
+    <div style="font-size:0.9rem;color:rgba(255,255,255,0.88);font-style:italic;">Partitioning unlabeled data into groups of similar points</div>
+  </div>
 </div>
 
 Clustering algorithms partition a dataset $\{x^{(p)}\}_{p=1}^P$ into groups of similar points without using any labels. Two broad families of methods exist, reflecting different geometric assumptions about cluster structure.
