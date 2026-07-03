@@ -18,7 +18,11 @@ A valid descriptor $\mathbf{x} = \phi(\{Z_i, \mathbf{R}_i\})$ must satisfy:
 
 ### Invariance, equivariance, and where to put the symmetry
 
-For scalar properties (energy, band gap), the model output must be **invariant**: $\hat{f}(\mathcal{R}\,\mathbf{X}) = \hat{f}(\mathbf{X})$. For vectorial properties (forces, dipole moments) or tensorial properties (polarizability, stress), the output must be **equivariant** — it must transform predictably with the symmetry operation:
+For scalar properties (energy, band gap), the model output must be **invariant** — unchanged under any symmetry operation $\mathcal{R}$:
+
+$$\hat{f}(\mathcal{R}\,\mathbf{X}) = \hat{f}(\mathbf{X})$$
+
+For vectorial properties (forces, dipole moments) or tensorial properties (polarizability, stress), the output must be **equivariant** — it must transform predictably with the symmetry operation:
 
 $$\hat{f}(\mathcal{R}\,\mathbf{X}) = \mathcal{R}\,[\hat{f}(\mathbf{X})]$$
 
@@ -87,42 +91,7 @@ The full MBTR vector is the concatenation of $D(x, g_1)$, $D(x, g_2)$, $D(x, g_3
 ---
 
 
-## 2.5 Smooth Overlap of Atomic Positions (SOAP)
-
-SOAP constructs a rotationally invariant descriptor by representing the local atomic environment as a smooth density and computing its power spectrum under the rotation group. It is well suited for use with kernel methods.
-
-**Step 1 — Density smearing with Gaussians.** The local environment of atom $i$ is represented as a sum of Gaussians centered on each neighbor $j$ within the cutoff:
-
-$$\rho_i(\mathbf{r}) = \sum_{j \in \mathcal{N}(i)} \exp\!\left(-\alpha\,|\mathbf{r} - \mathbf{r}_{ij}|^2\right) f_c(r_{ij})$$
-
-where $\mathbf{r}_{ij} = \mathbf{R}_j - \mathbf{R}_i$ is the displacement vector from atom $i$ to neighbor $j$, $\alpha > 0$ controls the Gaussian width, and $f_c$ is a smooth cutoff function. Here $\mathcal{N}(i)$ denotes the set of atoms within cutoff $R_c$.
-
-**Step 2 — Representation via radial functions and spherical harmonics.** The density $\rho_i(\mathbf{r})$ is expanded in a product basis of radial functions $g_n(r)$ and real spherical harmonics $Y_l^m(\hat{\mathbf{r}})$:
-
-$$\rho_i(\mathbf{r}) = \sum_{n,l,m} c_{nlm}^i\, g_n(r)\, Y_l^m(\hat{\mathbf{r}})$$
-
-where $n = 1,\ldots,N_\text{max}$ indexes the radial basis, $l = 0,\ldots,L_\text{max}$ is the angular momentum quantum number, $m = -l,\ldots,l$ is the magnetic quantum number, and $\hat{\mathbf{r}} = \mathbf{r}/|\mathbf{r}|$ is the unit direction vector. The coefficients $c_{nlm}^i$ are obtained by projection onto the basis.
-
-**Step 3 — Distance metric by averaging over rotations.** The power spectrum is obtained by contracting the $m$-components, yielding a descriptor that is invariant to rotations of the local environment:
-
-$$p_{nn'l} = \sum_m \left(c_{nlm}\right)^* c_{n'lm}$$
-
-(atom index $i$ suppressed for clarity).
-
-**SOAP kernel**: the similarity between two environments is
-
-$$k(\rho, \rho') = \left|\sum_{n,n',l} p_{nn'l}\, p'_{nn'l}\right|^\zeta$$
-
-where $\zeta \ge 1$ controls the nonlinearity. Combined with Gaussian Process Regression (GPR), SOAP forms the basis of the GAP (Gaussian Approximation Potential) framework. As shown in the ACE connection below, SOAP corresponds to ACE at body order 3 (correlation order 2).
-
-**Completeness failure.** Despite satisfying all the symmetry requirements, SOAP is *not* a complete descriptor. The power spectrum contraction $\sum_m c_{nlm}^* c_{n'lm}$ discards phase information, meaning two physically distinct environments can produce identical SOAP descriptors. This was proven rigorously by Pozdnyakov et al. (*Phys. Rev. Lett.* **125**, 166001, 2020), who constructed explicit pairs of inequivalent environments that are indistinguishable by SOAP. Any model built on SOAP cannot in principle distinguish such environment pairs. In practice these failures are rare for real materials, but they represent a fundamental theoretical limitation that ACE resolves by providing a provably complete basis at arbitrary body order.
-
-Despite this limitation, SOAP is a powerful structural similarity metric. Mapping 15\,869 distinct ice polymorphs using the SOAP kernel distance reveals the structural diversity and clustering of ice phases — a demonstration of its practical utility for materials-space exploration.
-
----
-
-
-## 2.6 Atom-Centered Symmetry Functions (ACSFs)
+## 2.5 Atom-Centered Symmetry Functions (ACSFs)
 
 ACSFs encode the local chemical environment of atom $i$ by summing contributions from all neighbors within a cutoff radius $R_c$. All functions are constructed to be invariant under translation, rotation, and permutation of like atoms.
 
@@ -179,173 +148,207 @@ The full ACSF fingerprint of atom $i$ is the concatenation of many symmetry func
 ### Interactive Explorer
 
 <div id="acsf-widget" style="border:1px solid #8884;border-radius:8px;padding:1.2rem;margin:1.4rem 0;background:var(--md-code-bg-color,#f5f5f5);">
-<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.9rem;flex-wrap:wrap;">
+
+<!-- Title + function toggle buttons -->
+<div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;flex-wrap:wrap;">
   <span style="font-weight:600;font-size:0.95rem;color:var(--md-default-fg-color);">ACSF Explorer</span>
-  <div style="display:flex;gap:6px;">
-    <button id="acsf-tab-s" onclick="acsfMode('single')" style="padding:3px 14px;border-radius:20px;border:1.5px solid #86BCBD;background:#86BCBD;color:#fff;font-size:0.8rem;cursor:pointer;font-weight:600;">Single</button>
-    <button id="acsf-tab-b" onclick="acsfMode('basis')" style="padding:3px 14px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">Basis view</button>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;">
+    <button id="acsf-btn-g1" onclick="acsfToggleFn('g1')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">G¹</button>
+    <button id="acsf-btn-g2" onclick="acsfToggleFn('g2')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #86BCBD;background:#86BCBD;color:#fff;font-size:0.8rem;cursor:pointer;font-weight:600;">G²</button>
+    <button id="acsf-btn-g3" onclick="acsfToggleFn('g3')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">G³</button>
+    <button id="acsf-btn-g4" onclick="acsfToggleFn('g4')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">G⁴</button>
+    <button id="acsf-btn-g5" onclick="acsfToggleFn('g5')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">G⁵</button>
   </div>
 </div>
+
+<!-- Function explorer: parameters + single plot -->
 <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
   <div id="acsf-ctrl" style="flex:0 0 auto;min-width:190px;max-width:215px;"></div>
-  <div id="acsf-plot" style="flex:1 1 280px;min-width:250px;height:300px;"></div>
+  <div id="acsf-plot" style="flex:1 1 280px;min-width:250px;height:290px;"></div>
 </div>
+
+<!-- Descriptor basis section -->
+<hr style="margin:1rem 0;border:none;border-top:1px solid #8882;">
+<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem;flex-wrap:wrap;">
+  <span style="font-size:0.85rem;font-weight:600;color:var(--md-default-fg-color);">Descriptor basis</span>
+  <span style="font-size:0.79rem;color:#888;">— N copies of each type tile parameter space; the full descriptor concatenates all these values</span>
+  <div style="display:flex;align-items:center;gap:0.5rem;margin-left:auto;">
+    <label style="font-size:0.82rem;white-space:nowrap;color:var(--md-default-fg-color);">N = <span id="av-nbasis">5</span></label>
+    <input type="range" min="2" max="8" step="1" value="5" style="width:90px;accent-color:#86BCBD;" oninput="acsfUpdate('nbasis',this.value)">
+  </div>
+</div>
+<div id="acsf-plot-b" style="height:260px;"></div>
+
 </div>
 
 <script>
-var _A = {
-  mode:'single', fn:'g2',
-  Rc:6, eta:0.5, mus:2.0, kappa:1.0, zeta:4, lam:1, nbasis:5
-};
-var _PAL = ['#BA5A5A','#A4CE8B','#86BCBD','#F7E49B','#BA5A5A','#A4CE8B','#86BCBD','#F7E49B'];
-var _XMAX = 8;
+var _A={Rc:6,eta:0.5,mus:2.0,kappa:1.0,zeta:4,lam:1,theta:60,nbasis:5,
+        fns:{g1:false,g2:true,g3:false,g4:false,g5:false}};
+var _XMAX=8;
+var _FNCOL={g1:'#A4CE8B',g2:'#86BCBD',g3:'#F7E49B',g4:'#BA5A5A',g5:'#C07AB5'};
+var _FNLAB={g1:'G¹',g2:'G²',g3:'G³',g4:'G⁴',g5:'G⁵'};
+var _BPAL=['#0077BB','#33BBEE','#009988','#EE7733','#CC3311','#EE3377','#AA3377','#BBBB22'];
 
-function _fc(r){ return r>=_A.Rc?0:0.5*(Math.cos(Math.PI*r/_A.Rc)+1); }
-function _ls(a,b,n){ return Array.from({length:n},function(_,i){return a+(b-a)*i/(n-1);}); }
-function _dark(){ return document.body.getAttribute('data-md-color-scheme')==='slate'; }
-function _c(){
-  var d=_dark();
-  return {fg:d?'#ddd':'#333', grid:d?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)'};
-}
+function _fc(r){return r>=_A.Rc?0:0.5*(Math.cos(Math.PI*r/_A.Rc)+1);}
+function _ls(a,b,n){return Array.from({length:n},function(_,i){return a+(b-a)*i/(n-1);});}
+function _dark(){return document.body.getAttribute('data-md-color-scheme')==='slate';}
+function _clr(){var d=_dark();return{fg:d?'#ddd':'#333',grid:d?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)'};}
+
 function _layout(xl,yl){
-  var c=_c();
-  return {
+  var c=_clr();
+  return{
     xaxis:{title:{text:xl,font:{size:12}},color:c.fg,gridcolor:c.grid,zeroline:false},
     yaxis:{title:{text:yl,font:{size:12}},color:c.fg,gridcolor:c.grid,zeroline:true,zerolinecolor:c.grid},
     paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
     font:{color:c.fg,size:12},showlegend:true,
-    legend:{font:{color:c.fg,size:11},bgcolor:'rgba(0,0,0,0)',x:0.98,xanchor:'right'},
-    margin:{l:55,r:15,t:15,b:50}
+    legend:{font:{color:c.fg,size:10},bgcolor:'rgba(0,0,0,0)',x:1,xanchor:'right',y:1,yanchor:'top'},
+    margin:{l:55,r:15,t:10,b:50}
   };
 }
 
-function _plotSingle(){
-  var rs=_ls(0,_XMAX,400), traces=[], L;
-  if(['g1','g2','g3'].includes(_A.fn)){
-    traces.push({x:rs,y:rs.map(_fc),mode:'lines',name:'f<sub>c</sub>',
-      line:{color:'#A4CE8B',dash:'dot',width:1.5}});
-    var yg=rs.map(function(r){
-      if(_A.fn==='g1') return _fc(r);
-      if(_A.fn==='g2') return Math.exp(-_A.eta*Math.pow(r-_A.mus,2))*_fc(r);
-      if(_A.fn==='g3') return Math.cos(_A.kappa*r)*_fc(r);
-    });
-    traces.push({x:rs,y:yg,mode:'lines',name:_A.fn==='g1'?'G¹':_A.fn==='g2'?'G²':'G³',
-      line:{color:'#86BCBD',width:2.5}});
-    L=_layout('r (Å)','value'); L.xaxis.range=[0,_XMAX];
-  } else {
-    var th=_ls(0,Math.PI,400), deg=th.map(function(t){return t*180/Math.PI;});
-    var ya=th.map(function(t){return Math.pow(Math.max(0,1+_A.lam*Math.cos(t)),_A.zeta);});
-    traces.push({x:deg,y:ya,mode:'lines',name:_A.fn==='g4'?'G⁴':'G⁵',
-      line:{color:'#86BCBD',width:2.5}});
-    L=_layout('θ (°)','(1 + λ cos θ)^ζ');
-    L.xaxis.range=[0,180]; L.xaxis.tickvals=[0,30,60,90,120,150,180];
-  }
-  Plotly.react('acsf-plot',traces,L,{responsive:true,displayModeBar:false});
+function _evalFn(fn,r,th_deg){
+  var fc=_fc(r);
+  var th=(th_deg!==undefined?th_deg:_A.theta)*Math.PI/180;
+  var ang=Math.pow(Math.max(0,1+_A.lam*Math.cos(th)),_A.zeta);
+  if(fn==='g1') return fc;
+  if(fn==='g2') return Math.exp(-_A.eta*Math.pow(r-_A.mus,2))*fc;
+  if(fn==='g3') return Math.cos(_A.kappa*r)*fc;
+  var rjk=2*r*Math.abs(Math.sin(th/2));
+  var prefac=Math.pow(2,1-_A.zeta)*ang;
+  if(fn==='g4') return prefac*Math.exp(-_A.eta*(2*r*r+rjk*rjk))*fc*fc*_fc(rjk);
+  if(fn==='g5') return prefac*Math.exp(-_A.eta*2*r*r)*fc*fc;
+  return 0;
 }
 
-function _plotBasis(){
-  var rs=_ls(0,_XMAX,400), traces=[], n=Math.round(_A.nbasis);
-  var centers=_ls(0.5,Math.min(_A.Rc-0.5,_XMAX-0.5),n);
-  centers.forEach(function(mu,i){
-    traces.push({x:rs,
-      y:rs.map(function(r){return Math.exp(-_A.eta*Math.pow(r-mu,2))*_fc(r);}),
-      mode:'lines',name:'μ<sub>s</sub>='+mu.toFixed(1),
-      line:{color:_PAL[i%_PAL.length],width:2}});
-  });
-  var L=_layout('r (Å)','G² value'); L.xaxis.range=[0,_XMAX];
-  Plotly.react('acsf-plot',traces,L,{responsive:true,displayModeBar:false});
-}
+function _selFns(){return['g1','g2','g3','g4','g5'].filter(function(f){return _A.fns[f];});}
 
 function acsfPlot(){
   if(!document.getElementById('acsf-plot')||!window.Plotly) return;
-  if(_A.mode==='single') _plotSingle(); else _plotBasis();
+  var rs=_ls(0,_XMAX,400),sel=_selFns(),traces=[];
+  traces.push({x:rs,y:rs.map(_fc),mode:'lines',name:'f<sub>c</sub>',
+    line:{color:'#888',dash:'dot',width:1.2},opacity:0.5});
+  sel.forEach(function(fn){
+    traces.push({x:rs,y:rs.map(function(r){return _evalFn(fn,r);}),
+      mode:'lines',name:_FNLAB[fn],line:{color:_FNCOL[fn],width:2.5}});
+  });
+  var hasAng=sel.indexOf('g4')!==-1||sel.indexOf('g5')!==-1;
+  var yl=hasAng?'value   (θ = '+_A.theta+'°)':'value';
+  var L=_layout('r (Å)',yl);
+  L.xaxis.range=[0,Math.min(_A.Rc+0.5,_XMAX)];
+  Plotly.react('acsf-plot',traces,L,{responsive:true,displayModeBar:false});
+}
+
+function acsfPlotBasis(){
+  if(!document.getElementById('acsf-plot-b')||!window.Plotly) return;
+  var rs=_ls(0,_XMAX,400),sel=_selFns(),n=_A.nbasis,traces=[];
+  sel.forEach(function(fn){
+    if(fn==='g1'){
+      traces.push({x:rs,y:rs.map(_fc),mode:'lines',name:'G¹',
+        line:{color:_FNCOL.g1,width:2}});
+    } else if(fn==='g2'){
+      _ls(0.5,Math.min(_A.Rc-0.5,_XMAX-0.5),n).forEach(function(mu,i){
+        traces.push({x:rs,y:rs.map(function(r){return Math.exp(-_A.eta*Math.pow(r-mu,2))*_fc(r);}),
+          mode:'lines',name:'G²  μ<sub>s</sub>='+mu.toFixed(1)+' Å',
+          line:{color:_BPAL[i%_BPAL.length],width:2}});
+      });
+    } else if(fn==='g3'){
+      _ls(0.5,3.0,Math.min(n,6)).forEach(function(kap,i){
+        traces.push({x:rs,y:rs.map(function(r){return Math.cos(kap*r)*_fc(r);}),
+          mode:'lines',name:'G³  κ='+kap.toFixed(1)+' Å⁻¹',
+          line:{color:_BPAL[i%_BPAL.length],width:2}});
+      });
+    } else if(fn==='g4'||fn==='g5'){
+      _ls(0,180,n).forEach(function(th,i){
+        traces.push({x:rs,y:rs.map(function(r){return _evalFn(fn,r,th);}),
+          mode:'lines',name:_FNLAB[fn]+'  θ='+th.toFixed(0)+'°',
+          line:{color:_BPAL[i%_BPAL.length],width:2,dash:fn==='g5'?'dash':'solid'}});
+      });
+    }
+  });
+  if(!traces.length){
+    Plotly.react('acsf-plot-b',[],_layout('r (Å)','descriptor components'),{responsive:true,displayModeBar:false});
+    return;
+  }
+  var L=_layout('r (Å)','descriptor components');
+  L.xaxis.range=[0,Math.min(_A.Rc+0.5,_XMAX)];
+  L.legend.font.size=9;
+  Plotly.react('acsf-plot-b',traces,L,{responsive:true,displayModeBar:false});
 }
 
 function acsfUpdate(k,v){
   _A[k]=k==='nbasis'?Math.round(+v):(+v);
-  var fmts={Rc:1,eta:2,mus:1,kappa:1,zeta:1,nbasis:0};
+  var fmts={Rc:1,eta:2,mus:1,kappa:1,zeta:1,theta:0,nbasis:0};
   var el=document.getElementById('av-'+k);
   if(el) el.textContent=(+_A[k]).toFixed(fmts[k]!==undefined?fmts[k]:1);
-  acsfPlot();
+  acsfPlot(); acsfPlotBasis();
+}
+
+function acsfToggleFn(fn){
+  _A.fns[fn]=!_A.fns[fn];
+  var btn=document.getElementById('acsf-btn-'+fn);
+  if(btn){
+    if(_A.fns[fn]){
+      btn.style.background=_FNCOL[fn];btn.style.color='#fff';
+      btn.style.border='1.5px solid '+_FNCOL[fn];btn.style.fontWeight='600';
+    } else {
+      btn.style.background='transparent';btn.style.color='var(--md-default-fg-color)';
+      btn.style.border='1.5px solid #8886';btn.style.fontWeight='normal';
+    }
+  }
+  _renderCtrl(); acsfPlot(); acsfPlotBasis();
 }
 
 function _sl(k,label,min,max,step,val,dp){
-  return '<div style="margin-bottom:0.55rem;">'
+  return '<div style="margin-bottom:0.5rem;">'
     +'<label style="font-size:0.82rem;color:var(--md-default-fg-color);">'+label
     +' = <span id="av-'+k+'">'+(+val).toFixed(dp)+'</span></label><br>'
     +'<input type="range" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val
-    +'" style="width:100%;accent-color:#86BCBD;"'
-    +' oninput="acsfUpdate(\''+k+'\',this.value)">'
-    +'</div>';
-}
-
-function _lamBtn(){
-  return '<div style="margin-bottom:0.55rem;">'
-    +'<label style="font-size:0.82rem;color:var(--md-default-fg-color);">λ = <span id="av-lam">'+_A.lam+'</span></label><br>'
-    +'<button onclick="_A.lam*=-1;document.getElementById(\'av-lam\').textContent=_A.lam;acsfPlot();"'
-    +' style="padding:2px 10px;border-radius:4px;border:1px solid #8886;background:var(--md-default-bg-color);'
-    +'color:var(--md-default-fg-color);cursor:pointer;font-size:0.8rem;">Toggle ±1</button>'
+    +'" style="width:100%;accent-color:#86BCBD;" oninput="acsfUpdate(\''+k+'\',this.value)">'
     +'</div>';
 }
 
 function _renderCtrl(){
-  var h='', fn=_A.fn;
-  if(_A.mode==='single'){
-    h+='<div style="margin-bottom:0.8rem;">'
-      +'<label style="font-size:0.82rem;font-weight:600;">Function</label><br>'
-      +'<select onchange="acsfSetFn(this.value)" style="margin:0.25rem 0;width:100%;padding:5px;'
-      +'border-radius:4px;border:1px solid #8886;background:var(--md-default-bg-color);'
-      +'color:var(--md-default-fg-color);font-size:0.82rem;">'
-      +['g1','g2','g3','g4','g5'].map(function(f){
-        var n={g1:'G¹',g2:'G²',g3:'G³',g4:'G⁴',g5:'G⁵'};
-        return '<option value="'+f+'"'+(f===fn?' selected':'')+'>'+n[f]+'</option>';
-      }).join('')+'</select></div>';
-    h+=_sl('Rc','R<sub>c</sub> (Å)',2,10,0.5,_A.Rc,1);
-    if(fn==='g2'){h+=_sl('eta','η',0.05,3,0.05,_A.eta,2);h+=_sl('mus','μ<sub>s</sub> (Å)',0,7,0.1,_A.mus,1);}
-    if(fn==='g3') h+=_sl('kappa','κ (Å⁻¹)',0.1,4,0.1,_A.kappa,1);
-    if(fn==='g4'||fn==='g5'){h+=_sl('eta','η',0.01,1,0.01,_A.eta,2);h+=_sl('zeta','ζ',0.5,16,0.5,_A.zeta,1);h+=_lamBtn();}
-  } else {
-    h+='<p style="font-size:0.8rem;color:var(--md-default-fg-color);margin:0 0 0.6rem 0;">G² functions with evenly spaced μ<sub>s</sub>, showing how they cover radial space to form the descriptor.</p>';
-    h+=_sl('Rc','R<sub>c</sub> (Å)',2,10,0.5,_A.Rc,1);
-    h+=_sl('eta','η',0.05,3,0.05,_A.eta,2);
-    h+=_sl('nbasis','N functions',2,8,1,_A.nbasis,0);
+  var sel=_selFns();
+  var hasG2=sel.indexOf('g2')!==-1;
+  var hasG3=sel.indexOf('g3')!==-1;
+  var hasG45=sel.indexOf('g4')!==-1||sel.indexOf('g5')!==-1;
+  var h='';
+  h+=_sl('Rc','R<sub>c</sub> (Å)',2,10,0.5,_A.Rc,1);
+  if(hasG2||hasG45) h+=_sl('eta','η',0.01,2,0.01,_A.eta,2);
+  if(hasG2) h+=_sl('mus','μ<sub>s</sub> (Å)',0,8,0.1,_A.mus,1);
+  if(hasG3) h+=_sl('kappa','κ (Å⁻¹)',0.1,4,0.1,_A.kappa,1);
+  if(hasG45){
+    h+=_sl('theta','θ (°)',0,180,5,_A.theta,0);
+    h+=_sl('zeta','ζ',0.5,16,0.5,_A.zeta,1);
+    h+='<div style="margin-bottom:0.5rem;">'
+      +'<label style="font-size:0.82rem;color:var(--md-default-fg-color);">λ = <span id="av-lam">'+_A.lam+'</span></label><br>'
+      +'<button onclick="_A.lam*=-1;document.getElementById(\'av-lam\').textContent=_A.lam;acsfPlot();acsfPlotBasis();"'
+      +' style="padding:2px 10px;border-radius:4px;border:1px solid #8886;background:var(--md-default-bg-color);'
+      +'color:var(--md-default-fg-color);cursor:pointer;font-size:0.8rem;">Toggle ±1</button>'
+      +'</div>';
   }
+  if(!sel.length) h='<p style="font-size:0.82rem;color:#999;font-style:italic;">Select a function above.</p>';
   document.getElementById('acsf-ctrl').innerHTML=h;
-}
-
-function acsfSetFn(fn){ _A.fn=fn; acsfPlot(); }
-
-function acsfMode(m){
-  _A.mode=m;
-  var s=document.getElementById('acsf-tab-s'), b=document.getElementById('acsf-tab-b');
-  if(m==='single'){
-    s.style.background='#86BCBD';s.style.color='#fff';s.style.border='1.5px solid #86BCBD';s.style.fontWeight='600';
-    b.style.background='transparent';b.style.color='var(--md-default-fg-color)';b.style.border='1.5px solid #8886';b.style.fontWeight='normal';
-  } else {
-    b.style.background='#86BCBD';b.style.color='#fff';b.style.border='1.5px solid #86BCBD';b.style.fontWeight='600';
-    s.style.background='transparent';s.style.color='var(--md-default-fg-color)';s.style.border='1.5px solid #8886';s.style.fontWeight='normal';
-  }
-  _renderCtrl(); acsfPlot();
 }
 
 function _init(){
   if(!document.getElementById('acsf-plot')) return;
-  function _run(){ _renderCtrl(); acsfPlot(); }
+  function _run(){ _renderCtrl(); acsfPlot(); acsfPlotBasis(); }
   if(window.Plotly){ _run(); return; }
   var s=document.createElement('script');
   s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
-  s.onload=_run;
-  document.head.appendChild(s);
+  s.onload=_run; document.head.appendChild(s);
 }
 
 if(typeof document$!=='undefined'){ document$.subscribe(_init); }
 else if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',_init); }
 else { _init(); }
 </script>
+
 ---
 
 
-## 2.7 Weighted Atom-Centered Symmetry Functions (wACSFs)
+## 2.6 Weighted Atom-Centered Symmetry Functions (wACSFs)
 
 Standard ACSFs handle multi-element systems by constructing *separate* symmetry functions for each element combination: one set of radial functions per element pair $(Z_i, Z_j)$ and one set of angular functions per triple $(Z_i, Z_j, Z_k)$. For a system with $S$ distinct elements this requires $\mathcal{O}(S)$ radial function sets and $\mathcal{O}(S^2)$ angular sets — parameter proliferation that becomes unwieldy for chemically diverse systems.
 
@@ -362,6 +365,41 @@ The nuclear charge factors $Z_j$ (2-body) and $Z_j Z_k$ (3-body) act as a contin
 The trade-off is that the $Z$-weighting is fixed and may not optimally distinguish all chemical environments — standard ACSFs with element-specific parameters remain more expressive when the element set is small and fixed. wACSFs generalize better across compositionally diverse systems and are a natural choice for MLIPs designed to span large regions of chemical space.
 
 ---
+
+## 2.7 Smooth Overlap of Atomic Positions (SOAP)
+
+SOAP constructs a rotationally invariant descriptor by representing the local atomic environment as a smooth density and computing its power spectrum under the rotation group. It is well suited for use with kernel methods.
+
+**Step 1 — Density smearing with Gaussians.** The local environment of atom $i$ is represented as a sum of Gaussians centered on each neighbor $j$ within the cutoff:
+
+$$\rho_i(\mathbf{r}) = \sum_{j \in \mathcal{N}(i)} \exp\!\left(-\alpha\,|\mathbf{r} - \mathbf{r}_{ij}|^2\right) f_c(r_{ij})$$
+
+where $\mathbf{r}_{ij} = \mathbf{R}_j - \mathbf{R}_i$ is the displacement vector from atom $i$ to neighbor $j$, $\alpha > 0$ controls the Gaussian width, and $f_c$ is a smooth cutoff function. Here $\mathcal{N}(i)$ denotes the set of atoms within cutoff $R_c$.
+
+**Step 2 — Representation via radial functions and spherical harmonics.** The density $\rho_i(\mathbf{r})$ is expanded in a product basis of radial functions $g_n(r)$ and real spherical harmonics $Y_l^m(\hat{\mathbf{r}})$:
+
+$$\rho_i(\mathbf{r}) = \sum_{n,l,m} c_{nlm}^i\, g_n(r)\, Y_l^m(\hat{\mathbf{r}})$$
+
+where $n = 1,\ldots,N_\text{max}$ indexes the radial basis, $l = 0,\ldots,L_\text{max}$ is the angular momentum quantum number, $m = -l,\ldots,l$ is the magnetic quantum number, and $\hat{\mathbf{r}} = \mathbf{r}/|\mathbf{r}|$ is the unit direction vector. The coefficients $c_{nlm}^i$ are obtained by projection onto the basis.
+
+**Step 3 — Distance metric by averaging over rotations.** The power spectrum is obtained by contracting the $m$-components, yielding a descriptor that is invariant to rotations of the local environment:
+
+$$p_{nn'l} = \sum_m \left(c_{nlm}\right)^* c_{n'lm}$$
+
+(atom index $i$ suppressed for clarity).
+
+**SOAP kernel**: the similarity between two environments is
+
+$$k(\rho, \rho') = \left|\sum_{n,n',l} p_{nn'l}\, p'_{nn'l}\right|^\zeta$$
+
+where $\zeta \ge 1$ controls the nonlinearity. Combined with Gaussian Process Regression (GPR), SOAP forms the basis of the GAP (Gaussian Approximation Potential) framework. As shown in the ACE connection below, SOAP corresponds to ACE at body order 3 (correlation order 2).
+
+**Completeness failure.** Despite satisfying all the symmetry requirements, SOAP is *not* a complete descriptor. The power spectrum contraction $\sum_m c_{nlm}^* c_{n'lm}$ discards phase information, meaning two physically distinct environments can produce identical SOAP descriptors. This was proven rigorously by Pozdnyakov et al. (*Phys. Rev. Lett.* **125**, 166001, 2020), who constructed explicit pairs of inequivalent environments that are indistinguishable by SOAP. Any model built on SOAP cannot in principle distinguish such environment pairs. In practice these failures are rare for real materials, but they represent a fundamental theoretical limitation that ACE resolves by providing a provably complete basis at arbitrary body order.
+
+Despite this limitation, SOAP is a powerful structural similarity metric. Mapping 15\,869 distinct ice polymorphs using the SOAP kernel distance reveals the structural diversity and clustering of ice phases — a demonstration of its practical utility for materials-space exploration.
+
+---
+
 
 ## 2.8 Atomic Cluster Expansion (ACE)
 
@@ -517,22 +555,22 @@ Here ✓ = satisfied, ✗ = fails, ~ = conditional, ≈ = equivariant (energy is
 ## References
 
 <a id="ref-bp07"></a>
-[BP07] Behler, J. & Parrinello, M. *Generalized Neural-Network Representation of High-Dimensional Potential-Energy Surfaces.* Phys. Rev. Lett. **98**, 146401 (2007). [DOI](https://doi.org/10.1103/PhysRevLett.98.146401)
+(Behler & Parrinello, 2007) Behler, J. & Parrinello, M. *Generalized Neural-Network Representation of High-Dimensional Potential-Energy Surfaces.* Phys. Rev. Lett. **98**, 146401 (2007). [DOI](https://doi.org/10.1103/PhysRevLett.98.146401)
 
 <a id="ref-bp11"></a>
-[BP11] Behler, J. *Atom-centered symmetry functions for constructing high-dimensional neural network potentials.* J. Chem. Phys. **134**, 074106 (2011). [DOI](https://doi.org/10.1063/1.3553717)
+(Behler, 2011) Behler, J. *Atom-centered symmetry functions for constructing high-dimensional neural network potentials.* J. Chem. Phys. **134**, 074106 (2011). [DOI](https://doi.org/10.1063/1.3553717)
 
 <a id="ref-rup12"></a>
-[Rup12] Rupp, M. et al. *Fast and Accurate Modeling of Molecular Atomization Energies with Machine Learning.* Phys. Rev. Lett. **108**, 058301 (2012). [DOI](https://doi.org/10.1103/PhysRevLett.108.058301)
+(Rupp et al., 2012) Rupp, M. et al. *Fast and Accurate Modeling of Molecular Atomization Energies with Machine Learning.* Phys. Rev. Lett. **108**, 058301 (2012). [DOI](https://doi.org/10.1103/PhysRevLett.108.058301)
 
 <a id="ref-bar13"></a>
-[Bar13] Bartók, A. P. et al. *On representing chemical environments.* Phys. Rev. B **87**, 184115 (2013). [DOI](https://doi.org/10.1103/PhysRevB.87.184115)
+(Bartók et al., 2013) Bartók, A. P. et al. *On representing chemical environments.* Phys. Rev. B **87**, 184115 (2013). [DOI](https://doi.org/10.1103/PhysRevB.87.184115)
 
 <a id="ref-wacsf18"></a>
-[Gas18] Gastegger, M. et al. *wACSF — Weighted atom-centered symmetry functions as descriptors in machine learning potentials.* J. Chem. Phys. **148**, 241709 (2018). [DOI](https://doi.org/10.1063/1.5019667)
+(Gastegger et al., 2018) Gastegger, M. et al. *wACSF — Weighted atom-centered symmetry functions as descriptors in machine learning potentials.* J. Chem. Phys. **148**, 241709 (2018). [DOI](https://doi.org/10.1063/1.5019667)
 
 <a id="ref-huo22"></a>
-[HR22] Huo, H. & Rupp, M. *Unified Representation of Molecules and Crystals for Machine Learning.* Mach. Learn.: Sci. Technol. **3**, 045017 (2022). [DOI](https://doi.org/10.1088/2632-2153/aca005)
+(Huo & Rupp, 2022) Huo, H. & Rupp, M. *Unified Representation of Molecules and Crystals for Machine Learning.* Mach. Learn.: Sci. Technol. **3**, 045017 (2022). [DOI](https://doi.org/10.1088/2632-2153/aca005)
 
 <a id="ref-drautz19"></a>
-[Dra19] Drautz, R. *Atomic cluster expansion for accurate and transferable interatomic potentials.* Phys. Rev. B **99**, 014104 (2019). [DOI](https://doi.org/10.1103/PhysRevB.99.014104)
+(Drautz, 2019) Drautz, R. *Atomic cluster expansion for accurate and transferable interatomic potentials.* Phys. Rev. B **99**, 014104 (2019). [DOI](https://doi.org/10.1103/PhysRevB.99.014104)
