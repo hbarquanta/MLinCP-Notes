@@ -326,17 +326,18 @@ Two converging trajectories explain why ML and computational physics now overlap
 <div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1988</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">Universal approximation theorem (Cybenko)</div></div></div></div>
 <div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1989</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">Q-learning (Watkins); MNIST dataset</div></div></div></div>
 <div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;">Hybrid functionals (B3LYP)</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1993</div><div></div></div>
-<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1997</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">Deep Blue defeats world chess champion; SVMs, LSTM</div></div></div></div>
-<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;border:2px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.18);"><div style="font-size:0.77rem;line-height:1.35;">Nobel Prize in Chemistry (Kohn, Pople)</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:700;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1998 ★</div><div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1997</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">Deep Blue defeats world chess champion; LSTM (Hochreiter &amp; Schmidhuber)</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;">Nobel Prize in Chemistry (Kohn, Pople)</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1998</div><div></div></div>
 <div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;">Meta-GGA, dispersion corrections, range-separated hybrids</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">2001+</div><div></div></div>
-<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2006</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">&#8220;Deep Learning&#8221; coined (Hinton); ImageNet launched</div></div></div></div>
-<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:700;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2012 ★</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:2px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.18);"><div style="font-size:0.77rem;line-height:1.35;">AlexNet — deep learning breakthrough on ImageNet</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2006</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">&#8220;Deep Learning&#8221; coined (Hinton)</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2009</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">ImageNet released; ILSVRC competition (2010)</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2012</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">AlexNet — deep learning breakthrough on ImageNet</div></div></div></div>
 <div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2016</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">AlphaGo defeats Lee Sedol</div></div></div></div>
-<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:700;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2017 ★</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:2px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.18);"><div style="font-size:0.77rem;line-height:1.35;">Transformers — &#8220;Attention Is All You Need&#8221;</div></div></div></div>
-<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;border:2px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.18);"><div style="font-size:0.77rem;line-height:1.35;">ML exchange-correlation functionals; neural XC</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:700;font-size:0.76rem;color:#888;white-space:nowrap;">2018 ★</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:2px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.18);"><div style="font-size:0.77rem;line-height:1.35;">AlphaFold 1; BERT; GPT-1</div></div></div></div>
-<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:700;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2021 ★</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:2px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.18);"><div style="font-size:0.77rem;line-height:1.35;">AlphaFold 2 — protein structure revolution</div></div></div></div>
-<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:700;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2022 ★</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:2px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.18);"><div style="font-size:0.77rem;line-height:1.35;">ChatGPT; DALL-E 2; Stable Diffusion</div></div></div></div>
-<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:700;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2024 ★</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:2px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.18);"><div style="font-size:0.77rem;line-height:1.35;">Nobel Prize in Physics (Hopfield, Hinton); EU AI Act; GPT-4o</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2017</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">Transformers — &#8220;Attention Is All You Need&#8221;</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;">ML exchange-correlation functionals; neural XC</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#888;white-space:nowrap;">2018</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">AlphaFold 1; BERT; GPT-1</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2021</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">AlphaFold 2 — protein structure revolution</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2022</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">ChatGPT; DALL-E 2; Stable Diffusion</div></div></div></div>
+<div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2024</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">Nobel Prize in Physics (Hopfield, Hinton); EU AI Act; GPT-4o</div></div></div></div>
 <div style="display:grid;grid-template-columns:1fr 5.2rem 1fr;align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2025</div><div style="padding-left:0.8rem;"><div style="display:inline-block;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;">Agentic AI systems; frontier model race</div></div></div></div>
 </div>
 ## 1.7 Evaluation Metrics
@@ -403,7 +404,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#86BCBD;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 1</span>
     <span style="font-weight:700;font-size:0.9rem;">Define the task</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Choose the target property (energy, force, band gap), set the acceptable error tolerance, and plan how training data will be generated.</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Identify the target property, acceptable error tolerance, and how reference data will be generated.</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -412,7 +413,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#86BCBD;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 2</span>
     <span style="font-weight:700;font-size:0.9rem;">Generate and clean the data</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Run QM calculations (DFT, CCSD) or source a public database (QM9, Materials Project, ANI). Verify unit consistency, convergence criteria, and remove outliers.</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Run reference calculations (DFT, CCSD) or use an existing database. Check units, convergence, and data provenance.</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -421,7 +422,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#86BCBD;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 3</span>
     <span style="font-weight:700;font-size:0.9rem;">Visualize and explore</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Plot distributions, correlation matrices, and pairwise scatter plots to gain insight and detect systematic errors before modelling.</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Inspect feature distributions and correlations to catch systematic errors before modelling.</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -430,7 +431,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#A4CE8B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 4</span>
     <span style="font-weight:700;font-size:0.9rem;">Prepare the data</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Partition into train / validation / test before any model fitting. For atomistic data, split by structure to prevent leakage. Apply scaling and normalization fitted on the training set only.</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Split by structure into train / validation / test. Fit preprocessing (scaling, normalization) on the training set only.</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -439,7 +440,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#A4CE8B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 5</span>
     <span style="font-weight:700;font-size:0.9rem;">Featurize the inputs</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Convert raw atomic structures into fixed-size descriptors (Chapter 2) or a graph representation (Chapter 6).</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Encode atomic structures as symmetry-invariant descriptors (Chapter 2) or graphs (Chapter 6).</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -448,7 +449,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#F7E49B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 6</span>
     <span style="font-weight:700;font-size:0.9rem;">Select, train, and evaluate</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Choose a model family suited to the data regime and required output (energy, force, dipole). Fit parameters on the training set using the chosen loss function; check generalization on the validation set.</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Choose a model class suited to the data regime and output type. Fit on the training set; monitor generalization on the validation set.</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -457,7 +458,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#F7E49B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 7</span>
     <span style="font-weight:700;font-size:0.9rem;">Optimise and fine-tune</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Tune hyperparameters on the validation set via grid search, random search, or Bayesian optimization.</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Tune hyperparameters (architecture, learning rate, regularization) on the validation set.</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -466,7 +467,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#F7E49B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 8</span>
     <span style="font-weight:700;font-size:0.9rem;">Assess accuracy and uncertainty</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Report MAE, RMSE, and R² on the test set — once, at the very end. Quantify aleatoric and epistemic uncertainty (Chapter 4).</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Evaluate on the held-out test set: MAE, RMSE, R². Quantify aleatoric and epistemic uncertainty (Chapter 4).</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -475,7 +476,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#BA5A5A;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 9</span>
     <span style="font-weight:700;font-size:0.9rem;">Generate more data if needed</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">If uncertainty is too large in specific regions, use active learning to target new calculations where the model is least confident.</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Use active learning to target new calculations where model uncertainty is highest.</div>
 </div>
 <div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
 <div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
@@ -484,7 +485,7 @@ A structured workflow prevents common pitfalls: data leakage, metric shopping, a
     <span style="font-weight:700;font-size:0.72rem;color:#BA5A5A;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 10</span>
     <span style="font-weight:700;font-size:0.9rem;">Deploy</span>
   </div>
-  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Version the trained model, document training provenance (DFT functional, basis set, code version), and plan for periodic retraining as new data arrives.</div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Version the model; record training provenance: functional, basis set, code version, dataset composition.</div>
 </div>
 </div>
 
@@ -504,14 +505,16 @@ Model performance is bounded by data quality. Three issues are especially common
 
 **GPU accelerators.** GPUs accelerate the matrix multiplications at the core of neural network training by 100–1000× over a CPU, via thousands of parallel cores and extremely high memory bandwidth. The table below compares current data-centre accelerators used in ML for physics:
 
-| Chip | Vendor | Memory | Bandwidth | Generation |
-|---|---|---|---|---|
-| H100 SXM | NVIDIA | 80 GB HBM3 | 3.35 TB/s | Hopper |
-| H200 SXM | NVIDIA | 141 GB HBM3e | 4.8 TB/s | Hopper |
-| B200 | NVIDIA | 180 GB HBM3e | 8.0 TB/s | Blackwell |
-| GB200 | NVIDIA | 2×B200 + Grace ARM CPU | 900 GB/s NVLink-C2C | Blackwell |
-| MI300X | AMD | 192 GB HBM3 | 5.3 TB/s | CDNA 3 |
-| MI350X | AMD | 288 GB HBM3e | 8.0 TB/s | CDNA 4 |
+| Chip | Vendor | Year | Memory | Bandwidth | Generation |
+|---|---|---|---|---|---|
+| A100 SXM4 | NVIDIA | 2020 | 80 GB HBM2e | 2.0 TB/s | Ampere |
+| H100 SXM | NVIDIA | 2022 | 80 GB HBM3 | 3.35 TB/s | Hopper |
+| L40S | NVIDIA | 2023 | 48 GB GDDR6 | 864 GB/s | Ada Lovelace |
+| H200 SXM | NVIDIA | 2024 | 141 GB HBM3e | 4.8 TB/s | Hopper |
+| B200 | NVIDIA | 2025 | 180 GB HBM3e | 8.0 TB/s | Blackwell |
+| GB200 | NVIDIA | 2025 | 2×B200 + Grace ARM CPU | 900 GB/s NVLink-C2C | Blackwell |
+| MI300X | AMD | 2023 | 192 GB HBM3 | 5.3 TB/s | CDNA 3 |
+| MI350X | AMD | 2025 | 288 GB HBM3e | 8.0 TB/s | CDNA 4 |
 
 The H200 carries the same compute die as the H100 but nearly doubles the memory capacity, relieving the bandwidth bottleneck for large models. The B200 (Blackwell) is a dual-die chip with fifth-generation Tensor Cores and NVLink 5.0; a GB200 NVL72 rack integrates 72 B200 chips over NVLink. AMD's MI300X powers El Capitan (#2 globally) thanks to its record memory capacity; the MI350X (CDNA 4, released mid-2025) raises this to 288 GB.
 
@@ -522,36 +525,33 @@ The H200 carries the same compute die as the H100 but nearly doubles the memory 
 <!-- Tier 0: Exascale — narrowest trapezoid (top 22%–78%, bottom 14%–86%) -->
 <div style="clip-path:polygon(22% 0%,78% 0%,86% 100%,14% 100%);background:rgba(186,90,90,0.30);padding:0.75rem 23%;text-align:center;min-height:5.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;">
 <span style="font-weight:700;font-size:0.6rem;color:#8B2020;text-transform:uppercase;letter-spacing:0.09em;">Tier 0 &nbsp;·&nbsp; Exascale (&gt;1 EF/s)</span>
-<span>LineShine (China, #1, 2.20 EF/s) · El Capitan (USA, #2, 1.81 EF/s)</span>
-<span>Frontier (USA, ~1.2 EF/s) · Aurora (USA, 1.01 EF/s) · JUPITER (Germany/EU, 1.00 EF/s)</span>
+<span>LineShine (China) · El Capitan (USA)</span>
+<span>Frontier (USA) · Aurora (USA) · JUPITER (Germany)</span>
 </div>
 
 <!-- Tier 1: Pre-exascale (top 14%–86%, bottom 7%–93%) -->
 <div style="clip-path:polygon(14% 0%,86% 0%,93% 100%,7% 100%);background:rgba(186,90,90,0.18);padding:0.75rem 15%;text-align:center;min-height:5.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
-<span style="font-weight:700;font-size:0.6rem;color:#8B2020;text-transform:uppercase;letter-spacing:0.09em;">Tier 1 &nbsp;·&nbsp; Pre-exascale Flagship (100–999 PF/s)</span>
-<span>MareNostrum 5 (Spain/EU, 314 PF) · LUMI (Finland/EU, 309 PF) · Leonardo (Italy/EU, 238 PF)</span>
-<span>JUWELS Booster (Germany/Jülich, 71 PF) · Perlmutter (USA/NERSC, 70 PF)</span>
+<span style="font-weight:700;font-size:0.6rem;color:#8B2020;text-transform:uppercase;letter-spacing:0.09em;">Tier 1 &nbsp;·&nbsp; Pre-exascale Flagship</span>
+<span>MareNostrum 5 (Spain) · LUMI (Finland) · Leonardo (Italy)</span>
+<span>JUWELS Booster (Germany) · Perlmutter (USA)</span>
 </div>
 
 <!-- Tier 2: National (top 7%–93%, bottom 0%–100%) -->
 <div style="clip-path:polygon(7% 0%,93% 0%,100% 100%,0% 100%);background:rgba(247,228,155,0.38);padding:0.75rem 8%;text-align:center;min-height:5.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
-<span style="font-weight:700;font-size:0.6rem;color:#6A5000;text-transform:uppercase;letter-spacing:0.09em;">Tier 2 &nbsp;·&nbsp; National HPC Facilities (1–100 PF/s)</span>
-<span>MUSICA (Austria, 40 PF) · VSC-5 (Austria, national consortium, 4.3 PF) · ARCHER2 (UK, 28 PF)</span>
-<span>Hawk (Germany/HLRS, 26 PF) · SuperMUC-NG (Germany/LRZ Munich) · Gadi (Australia/NCI)</span>
-<span>Cedar (Canada/Compute Canada) · Shaheen III (Saudi Arabia/KAUST) · Mahti (Finland/CSC)</span>
+<span style="font-weight:700;font-size:0.6rem;color:#6A5000;text-transform:uppercase;letter-spacing:0.09em;">Tier 2 &nbsp;·&nbsp; National HPC Facilities</span>
+<span>MUSICA (Austria) · VSC-5 (Austria) · ARCHER2 (UK)<br>Hawk (Germany) · SuperMUC-NG (Germany) · Gadi (Australia)<br>Cedar (Canada) · Shaheen III (Saudi Arabia) · Mahti (Finland)</span>
 </div>
 
 <!-- Tier 3: Institutional — full-width rectangle (base of pyramid) -->
 <div style="background:rgba(164,206,139,0.35);padding:0.75rem 2%;text-align:center;min-height:4.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
 <span style="font-weight:700;font-size:0.6rem;color:#2A5A1A;text-transform:uppercase;letter-spacing:0.09em;">Tier 3 &nbsp;·&nbsp; University / Institutional Clusters</span>
 <span>bwUniCluster 2.0 (Germany) · CSD3 (UK, Cambridge) · Narval (Canada) · ALICE (Netherlands, Leiden)</span>
-<span>10–500 GPUs, SLURM scheduler, shared allocation</span>
 </div>
 
 <!-- Tier 4: Local — base -->
 <div style="background:rgba(134,188,189,0.35);padding:0.75rem 2%;text-align:center;min-height:4rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
 <span style="font-weight:700;font-size:0.6rem;color:#1A5A5C;text-transform:uppercase;letter-spacing:0.09em;">Tier 4 &nbsp;·&nbsp; Local Workstation / Lab Server</span>
-<span>NVIDIA DGX H100 · single/multi-GPU servers · laptop or desktop CPU · development &amp; prototyping</span>
+<span>NVIDIA DGX H100 · single/multi-GPU servers · laptop or desktop CPU</span>
 </div>
 
 </div>
