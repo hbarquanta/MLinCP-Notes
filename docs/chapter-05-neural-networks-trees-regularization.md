@@ -106,9 +106,9 @@ A **random forest** is bagged decision trees with an additional randomization: a
 
 A **feed-forward neural network (FFNN)** is a composition of parameterized nonlinear transformations arranged in layers. Let the input layer be $\mathbf{f}^{(0)}(\mathbf{x}) = \mathbf{x} \in \mathbb{R}^N$. The network has $L$ hidden layers followed by an output layer. The $i$-th unit in layer $k \in \{1, \ldots, L\}$ computes
 
-$$f_i^{(k)}(\mathbf{x}, \omega^{(k)}) = \sigma\!\left(w_{i,0}^{(k)} + \sum_j w_{i,j}^{(k)} f_j^{(k-1)}(\mathbf{x}, \omega^{(k-1)})\right),$$
+$$f_i^{(k)}(\mathbf{x}, \omega^{(k)}) = \sigma\!\left(b_i^{(k)} + \sum_j w_{i,j}^{(k)} f_j^{(k-1)}(\mathbf{x}, \omega^{(k-1)})\right),$$
 
-where $w_{i,0}^{(k)}$ is a bias, $w_{i,j}^{(k)}$ is the weight from unit $j$ in layer $k-1$ to unit $i$ in layer $k$, and $\sigma(\cdot)$ is a pointwise nonlinear **activation function**. All parameters for layer $k$ are collected in $\omega^{(k)}$. The network depth equals the number of recursive applications of this formula; each application constitutes one hidden layer. The output layer applies no activation function for regression (raw linear output) or a softmax for classification.
+where $b_i^{(k)}$ is a bias for unit $i$ in layer $k$, $w_{i,j}^{(k)}$ is the weight from unit $j$ in layer $k-1$ to unit $i$ in layer $k$, and $\sigma(\cdot)$ is a pointwise nonlinear **activation function**. All parameters for layer $k$ are collected in $\omega^{(k)}$. The network depth equals the number of recursive applications of this formula; each application constitutes one hidden layer. The output layer applies no activation function for regression (raw linear output) or a softmax for classification.
 
 The entire parameter set is $\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \omega^{(\text{out})}\}$. The **universal approximation theorem** (Cybenko 1989; Hornik 1991) states: for any continuous function $f: [0,1]^N \to \mathbb{R}$, any $\varepsilon > 0$, and any continuous non-polynomial activation $\sigma$, there exists a single-hidden-layer network $\hat{f}$ such that $\sup_{\mathbf{x}} |\hat{f}(\mathbf{x}) - f(\mathbf{x})| < \varepsilon$. The theorem guarantees existence but says nothing about how many units are needed, how to find the weights, or whether gradient descent will converge to such a solution. Deeper networks are more *parameter-efficient*: functions that require exponentially many units in a shallow network can often be represented with polynomially many units arranged in $O(\log(1/\varepsilon))$ layers, because each layer can learn reusable intermediate features rather than reconstructing everything from scratch.
 
@@ -132,8 +132,8 @@ The entire parameter set is $\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \ome
     <span><span style="display:inline-block;width:11px;height:11px;background:#A4CE8B;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Input</span>
     <span><span style="display:inline-block;width:11px;height:11px;background:#86BCBD;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Hidden</span>
     <span><span style="display:inline-block;width:11px;height:11px;background:#BA5A5A;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Output</span>
-    <span><span style="display:inline-block;width:10px;height:10px;background:#555;border-radius:2px;vertical-align:middle;margin-right:3px;"></span>Bias = 1</span>
-    <span style="opacity:0.55;font-style:italic;">dashed = bias edges (weight&nbsp;b<sub>i</sub>)</span>
+    <span><span style="display:inline-block;width:10px;height:10px;background:#555;border-radius:2px;vertical-align:middle;margin-right:3px;"></span>Bias unit (value = 1)</span>
+    <span style="opacity:0.55;font-style:italic;">dashed = bias connections; edge weight = b<sub>i</sub><sup>(k)</sup></span>
   </div>
   <div id="nn-params" style="font-size:0.79rem;opacity:0.62;margin-top:0.28rem;text-align:center;"></div>
   <div id="nn-formula" style="margin-top:0.8rem;width:100%;max-width:700px;padding:0.65rem 1rem 0.75rem;border-radius:6px;overflow-x:auto;line-height:2.6;"></div>
@@ -346,13 +346,13 @@ The activation function $\sigma$ is the source of nonlinearity. Four standard ch
 
 Training very deep networks (tens or hundreds of layers) is difficult because gradients must flow back through every layer without vanishing. **Skip (residual) connections**, introduced by He et al. (*CVPR*, 2016), add the input of a block directly to its output:
 
-$$f_i^{(k)}(\mathbf{x}) = f_i^{(k-1)}(\mathbf{x}) + \sigma\!\left(w_{i,0}^{(k)} + \sum_j w_{i,j}^{(k)} f_j^{(k-1)}(\mathbf{x})\right).$$
+$$f_i^{(k)}(\mathbf{x}) = f_i^{(k-1)}(\mathbf{x}) + \sigma\!\left(b_i^{(k)} + \sum_j w_{i,j}^{(k)} f_j^{(k-1)}(\mathbf{x})\right).$$
 
 The Jacobian of $f_i^{(k)}$ with respect to $f_j^{(k-1)}$ is
 
 $$\frac{\partial f_i^{(k)}}{\partial f_j^{(k-1)}} = \delta_{ij} + \sigma'\!\left(z_i^{(k)}\right) w_{i,j}^{(k)},$$
 
-where $z_i^{(k)} = w_{i,0}^{(k)} + \sum_j w_{i,j}^{(k)} f_j^{(k-1)}$ is the pre-activation and $\delta_{ij}$ is the Kronecker delta. The identity term $\delta_{ij}$ guarantees that the gradient is at least 1 along the diagonal even if $\sigma'$ vanishes, so gradients can propagate without exponential decay. This identity path also smooths the loss landscape and enables architectures hundreds of layers deep (ResNets, Transformers).
+where $z_i^{(k)} = b_i^{(k)} + \sum_j w_{i,j}^{(k)} f_j^{(k-1)}$ is the pre-activation and $\delta_{ij}$ is the Kronecker delta. The identity term $\delta_{ij}$ guarantees that the gradient is at least 1 along the diagonal even if $\sigma'$ vanishes, so gradients can propagate without exponential decay. This identity path also smooths the loss landscape and enables architectures hundreds of layers deep (ResNets, Transformers).
 
 ## 5.7 Batch Normalization
 
