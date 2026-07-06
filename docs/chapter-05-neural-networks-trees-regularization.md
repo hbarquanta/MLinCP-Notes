@@ -113,77 +113,163 @@ where $w_{i,0}^{(k)}$ is a bias, $w_{i,j}^{(k)}$ is the weight from unit $j$ in 
 The entire parameter set is $\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \omega^{(\text{out})}\}$. By the universal approximation theorem, a single hidden layer with sufficiently many units can approximate any continuous function; in practice, depth is more parameter-efficient than width, and deep architectures learn hierarchical representations.
 
 <div id="nn-widget" style="margin:1.5rem 0;display:flex;flex-direction:column;align-items:center;">
-  <div style="display:flex;gap:1.2rem;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;justify-content:center;font-size:0.85rem;">
-    <label>Inputs: <input type="range" id="nn-inp" min="2" max="5" value="3" step="1"
-           oninput="nnDraw()" style="width:70px;accent-color:#A4CE8B;vertical-align:middle;">
-    <span id="nn-inp-v" style="font-weight:700;">3</span></label>
-    <label>Hidden layers: <input type="range" id="nn-hl" min="1" max="4" value="2" step="1"
-           oninput="nnDraw()" style="width:70px;accent-color:#86BCBD;vertical-align:middle;">
-    <span id="nn-hl-v" style="font-weight:700;">2</span></label>
-    <label>Width: <input type="range" id="nn-w" min="2" max="7" value="4" step="1"
-           oninput="nnDraw()" style="width:70px;accent-color:#86BCBD;vertical-align:middle;">
-    <span id="nn-w-v" style="font-weight:700;">4</span></label>
+  <div style="display:flex;gap:0.8rem;align-items:center;margin-bottom:0.55rem;flex-wrap:wrap;justify-content:center;font-size:0.84rem;">
+    <label>N (inputs):&nbsp;<input type="range" id="nn-inp" min="1" max="5" value="2" step="1"
+      oninput="nnDraw()" style="width:60px;accent-color:#A4CE8B;vertical-align:middle;"> <b id="nn-inp-v">2</b></label>
+    <label>L (hidden layers):&nbsp;<input type="range" id="nn-hl" min="1" max="4" value="1" step="1"
+      oninput="nnDraw()" style="width:60px;accent-color:#86BCBD;vertical-align:middle;"> <b id="nn-hl-v">1</b></label>
+    <label>U (width):&nbsp;<input type="range" id="nn-w" min="1" max="7" value="2" step="1"
+      oninput="nnDraw()" style="width:60px;accent-color:#86BCBD;vertical-align:middle;"> <b id="nn-w-v">2</b></label>
+    <label>&sigma;:&nbsp;<select id="nn-act" onchange="nnDraw()"
+      style="font-size:0.82rem;padding:2px 6px;border-radius:4px;border:1px solid rgba(128,128,128,0.4);">
+      <option value="sigma">&sigma; (generic)</option>
+      <option value="tanh">tanh</option>
+      <option value="relu">ReLU</option>
+    </select></label>
   </div>
-  <svg id="nn-svg" width="100%" style="max-width:580px;height:260px;" viewBox="0 0 580 260"></svg>
-  <div id="nn-params" style="font-size:0.8rem;opacity:0.65;margin-top:0.4rem;text-align:center;"></div>
-  <div style="display:flex;gap:1.5rem;margin-top:0.4rem;font-size:0.82rem;flex-wrap:wrap;justify-content:center;">
-    <span><span style="display:inline-block;width:13px;height:13px;background:#A4CE8B;border-radius:50%;vertical-align:middle;margin-right:4px;"></span>Input</span>
-    <span><span style="display:inline-block;width:13px;height:13px;background:#86BCBD;border-radius:50%;vertical-align:middle;margin-right:4px;"></span>Hidden</span>
-    <span><span style="display:inline-block;width:13px;height:13px;background:#BA5A5A;border-radius:50%;vertical-align:middle;margin-right:4px;"></span>Output</span>
+  <svg id="nn-svg" width="100%" style="max-width:640px;height:255px;" viewBox="0 0 640 255"></svg>
+  <div style="display:flex;gap:1.1rem;margin-top:0.3rem;font-size:0.79rem;flex-wrap:wrap;justify-content:center;">
+    <span><span style="display:inline-block;width:11px;height:11px;background:#A4CE8B;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Input</span>
+    <span><span style="display:inline-block;width:11px;height:11px;background:#86BCBD;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Hidden</span>
+    <span><span style="display:inline-block;width:11px;height:11px;background:#BA5A5A;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Output</span>
+    <span><span style="display:inline-block;width:10px;height:10px;background:#555;border-radius:2px;vertical-align:middle;margin-right:3px;"></span>Bias = 1</span>
+    <span style="opacity:0.55;font-style:italic;">dashed = bias edges (weight&nbsp;w<sub>i,0</sub>)</span>
   </div>
+  <div id="nn-params" style="font-size:0.79rem;opacity:0.62;margin-top:0.28rem;text-align:center;"></div>
+  <div id="nn-formula" style="margin-top:0.8rem;width:100%;max-width:700px;padding:0.65rem 1rem 0.75rem;border-radius:6px;overflow-x:auto;line-height:2.6;"></div>
 </div>
 
 <script>
 (function(){
-  function nnDraw(){
-    var nIn=+document.getElementById('nn-inp').value;
-    var nHL=+document.getElementById('nn-hl').value;
-    var nW=+document.getElementById('nn-w').value;
-    document.getElementById('nn-inp-v').textContent=nIn;
-    document.getElementById('nn-hl-v').textContent=nHL;
-    document.getElementById('nn-w-v').textContent=nW;
-    var svg=document.getElementById('nn-svg');if(!svg)return;
-    var W=580,H=240;svg.innerHTML='';
-    var dk=document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';
-    var edgeCol=dk?'rgba(180,180,180,0.22)':'rgba(80,80,80,0.16)';
-    var lblCol=dk?'#aaa':'#555';
-    var strokeCol=dk?'#1a1e24':'#fff';
-    var struct=[nIn];for(var i=0;i<nHL;i++)struct.push(nW);struct.push(1);
-    var L=struct.length;
-    var xs=struct.map(function(_,l){return W*(l+1)/(L+1);});
-    var maxN=Math.max.apply(null,struct);
-    var R=Math.min(16,(H-40)/(2*maxN+1));
-    var cols=['#A4CE8B','#86BCBD','#BA5A5A'];
-    var lbls=['Input'];for(var i=0;i<nHL;i++)lbls.push('H'+(i+1));lbls.push('Output');
-    // Edges
-    for(var l=0;l<L-1;l++){
-      var nA=struct[l],nB=struct[l+1],xA=xs[l],xB=xs[l+1];
-      var ySpA=(H-35)/(nA+1),ySpB=(H-35)/(nB+1);
-      for(var a=0;a<nA;a++){var yA=17+(a+1)*ySpA;
-        for(var b=0;b<nB;b++){var yB=17+(b+1)*ySpB;
-          var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
-          ln.setAttribute('x1',xA);ln.setAttribute('y1',yA);ln.setAttribute('x2',xB);ln.setAttribute('y2',yB);
-          ln.setAttribute('stroke',edgeCol);ln.setAttribute('stroke-width','1');svg.appendChild(ln);}}
-    }
-    // Nodes + labels
-    for(var l=0;l<L;l++){
-      var n=struct[l],x=xs[l],ySp=(H-35)/(n+1);
-      var col=l===0?cols[0]:(l===L-1?cols[2]:cols[1]);
-      for(var i=0;i<n;i++){var y=17+(i+1)*ySp;
-        var ci=document.createElementNS('http://www.w3.org/2000/svg','circle');
-        ci.setAttribute('cx',x);ci.setAttribute('cy',y);ci.setAttribute('r',R);
-        ci.setAttribute('fill',col);ci.setAttribute('stroke',strokeCol);ci.setAttribute('stroke-width','2');
-        svg.appendChild(ci);}
-      var tx=document.createElementNS('http://www.w3.org/2000/svg','text');
-      tx.setAttribute('x',x);tx.setAttribute('y',H-4);tx.setAttribute('text-anchor','middle');
-      tx.setAttribute('font-size','10');tx.setAttribute('fill',lblCol);tx.textContent=lbls[l];
-      svg.appendChild(tx);
-    }
-    var params=0;for(var l=0;l<L-1;l++)params+=(struct[l]+1)*struct[l+1];
-    document.getElementById('nn-params').textContent=params+' trainable parameters (weights + biases)';
+  function _dk(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
+  function _el(tag,at,tx){
+    var e=document.createElementNS('http://www.w3.org/2000/svg',tag);
+    for(var k in at)e.setAttribute(k,at[k]);
+    if(tx!==undefined)e.textContent=tx;
+    return e;
   }
-  window.nnDraw=nnDraw;
-  function _init(){if(document.getElementById('nn-svg'))nnDraw();}
+
+  function drawSVG(N,L,U){
+    var svg=document.getElementById('nn-svg');if(!svg)return;
+    svg.innerHTML='';
+    var W=640,H=255,dk=_dk();
+    var eCol=dk?'rgba(180,180,180,0.15)':'rgba(70,70,70,0.12)';
+    var bCol=dk?'rgba(247,228,155,0.45)':'rgba(150,100,15,0.4)';
+    var nodeBd=dk?'#1a1e24':'#fff';
+    var lblC=dk?'#999':'#555';
+    var biasF=dk?'#888':'#444';
+
+    var struct=[N];for(var k=0;k<L;k++)struct.push(U);struct.push(1);
+    var nC=struct.length;
+    var BSY=13,BSZ=9; // bias square: center y, half-size
+    var TPAD=BSY+BSZ+10,BPAD=22,AH=H-TPAD-BPAD;
+    var maxN=Math.max.apply(null,struct);
+    var R=Math.max(5,Math.min(13,Math.floor(AH/(2*(maxN+1)))));
+    var xs=struct.map(function(_,i){return W*(i+1)/(nC+1);});
+    function nY(n,i){return TPAD+AH*(i+1)/(n+1);}
+
+    // regular edges
+    for(var ci=0;ci<nC-1;ci++){
+      var nA=struct[ci],nB=struct[ci+1],xA=xs[ci],xB=xs[ci+1];
+      for(var a=0;a<nA;a++){var yA=nY(nA,a);
+        for(var b=0;b<nB;b++)svg.appendChild(_el('line',{x1:xA,y1:yA,x2:xB,y2:nY(nB,b),stroke:eCol,'stroke-width':'1'}));
+      }
+    }
+    // bias edges (dashed, bias square → next-layer nodes)
+    for(var ci=0;ci<nC-1;ci++){
+      var nB=struct[ci+1],xB=xs[ci+1];
+      for(var b=0;b<nB;b++)
+        svg.appendChild(_el('line',{x1:xs[ci],y1:BSY+BSZ,x2:xB,y2:nY(nB,b)-R,
+          stroke:bCol,'stroke-width':'0.9','stroke-dasharray':'3,3'}));
+    }
+    // regular nodes
+    var fills=['#A4CE8B','#86BCBD','#BA5A5A'];
+    for(var ci=0;ci<nC;ci++){
+      var n=struct[ci],x=xs[ci];
+      var f=ci===0?fills[0]:(ci===nC-1?fills[2]:fills[1]);
+      for(var ni=0;ni<n;ni++)
+        svg.appendChild(_el('circle',{cx:x,cy:nY(n,ni),r:R,fill:f,stroke:nodeBd,'stroke-width':'2'}));
+    }
+    // bias squares
+    for(var ci=0;ci<nC-1;ci++){
+      var x=xs[ci];
+      svg.appendChild(_el('rect',{x:x-BSZ,y:BSY-BSZ,width:BSZ*2,height:BSZ*2,fill:biasF,rx:'2'}));
+      svg.appendChild(_el('text',{x:x,y:BSY+4,'text-anchor':'middle','font-size':'9','font-weight':'bold',fill:'#fff'},'1'));
+    }
+    // labels
+    var lbls=['Input'];for(var k=0;k<L;k++)lbls.push(L===1?'Hidden':'H'+(k+1));lbls.push('Output');
+    for(var ci=0;ci<nC;ci++)
+      svg.appendChild(_el('text',{x:xs[ci],y:H-4,'text-anchor':'middle','font-size':'10',fill:lblC},lbls[ci]));
+  }
+
+  function iRange(U){
+    if(U===1)return 'i=1';
+    if(U===2)return 'i=1,\\,2';
+    return 'i=1,\\ldots,'+U;
+  }
+
+  function buildFormula(N,L,U,aSym){
+    var lines=[],EXIN=N<=4,EXHID=U<=4,EXOUT=U<=5;
+    // Layer 1
+    var in1;
+    if(EXIN){
+      in1='w_{i,0}^{(1)}';
+      for(var j=1;j<=N;j++)in1+=' + w_{i,'+j+'}^{(1)}\\,x_{'+j+'}';
+    } else {
+      in1='w_{i,0}^{(1)} + {\\textstyle\\sum_{j=1}^{'+N+'}}\\, w_{i,j}^{(1)}\\,x_j';
+    }
+    lines.push('f_i^{(1)} = '+aSym+'\\!\\left('+in1+'\\right),\\quad '+iRange(U));
+    // Layers 2..L
+    if(L>1){
+      var hid;
+      if(EXHID){
+        hid='w_{i,0}^{(k)}';
+        for(var j=1;j<=U;j++)hid+=' + w_{i,'+j+'}^{(k)}\\,f_{'+j+'}^{(k-1)}';
+      } else {
+        hid='w_{i,0}^{(k)} + {\\textstyle\\sum_{j=1}^{'+U+'}}\\, w_{i,j}^{(k)}\\,f_j^{(k-1)}';
+      }
+      var kr=L===2?'k=2':'k=2,\\ldots,'+L;
+      lines.push('f_i^{(k)} = '+aSym+'\\!\\left('+hid+'\\right),\\quad '+kr+',\\;'+iRange(U));
+    }
+    // Output
+    var out;
+    if(EXOUT){
+      out='w_0';
+      for(var b=1;b<=U;b++)out+=' + w_{'+b+'}\\,f_{'+b+'}^{('+L+')}';
+    } else {
+      out='w_0 + {\\textstyle\\sum_{b=1}^{'+U+'}}\\, w_b\\,f_b^{('+L+')}';
+    }
+    lines.push('\\hat{f}(\\mathbf{x},\\boldsymbol{\\Theta}) = '+out);
+    return lines;
+  }
+
+  window.nnDraw=function(){
+    var N=+document.getElementById('nn-inp').value;
+    var L=+document.getElementById('nn-hl').value;
+    var U=+document.getElementById('nn-w').value;
+    var asel=(document.getElementById('nn-act')||{}).value||'sigma';
+    var aSym={sigma:'\\sigma',tanh:'\\tanh',relu:'\\operatorname{ReLU}'}[asel]||'\\sigma';
+    document.getElementById('nn-inp-v').textContent=N;
+    document.getElementById('nn-hl-v').textContent=L;
+    document.getElementById('nn-w-v').textContent=U;
+    var params=(N+1)*U+(L-1)*(U+1)*U+(U+1);
+    document.getElementById('nn-params').textContent=params+' trainable parameters';
+    drawSVG(N,L,U);
+    var fEl=document.getElementById('nn-formula');if(!fEl)return;
+    var dk=_dk();
+    fEl.style.background=dk?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.04)';
+    fEl.style.border='1px solid '+(dk?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.09)');
+    var lines=buildFormula(N,L,U,aSym);
+    if(window.katex){
+      fEl.innerHTML=lines.map(function(line){
+        return '<div>'+katex.renderToString('\\displaystyle '+line,{throwOnError:false})+'</div>';
+      }).join('');
+    } else {
+      fEl.innerHTML='<pre style="font-size:0.77rem;white-space:pre-wrap;">'+lines.join('\n')+'</pre>';
+    }
+  };
+
+  function _init(){if(document.getElementById('nn-svg'))window.nnDraw();}
   if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
   else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
   else{setTimeout(_init,80);}
