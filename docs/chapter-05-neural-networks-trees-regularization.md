@@ -39,7 +39,7 @@ The widget below shows how a depth-$D$ tree partitions the feature axis into pie
 <script>
 (function(){
   function _rng(s){var st=s>>>0;return function(){st=(st*1664525+1013904223)>>>0;return st/0x100000000;};}
-  var r=_rng(314),_N=24,_pts=[];
+  var r=_rng(314),_N=80,_pts=[];
   for(var i=0;i<_N;i++){var xi=r();_pts.push([xi,Math.sin(2*Math.PI*xi)+(r()-0.5)*0.4]);}
   _pts.sort(function(a,b){return a[0]-b[0];});
   var _xF=[],_yF=[];for(var i=0;i<150;i++){var xf=i/149;_xF.push(xf);_yF.push(Math.sin(2*Math.PI*xf));}
@@ -205,28 +205,47 @@ The activation function $\sigma$ is the source of nonlinearity. Four standard ch
 **Exponential Linear Unit (ELU)**: $\text{ELU}(x) = x$ if $x \geq 0$, and $\alpha(e^x - 1)$ if $x < 0$, where $\alpha > 0$ is a hyperparameter. ELU is smooth everywhere and has a nonzero gradient for $x < 0$, mitigating the dying-neuron issue while retaining the non-saturating behavior of ReLU for positive inputs.
 
 <div id="act-widget" style="margin:1.5rem 0;">
+  <div style="display:flex;gap:0.45rem;flex-wrap:wrap;margin-bottom:0.45rem;justify-content:center;">
+    <button id="act-btn-0" onclick="actToggle(0)"
+      style="padding:4px 15px;border-radius:5px;border:2px solid #BA5A5A;background:#BA5A5A;color:#fff;font-size:0.82rem;cursor:pointer;transition:opacity 0.15s;font-weight:600;">Sigmoid</button>
+    <button id="act-btn-1" onclick="actToggle(1)"
+      style="padding:4px 15px;border-radius:5px;border:2px solid #4d9e6b;background:#A4CE8B;color:#1a3a26;font-size:0.82rem;cursor:pointer;transition:opacity 0.15s;font-weight:600;">Tanh</button>
+    <button id="act-btn-2" onclick="actToggle(2)"
+      style="padding:4px 15px;border-radius:5px;border:2px solid #4a8a8c;background:#86BCBD;color:#fff;font-size:0.82rem;cursor:pointer;transition:opacity 0.15s;font-weight:600;">ReLU</button>
+    <button id="act-btn-3" onclick="actToggle(3)"
+      style="padding:4px 15px;border-radius:5px;border:2px solid #b8a800;background:#F7E49B;color:#3a3200;font-size:0.82rem;cursor:pointer;transition:opacity 0.15s;font-weight:600;">ELU (&alpha;=1)</button>
+  </div>
+  <div style="font-size:0.79rem;opacity:0.62;text-align:center;margin-bottom:0.35rem;">Click a button to toggle that function on/off.</div>
   <div id="act-plot" style="height:280px;"></div>
-  <div style="font-size:0.8rem;opacity:0.65;margin-top:0.3rem;text-align:center;">Click legend entries to hide/show. ELU uses &alpha;&nbsp;=&nbsp;1. Note the saturation of sigmoid and tanh vs the unbounded positive regime of ReLU/ELU.</div>
+  <div style="font-size:0.8rem;opacity:0.65;margin-top:0.3rem;text-align:center;">ELU uses &alpha;&nbsp;=&nbsp;1. Note saturation of sigmoid and tanh vs the unbounded positive regime of ReLU/ELU.</div>
 </div>
 
 <script>
 (function(){
+  var _vis=[true,true,true,true];
   function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
   function _draw(){
     var el=document.getElementById('act-plot');if(!el||!window.Plotly)return;
     var dk=_dark(),bg=dk?'#1e2228':'#fff',fg=dk?'#e0e0e0':'#333',gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
     var x=Array.from({length:200},function(_,i){return -4+8*i/199;});
     Plotly.react(el,[
-      {x:x,y:x.map(function(xi){return 1/(1+Math.exp(-xi));}),mode:'lines',name:'Sigmoid',line:{color:'#BA5A5A',width:2.5}},
-      {x:x,y:x.map(function(xi){return Math.tanh(xi);}),mode:'lines',name:'Tanh',line:{color:'#A4CE8B',width:2.5}},
-      {x:x,y:x.map(function(xi){return Math.max(0,xi);}),mode:'lines',name:'ReLU',line:{color:'#86BCBD',width:2.5}},
-      {x:x,y:x.map(function(xi){return xi>=0?xi:Math.exp(xi)-1;}),mode:'lines',name:'ELU (α=1)',line:{color:'#F7E49B',width:2.5}},
+      {x:x,y:x.map(function(xi){return 1/(1+Math.exp(-xi));}),mode:'lines',name:'Sigmoid',line:{color:'#BA5A5A',width:2.5},visible:_vis[0]?true:'legendonly'},
+      {x:x,y:x.map(function(xi){return Math.tanh(xi);}),mode:'lines',name:'Tanh',line:{color:'#A4CE8B',width:2.5},visible:_vis[1]?true:'legendonly'},
+      {x:x,y:x.map(function(xi){return Math.max(0,xi);}),mode:'lines',name:'ReLU',line:{color:'#86BCBD',width:2.5},visible:_vis[2]?true:'legendonly'},
+      {x:x,y:x.map(function(xi){return xi>=0?xi:Math.exp(xi)-1;}),mode:'lines',name:'ELU (a=1)',line:{color:'#F7E49B',width:2.5},visible:_vis[3]?true:'legendonly'},
     ],{paper_bgcolor:bg,plot_bgcolor:bg,font:{color:fg,size:10.5},margin:{t:10,b:38,l:38,r:10},
        xaxis:{title:'x',range:[-4,4],gridcolor:gc,zerolinecolor:gc,zeroline:true,zerolinewidth:1.5},
        yaxis:{title:'activation',range:[-1.5,4],gridcolor:gc,zerolinecolor:gc,zeroline:true,zerolinewidth:1.5},
-       legend:{x:0.01,y:0.99,bgcolor:'transparent',font:{size:10}},
+       showlegend:false,
     },{displayModeBar:false,responsive:true});
   }
+  window.actToggle=function(i){
+    var el=document.getElementById('act-plot');if(!el||!window.Plotly)return;
+    _vis[i]=!_vis[i];
+    var btn=document.getElementById('act-btn-'+i);
+    if(btn)btn.style.opacity=_vis[i]?'1':'0.28';
+    Plotly.restyle(el,{visible:[_vis[i]?true:'legendonly']},[i]);
+  };
   function _ep(cb){if(window.Plotly){cb();return;}var s=document.getElementById('plotly-cdn');if(!s){s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';document.head.appendChild(s);}s.addEventListener('load',cb);}
   function _init(){if(!document.getElementById('act-plot'))return;_ep(_draw);}
   if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
@@ -261,19 +280,29 @@ $$\tilde{f}_j^{(k)} = \gamma_j^{(k)} \hat{f}_j^{(k)} + \beta_j^{(k)}.$$
 
 This allows the network to recover any mean and variance if that is optimal. Because mean and variance are re-computed at every weight update for every layer, batch normalization layers are typically inserted between affine transformations and activation functions. During inference, the running mean and variance accumulated over training are used rather than the current mini-batch statistics.
 
-## 5.8 Optimization: Gradient Descent and Adam
+## 5.8 Optimization
 
 The training loss for a network with parameters $\omega$ over $P$ data points is
 
 $$\mathcal{L}(\omega) = \frac{1}{P} \sum_{p=1}^{P} \ell\!\left(\hat{f}(\mathbf{x}^{(p)}, \omega),\, y^{(p)}\right),$$
 
-where $\ell$ is a pointwise loss (e.g. squared error). Deep network losses are almost always **non-convex**, so no closed-form solution exists and iterative gradient-based methods are required. Computing the full gradient $\nabla_\omega \mathcal{L}$ costs $\mathcal{O}(P)$ and is infeasible for large datasets.
+where $\ell$ is a pointwise loss (e.g. squared error). Deep network losses are almost always **non-convex**, so no closed-form solution exists and iterative gradient-based methods are required.
 
-**Stochastic gradient descent (SGD)** replaces the full gradient with an estimate computed over a random mini-batch $\mathcal{B}$ of $P' \ll P$ examples:
+### Gradient Descent
 
-$$g = \frac{1}{P'} \sum_{p \in \mathcal{B}} \nabla_\omega \ell\!\left(\hat{f}(\mathbf{x}^{(p)}, \omega), y^{(p)}\right), \qquad \omega_{k+1} = \omega_k - \varepsilon\, g,$$
+The simplest approach computes the exact gradient over all $P$ training examples:
 
-where $\varepsilon > 0$ is the **learning rate**. One pass through the full dataset is called an **epoch**; a single gradient step is a **step**. Gradients of the composition of layer operations are computed efficiently by **backpropagation** (reverse-mode automatic differentiation), which propagates error signals layer by layer from output to input.
+$$\omega_{k+1} = \omega_k - \varepsilon\, \frac{1}{P} \sum_{p=1}^{P} \nabla_\omega \ell\!\left(\hat{f}(\mathbf{x}^{(p)}, \omega_k),\, y^{(p)}\right),$$
+
+where $\varepsilon > 0$ is the **learning rate**. Each update requires a full forward and backward pass over the dataset, which costs $\mathcal{O}(P)$ and becomes infeasible for large datasets.
+
+### Stochastic Gradient Descent (SGD)
+
+**Stochastic gradient descent** replaces the full gradient with a cheap estimate computed over a random mini-batch $\mathcal{B}$ of $P' \ll P$ examples:
+
+$$g = \frac{1}{P'} \sum_{p \in \mathcal{B}} \nabla_\omega \ell\!\left(\hat{f}(\mathbf{x}^{(p)}, \omega), y^{(p)}\right), \qquad \omega_{k+1} = \omega_k - \varepsilon\, g.$$
+
+One pass through the full dataset is called an **epoch**; a single gradient step is a **step**. Gradients of the layer composition are computed efficiently by **backpropagation** (reverse-mode automatic differentiation), which propagates error signals layer by layer from output to input.
 
 A limitation of plain SGD is that in elongated loss landscapes the negative gradient zig-zags across the valley rather than pointing down it. The simplest fix is **momentum**, which replaces the raw gradient with an exponentially weighted moving average of past gradients:
 
@@ -281,19 +310,19 @@ $$d_k = \beta\, d_{k-1} + (1 - \beta)\, g_k, \qquad \omega_{k+1} = \omega_k - \v
 
 where $\beta \approx 0.9$ is the momentum coefficient. Expanding the recursion shows that $d_k = \sum_{j=0}^k \beta^{k-j}(1-\beta)\,g_j$: each past gradient contributes with exponentially decaying weight, so the update accumulates speed in consistent directions and is dampened by noisy cancellations.
 
-A remaining problem is that near a saddle point the gradient magnitude approaches zero, making any step vanishingly small regardless of direction. The **Adam optimizer** combines momentum with per-parameter adaptive step sizes by maintaining exponentially weighted averages of the gradient $d_k^i$ (first moment) and of the squared gradient $h_k^i$ (second moment) for each parameter $i$:
+### Adam (Adaptive Moment Estimation)
 
-$$d_k^i = \beta_1 d_{k-1}^i + (1 - \beta_1)\, g_i(\omega_k), \qquad d_0^i = g_i(\omega_0),$$
+**Adam** (short for *Adaptive Moment Estimation*, Kingma & Ba 2014) addresses a remaining weakness of momentum SGD: near saddle points the gradient magnitude approaches zero, making every step vanishingly small regardless of direction. Adam combines momentum with *per-parameter adaptive step sizes* by maintaining two exponentially weighted running averages for each parameter $i$: the first moment $d_k^i$ (mean of recent gradients) and the second moment $h_k^i$ (mean of recent squared gradients):
 
-$$h_k^i = \beta_2 h_{k-1}^i + (1 - \beta_2)\, g_i(\omega_k)^2, \qquad h_0^i = g_i(\omega_0)^2,$$
+$$d_k^i = \beta_1 d_{k-1}^i + (1 - \beta_1)\, g_i(\omega_k), \qquad h_k^i = \beta_2 h_{k-1}^i + (1 - \beta_2)\, g_i(\omega_k)^2,$$
 
-where $\beta_1$ and $\beta_2$ are the exponential decay rates with defaults $\beta_1 = 0.9$ and $\beta_2 = 0.999$. The update is
+with defaults $\beta_1 = 0.9$ and $\beta_2 = 0.999$. The update is
 
-$$\omega_{k+1}^i = \omega_k^i - \varepsilon\, \frac{d_k^i}{\sqrt{h_k^i}}.$$
+$$\omega_{k+1}^i = \omega_k^i - \varepsilon\, \frac{\hat{d}_k^i}{\sqrt{\hat{h}_k^i} + \epsilon},$$
 
-Dividing by $\sqrt{h_k^i}$ normalizes the step by the recent gradient magnitude, so directions with consistently large gradients are slowed and directions with small gradients are amplified, effectively adapting the learning rate per parameter. In practice, bias-correction factors are applied to $d_k^i$ and $h_k^i$ to account for their initialization at zero.
+where $\hat{d}_k^i = d_k^i\,/\,(1 - \beta_1^k)$ and $\hat{h}_k^i = h_k^i\,/\,(1 - \beta_2^k)$ are bias-corrected estimates that compensate for the zero initialization of both moments. Dividing by $\sqrt{\hat{h}_k^i}$ normalizes each coordinate's step by its recent gradient magnitude: directions with consistently large gradients are slowed, and directions with small or inconsistent gradients are amplified. This is what "adaptive" means in the name: the effective learning rate is different for every parameter, automatically tuned by the geometry of the loss surface around that parameter. In practice, bias-correction factors are applied to $\hat{d}_k^i$ and $\hat{h}_k^i$ to account for their initialization at zero.
 
-The widget below animates three optimization trajectories on the anisotropic loss surface $\mathcal{L}(w_1, w_2) = w_1^2 + 10\,w_2^2$ (minimum at the origin). The steep $w_2$ direction causes GD to zig-zag; Adam adapts per-parameter and converges more directly.
+The widget below animates three optimization trajectories on the loss surface $\mathcal{L}(w_1, w_2) = w_1^2 + 25\,w_2^2$ (minimum at the origin). The high curvature in $w_2$ forces GD to use a small learning rate that barely moves $w_1$; the zig-zag in $w_2$ is the classical signature of anisotropic GD. Adam normalises each coordinate's effective step size and converges in roughly half as many iterations.
 
 <div id="opt-widget" style="margin:1.5rem 0;">
   <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.55rem;justify-content:center;flex-wrap:wrap;">
@@ -301,35 +330,37 @@ The widget below animates three optimization trajectories on the anisotropic los
       style="padding:5px 18px;border-radius:6px;border:1px solid #86BCBD;background:#86BCBD;color:#1a4a50;font-weight:600;cursor:pointer;font-size:0.85rem;">&#9654; Play</button>
     <button onclick="optRestart()"
       style="padding:5px 14px;border-radius:6px;border:1px solid rgba(128,128,128,0.4);background:transparent;cursor:pointer;font-size:0.85rem;">&#8635; Restart</button>
-    <span id="opt-step" style="font-size:0.81rem;opacity:0.65;">Step 0 / 50</span>
+    <span id="opt-step" style="font-size:0.81rem;opacity:0.65;">Step 0 / 80</span>
   </div>
   <div id="opt-plot" style="height:340px;"></div>
   <div style="display:flex;gap:1.4rem;margin-top:0.45rem;font-size:0.81rem;flex-wrap:wrap;justify-content:center;">
-    <span><span style="display:inline-block;width:22px;height:3px;background:#BA5A5A;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>GD (lr=0.085)</span>
-    <span><span style="display:inline-block;width:22px;height:3px;background:#F7E49B;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>SGD (lr=0.085 + mini-batch noise)</span>
-    <span><span style="display:inline-block;width:22px;height:3px;background:#A4CE8B;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>Adam (lr=0.4, &beta;&#8321;=0.9, &beta;&#8322;=0.999)</span>
+    <span><span style="display:inline-block;width:22px;height:3px;background:#BA5A5A;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>GD (lr=0.038)</span>
+    <span><span style="display:inline-block;width:22px;height:3px;background:#F7E49B;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>SGD (lr=0.038 + mini-batch noise)</span>
+    <span><span style="display:inline-block;width:22px;height:3px;background:#A4CE8B;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>Adam (lr=0.12, &beta;&#8321;=0.9, &beta;&#8322;=0.999)</span>
   </div>
 </div>
 
 <script>
 (function(){
   function _rng(s){var st=s>>>0;return function(){st=(st*1664525+1013904223)>>>0;return st/0x100000000;};}
-  function _grad(w){return [2*w[0],20*w[1]];}
-  var STEPS=50,LR=0.085,LRA=0.4,B1=0.9,B2=0.999,EP=1e-8;
-  var W0=[3,1.5];
+  // Surface: L = w1^2 + 25*w2^2, grad = (2w1, 50w2)
+  function _grad(w){return [2*w[0],50*w[1]];}
+  var STEPS=80,LR=0.038,LRA=0.12,B1=0.9,B2=0.999,EP=1e-8;
+  var W0=[2.5,1.5];
 
-  // GD
+  // GD: lr=0.038, w2 factor = 1-50*0.038 = -0.9 (strong zig-zag), w1 factor = 0.924 (slow)
   var gd=[W0.slice()];
   for(var k=0;k<STEPS;k++){var g=_grad(gd[k]);gd.push([gd[k][0]-LR*g[0],gd[k][1]-LR*g[1]]);}
 
-  // SGD
-  var sgd=[W0.slice()];var r=_rng(1234);
+  // SGD: same lr + moderate mini-batch noise
+  var sgd=[W0.slice()];var r=_rng(777);
   for(var k=0;k<STEPS;k++){
     var g=_grad(sgd[k]);
-    sgd.push([sgd[k][0]-LR*(g[0]+(r()-0.5)*6),sgd[k][1]-LR*(g[1]+(r()-0.5)*18)]);
+    var n1=(r()-0.5)*3,n2=(r()-0.5)*12;
+    sgd.push([sgd[k][0]-LR*(g[0]+n1),sgd[k][1]-LR*(g[1]+n2)]);
   }
 
-  // Adam (d,h initialised at 0; bias correction applied)
+  // Adam with bias correction
   var adam=[W0.slice()];var d1=0,d2=0,h1=0,h2=0;
   for(var k=0;k<STEPS;k++){
     var g=_grad(adam[k]),t=k+1;
@@ -340,11 +371,11 @@ The widget below animates three optimization trajectories on the anisotropic los
     adam.push([adam[k][0]-LRA*dh1/(Math.sqrt(hh1)+EP),adam[k][1]-LRA*dh2/(Math.sqrt(hh2)+EP)]);
   }
 
-  // Contour grid
-  var NX=55,NY=45;
-  var xR=Array.from({length:NX},function(_,i){return -4+8*i/(NX-1);});
-  var yR=Array.from({length:NY},function(_,i){return -2.5+5*i/(NY-1);});
-  var zC=yR.map(function(y){return xR.map(function(x){return Math.min(50,x*x+10*y*y);});});
+  // Contour grid for L = w1^2 + 25*w2^2
+  var NX=60,NY=50;
+  var xR=Array.from({length:NX},function(_,i){return -3+6*i/(NX-1);});
+  var yR=Array.from({length:NY},function(_,i){return -2+4*i/(NY-1);});
+  var zC=yR.map(function(y){return xR.map(function(x){return Math.min(60,x*x+25*y*y);});});
 
   var _fr=1,_tmr=null,_ready=false;
   function _xy(path,n){return{x:path.slice(0,n).map(function(p){return p[0];}),y:path.slice(0,n).map(function(p){return p[1];})};}
@@ -355,15 +386,15 @@ The widget below animates three optimization trajectories on the anisotropic los
     var dk=_dark(),bg=dk?'#1e2228':'#fff',fg=dk?'#e0e0e0':'#333',gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
     Plotly.react(el,[
       {type:'contour',x:xR,y:yR,z:zC,colorscale:'Blues',reversescale:true,
-       contours:{coloring:'heatmap',showlabels:false,start:0,end:50,size:5},
-       showscale:false,opacity:0.5,hoverinfo:'skip'},
+       contours:{coloring:'heatmap',showlabels:false,start:0,end:60,size:5},
+       showscale:false,opacity:0.55,hoverinfo:'skip'},
       {x:[W0[0]],y:[W0[1]],mode:'lines+markers',line:{color:'#BA5A5A',width:2.5},marker:{size:5,color:'#BA5A5A'},showlegend:false},
       {x:[W0[0]],y:[W0[1]],mode:'lines+markers',line:{color:'#F7E49B',width:2.5},marker:{size:5,color:'#F7E49B'},showlegend:false},
       {x:[W0[0]],y:[W0[1]],mode:'lines+markers',line:{color:'#A4CE8B',width:2.5},marker:{size:5,color:'#A4CE8B'},showlegend:false},
       {x:[0],y:[0],mode:'markers',marker:{symbol:'star',size:16,color:'white',line:{color:'#666',width:1.5}},showlegend:false},
     ],{paper_bgcolor:bg,plot_bgcolor:bg,font:{color:fg,size:10.5},margin:{t:10,b:42,l:44,r:10},
-       xaxis:{title:'w₁',range:[-4,4],gridcolor:gc,zerolinecolor:gc},
-       yaxis:{title:'w₂',range:[-2.5,2.5],gridcolor:gc,zerolinecolor:gc},
+       xaxis:{title:'w₁',range:[-3,3],gridcolor:gc,zerolinecolor:gc},
+       yaxis:{title:'w₂',range:[-2,2],gridcolor:gc,zerolinecolor:gc},
     },{displayModeBar:false,responsive:true});
     _ready=true;
   }
