@@ -110,7 +110,7 @@ $$f_i^{(k)}(\mathbf{x}, \omega^{(k)}) = \sigma\!\left(w_{i,0}^{(k)} + \sum_j w_{
 
 where $w_{i,0}^{(k)}$ is a bias, $w_{i,j}^{(k)}$ is the weight from unit $j$ in layer $k-1$ to unit $i$ in layer $k$, and $\sigma(\cdot)$ is a pointwise nonlinear **activation function**. All parameters for layer $k$ are collected in $\omega^{(k)}$. The network depth equals the number of recursive applications of this formula; each application constitutes one hidden layer. The output layer applies no activation function for regression (raw linear output) or a softmax for classification.
 
-The entire parameter set is $\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \omega^{(\text{out})}\}$. By the universal approximation theorem, a single hidden layer with sufficiently many units can approximate any continuous function; in practice, depth is more parameter-efficient than width, and deep architectures learn hierarchical representations.
+The entire parameter set is $\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \omega^{(\text{out})}\}$. The **universal approximation theorem** (Cybenko 1989; Hornik 1991) states: for any continuous function $f: [0,1]^N \to \mathbb{R}$, any $\varepsilon > 0$, and any continuous non-polynomial activation $\sigma$, there exists a single-hidden-layer network $\hat{f}$ such that $\sup_{\mathbf{x}} |\hat{f}(\mathbf{x}) - f(\mathbf{x})| < \varepsilon$. The theorem guarantees existence but says nothing about how many units are needed, how to find the weights, or whether gradient descent will converge to such a solution. Deeper networks are more *parameter-efficient*: functions that require exponentially many units in a shallow network can often be represented with polynomially many units arranged in $O(\log(1/\varepsilon))$ layers, because each layer can learn reusable intermediate features rather than reconstructing everything from scratch.
 
 <div id="nn-widget" style="margin:1.5rem 0;display:flex;flex-direction:column;align-items:center;">
   <div style="display:flex;gap:0.8rem;align-items:center;margin-bottom:0.55rem;flex-wrap:wrap;justify-content:center;font-size:0.84rem;">
@@ -133,7 +133,7 @@ The entire parameter set is $\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \ome
     <span><span style="display:inline-block;width:11px;height:11px;background:#86BCBD;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Hidden</span>
     <span><span style="display:inline-block;width:11px;height:11px;background:#BA5A5A;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Output</span>
     <span><span style="display:inline-block;width:10px;height:10px;background:#555;border-radius:2px;vertical-align:middle;margin-right:3px;"></span>Bias = 1</span>
-    <span style="opacity:0.55;font-style:italic;">dashed = bias edges (weight&nbsp;w<sub>i,0</sub>)</span>
+    <span style="opacity:0.55;font-style:italic;">dashed = bias edges (weight&nbsp;b<sub>i</sub>)</span>
   </div>
   <div id="nn-params" style="font-size:0.79rem;opacity:0.62;margin-top:0.28rem;text-align:center;"></div>
   <div id="nn-formula" style="margin-top:0.8rem;width:100%;max-width:700px;padding:0.65rem 1rem 0.75rem;border-radius:6px;overflow-x:auto;line-height:2.6;"></div>
@@ -213,20 +213,20 @@ The entire parameter set is $\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \ome
     // Layer 1
     var in1;
     if(EXIN){
-      in1='w_{i,0}^{(1)}';
+      in1='b_i^{(1)}';
       for(var j=1;j<=N;j++)in1+=' + w_{i,'+j+'}^{(1)}\\,x_{'+j+'}';
     } else {
-      in1='w_{i,0}^{(1)} + {\\textstyle\\sum_{j=1}^{'+N+'}}\\, w_{i,j}^{(1)}\\,x_j';
+      in1='b_i^{(1)} + {\\textstyle\\sum_{j=1}^{'+N+'}}\\, w_{i,j}^{(1)}\\,x_j';
     }
     lines.push('f_i^{(1)} = '+aSym+'\\!\\left('+in1+'\\right),\\quad '+iRange(U));
     // Layers 2..L
     if(L>1){
       var hid;
       if(EXHID){
-        hid='w_{i,0}^{(k)}';
+        hid='b_i^{(k)}';
         for(var j=1;j<=U;j++)hid+=' + w_{i,'+j+'}^{(k)}\\,f_{'+j+'}^{(k-1)}';
       } else {
-        hid='w_{i,0}^{(k)} + {\\textstyle\\sum_{j=1}^{'+U+'}}\\, w_{i,j}^{(k)}\\,f_j^{(k-1)}';
+        hid='b_i^{(k)} + {\\textstyle\\sum_{j=1}^{'+U+'}}\\, w_{i,j}^{(k)}\\,f_j^{(k-1)}';
       }
       var kr=L===2?'k=2':'k=2,\\ldots,'+L;
       lines.push('f_i^{(k)} = '+aSym+'\\!\\left('+hid+'\\right),\\quad '+kr+',\\;'+iRange(U));
@@ -234,10 +234,10 @@ The entire parameter set is $\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \ome
     // Output
     var out;
     if(EXOUT){
-      out='w_0';
-      for(var b=1;b<=U;b++)out+=' + w_{'+b+'}\\,f_{'+b+'}^{('+L+')}';
+      out='b';
+      for(var ui=1;ui<=U;ui++)out+=' + w_{'+ui+'}\\,f_{'+ui+'}^{('+L+')}';
     } else {
-      out='w_0 + {\\textstyle\\sum_{b=1}^{'+U+'}}\\, w_b\\,f_b^{('+L+')}';
+      out='b + {\\textstyle\\sum_{u=1}^{'+U+'}}\\, w_u\\,f_u^{('+L+')}';
     }
     lines.push('\\hat{f}(\\mathbf{x},\\boldsymbol{\\Theta}) = '+out);
     return lines;
@@ -286,9 +286,11 @@ The activation function $\sigma$ is the source of nonlinearity. Four standard ch
 
 **Hyperbolic tangent**: $\tanh(x) = (e^x - e^{-x})/(e^x + e^{-x})$. Output in $(-1, 1)$, zero-centered (unlike sigmoid), but still saturates.
 
-**Rectified Linear Unit (ReLU)**: $\text{ReLU}(x) = \max(0, x)$. Gradient is exactly 1 for $x > 0$, solving the vanishing-gradient problem. However, units with $x < 0$ always output zero and receive zero gradient: the "dying neuron" problem.
+**Rectified Linear Unit (ReLU)**: $\text{ReLU}(x) = \max(0, x)$. Gradient is exactly 1 for $x > 0$, solving the vanishing-gradient problem. However, whenever a unit's pre-activation $z < 0$ its output is exactly zero and its gradient $\text{ReLU}'(z) = 0$ as well, so the weights feeding that unit receive no update and the unit stays permanently silent. This is the **dying neuron** (or *dead ReLU*) problem. It is triggered by a large learning rate that drives a unit negative in one step, or by an initialisation that starts many units below zero. Common fixes are activations with a small negative-side gradient (ELU below, or *Leaky ReLU* $\max(\alpha x,\, x)$ with $\alpha \approx 0.01$) paired with proper weight initialisation.
 
 **Exponential Linear Unit (ELU)**: $\text{ELU}(x) = x$ if $x \geq 0$, and $\alpha(e^x - 1)$ if $x < 0$, where $\alpha > 0$ is a hyperparameter. ELU is smooth everywhere and has a nonzero gradient for $x < 0$, mitigating the dying-neuron issue while retaining the non-saturating behavior of ReLU for positive inputs.
+
+**Weight initialisation** is a critical but easily overlooked design choice. Setting all weights to zero makes every unit compute identical gradients, producing symmetric updates that never break symmetry: the network fails to learn. Random initialisation breaks symmetry, but the scale matters. If initial weights are too large, pre-activations grow exponentially with depth, saturating activations and destroying gradients. If too small, activations collapse toward zero at the same rate. *Xavier (Glorot) initialisation* draws each weight from $\mathcal{N}\!\left(0,\,\tfrac{2}{n_\text{in}+n_\text{out}}\right)$, where $n_\text{in}$ and $n_\text{out}$ are the fan-in and fan-out of the layer. This keeps the variance of activations and gradients roughly constant through tanh or sigmoid layers. *He (Kaiming) initialisation* uses $\mathcal{N}\!\left(0,\,\tfrac{2}{n_\text{in}}\right)$, accounting for the fact that ReLU zeroes out roughly half its inputs on average, and is the default for ReLU networks. Biases are typically initialised to zero.
 
 <div id="act-widget" style="margin:1.5rem 0;">
   <div style="display:flex;gap:0.45rem;flex-wrap:wrap;margin-bottom:0.45rem;justify-content:center;">
@@ -395,6 +397,32 @@ A limitation of plain SGD is that in elongated loss landscapes the negative grad
 $$d_k = \beta\, d_{k-1} + (1 - \beta)\, g_k, \qquad \omega_{k+1} = \omega_k - \varepsilon\, d_k,$$
 
 where $\beta \approx 0.9$ is the momentum coefficient. Expanding the recursion shows that $d_k = \sum_{j=0}^k \beta^{k-j}(1-\beta)\,g_j$: each past gradient contributes with exponentially decaying weight, so the update accumulates speed in consistent directions and is dampened by noisy cancellations.
+
+### Backpropagation
+
+Backpropagation is the algorithm that computes $\nabla_\omega \mathcal{L}$ by applying the chain rule from output to input. Define the *pre-activation* of unit $i$ in layer $k$ as
+
+$$z_i^{(k)} = b_i^{(k)} + \sum_j w_{i,j}^{(k)}\, f_j^{(k-1)},$$
+
+so $f_i^{(k)} = \sigma(z_i^{(k)})$. The *error signal* for that unit is $\delta_i^{(k)} = \partial\mathcal{L}/\partial z_i^{(k)}$.
+
+**Forward pass.** Propagate inputs through the network layer by layer, storing every $z_i^{(k)}$ and $f_i^{(k)}$.
+
+**Output error.** For a squared loss, $\delta^{(\text{out})} = \hat{f} - y$. For cross-entropy with softmax, $\delta_i^{(\text{out})} = \hat{p}_i - y_i$. In general, $\delta^{(\text{out})} = \partial\ell/\partial z^{(\text{out})}$.
+
+**Backward pass.** Propagate error signals from layer $L$ down to layer $1$. For each unit in layer $k$ (in reverse order):
+
+$$\delta_i^{(k)} = \sigma'\!\left(z_i^{(k)}\right) \sum_m w_{m,i}^{(k+1)}\, \delta_m^{(k+1)}.$$
+
+Each $\delta_i^{(k)}$ is the local activation derivative multiplied by the weighted sum of error signals from the layer above, the chain rule applied one step at a time.
+
+**Gradient readout.** With all $\delta_i^{(k)}$ in hand, the gradients are
+
+$$\frac{\partial\mathcal{L}}{\partial w_{i,j}^{(k)}} = \delta_i^{(k)}\, f_j^{(k-1)}, \qquad \frac{\partial\mathcal{L}}{\partial b_i^{(k)}} = \delta_i^{(k)}.$$
+
+Both the forward and backward passes cost $\mathcal{O}(W)$ operations, where $W$ is the total number of weights. Backpropagation therefore computes the full gradient in only twice the cost of a single forward pass, which is what makes training large networks feasible.
+
+The **vanishing gradient** problem appears when $\sigma'(z_i^{(k)})$ is consistently small: each multiplication shrinks $\delta$ further, and by the time the signal reaches early layers it has essentially disappeared. Sigmoid and tanh saturate for large $|z|$, making $\sigma' \approx 0$ there. ReLU eliminates this for positive pre-activations ($\sigma' = 1$ exactly), which is the primary reason it became the default activation for deep networks.
 
 ### Adam (Adaptive Moment Estimation)
 
