@@ -25,7 +25,7 @@ The widget below shows how a depth-$D$ tree partitions the feature axis into pie
 <div id="tw-widget" style="margin:1.5rem 0;">
   <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.6rem;flex-wrap:wrap;">
     <span style="font-size:0.88rem;font-weight:600;">Depth <em>D</em> =</span>
-    <input type="range" id="tw-depth" min="0" max="6" value="2" step="1"
+    <input type="range" id="tw-depth" min="0" max="20" value="2" step="1"
            oninput="twSetD(+this.value)" style="width:140px;accent-color:#86BCBD;">
     <span id="tw-dval" style="font-weight:700;min-width:1em;">2</span>
     <span style="font-size:0.79rem;opacity:0.65;margin-left:0.4rem;">
@@ -76,10 +76,8 @@ The widget below shows how a depth-$D$ tree partitions the feature axis into pie
     },{displayModeBar:false,responsive:true});
   }
   window.twSetD=function(d){_D=+d;_draw();};
-  function _init(){
-    if(!document.getElementById('tw-plot'))return;
-    if(!window.Plotly){if(!document.getElementById('plotly-cdn')){var s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';s.onload=_draw;document.head.appendChild(s);}}else{_draw();}
-  }
+  function _ep(cb){if(window.Plotly){cb();return;}var s=document.getElementById('plotly-cdn');if(!s){s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';document.head.appendChild(s);}s.addEventListener('load',cb);}
+  function _init(){if(!document.getElementById('tw-plot'))return;_ep(_draw);}
   if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
   else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
   else{setTimeout(_init,80);}
@@ -229,10 +227,8 @@ The activation function $\sigma$ is the source of nonlinearity. Four standard ch
        legend:{x:0.01,y:0.99,bgcolor:'transparent',font:{size:10}},
     },{displayModeBar:false,responsive:true});
   }
-  function _init(){
-    if(!document.getElementById('act-plot'))return;
-    if(!window.Plotly){if(!document.getElementById('plotly-cdn')){var s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';s.onload=_draw;document.head.appendChild(s);}}else{_draw();}
-  }
+  function _ep(cb){if(window.Plotly){cb();return;}var s=document.getElementById('plotly-cdn');if(!s){s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';document.head.appendChild(s);}s.addEventListener('load',cb);}
+  function _init(){if(!document.getElementById('act-plot'))return;_ep(_draw);}
   if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
   else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
   else{setTimeout(_init,80);}
@@ -394,11 +390,8 @@ The widget below animates three optimization trajectories on the anisotropic los
     _fr=1;_update();
   };
 
-  function _init(){
-    if(!document.getElementById('opt-plot'))return;
-    if(!window.Plotly){if(!document.getElementById('plotly-cdn')){var s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';s.onload=function(){_initPlot();_update();};document.head.appendChild(s);}}
-    else{_initPlot();_update();}
-  }
+  function _ep(cb){if(window.Plotly){cb();return;}var s=document.getElementById('plotly-cdn');if(!s){s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';document.head.appendChild(s);}s.addEventListener('load',cb);}
+  function _init(){if(!document.getElementById('opt-plot'))return;_ep(function(){_initPlot();_update();});}
   if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
   else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
   else{setTimeout(_init,80);}
