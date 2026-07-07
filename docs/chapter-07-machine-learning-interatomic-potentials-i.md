@@ -593,51 +593,36 @@ function drawMaceArrows(){
     '<marker id="mah-b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" fill="#1f6668"/></marker>'+
     '</defs>';
   function rel(id){
-    var el=document.getElementById(id);if(!el)return null;
-    var r=el.getBoundingClientRect();
+    var e=document.getElementById(id);if(!e)return null;
+    var r=e.getBoundingClientRect();
     return{left:r.left-wRect.left,top:r.top-wRect.top,right:r.right-wRect.left,
            bottom:r.bottom-wRect.top,cx:r.left+r.width/2-wRect.left,cy:r.top+r.height/2-wRect.top};
   }
-  function bezier(x1,y1,x2,y2,col,mid){
-    var dy=y2-y1;
-    var el=document.createElementNS(NS,'path');
-    el.setAttribute('d','M'+x1+','+y1+' C'+x1+','+(y1+dy*0.45)+' '+x2+','+(y1+dy*0.55)+' '+x2+','+y2);
-    el.setAttribute('fill','none');el.setAttribute('stroke',col);
-    el.setAttribute('stroke-width','1.8');el.setAttribute('marker-end','url(#'+mid+')');
-    asvg.appendChild(el);
+  function bz(x1,y1,x2,y2,col,mid){
+    var dy=y2-y1,p=document.createElementNS(NS,'path');
+    p.setAttribute('d','M'+x1+','+y1+' C'+x1+','+(y1+dy*0.45)+' '+x2+','+(y1+dy*0.55)+' '+x2+','+y2);
+    p.setAttribute('fill','none');p.setAttribute('stroke',col);
+    p.setAttribute('stroke-width','1.8');p.setAttribute('marker-end','url(#'+mid+')');
+    asvg.appendChild(p);
   }
-  // 1. Node (embedding) -> Linear mix (interaction)  [green]
-  var en=rel('mace-emb-node'),il=rel('mace-int-linear');
-  if(en&&il)bezier(en.cx,en.bottom,il.cx,il.top,'#3a7a28','mah-g');
-  // 2. Radial (embedding) -> Radial MLP (interaction)  [blue]
-  var er=rel('mace-emb-radial'),ir=rel('mace-int-radial');
-  if(er&&ir)bezier(er.cx,er.bottom,ir.cx,ir.top,'#1f6668','mah-b');
-  // 3. Angular (embedding) -> Tensor product  [blue bypass, right side]
-  var ea=rel('mace-emb-angular'),tp=rel('mace-int-tp');
+  var en=rel('mace-emb-node'),er=rel('mace-emb-radial'),ea=rel('mace-emb-angular');
+  var il=rel('mace-int-linear'),ir=rel('mace-int-radial'),tp=rel('mace-int-tp');
+  // Embedding -> Interaction inputs
+  if(en&&il) bz(en.cx,en.bottom, il.cx,il.top, '#3a7a28','mah-g');       // Node -> Linear mix
+  if(er&&ir) bz(er.cx,er.bottom, ir.cx,ir.top, '#1f6668','mah-b');       // Radial -> Radial MLP
+  // Interaction -> Tensor product (all three inputs converge)
+  if(il&&tp) bz(il.cx,il.bottom, tp.cx-20,tp.top, '#3a7a28','mah-g');   // Linear mix -> TP
+  if(ir&&tp) bz(ir.cx,ir.bottom, tp.cx+12,tp.top, '#1f6668','mah-b');   // Radial MLP -> TP
+  // Angular bypass: exits Angular bottom-right, travels right rail, enters TP top-right
   if(ea&&tp){
-    var rx=W-6,ry=8;
-    var sx=ea.right+2,sy=ea.cy;   // exit: right side of Angular box
-    var ex=tp.right+2,ey=tp.cy;   // entry: right side of Tensor product box
-    var d='M'+sx+','+sy+
-      ' L'+(rx-ry)+','+sy+
-      ' Q'+rx+','+sy+' '+rx+','+(sy+ry)+
-      ' L'+rx+','+(ey-ry)+
-      ' Q'+rx+','+ey+' '+(rx-ry)+','+ey+
-      ' L'+ex+','+ey;
-    var el=document.createElementNS(NS,'path');
-    el.setAttribute('d',d);el.setAttribute('fill','none');
-    el.setAttribute('stroke','#1f6668');el.setAttribute('stroke-width','1.8');
-    el.setAttribute('marker-end','url(#mah-b)');
-    asvg.appendChild(el);
-    // small rotated label along the right rail
-    var lbl=document.createElementNS(NS,'text');
-    var my=(sy+ey)/2,mx=rx+3;
-    lbl.setAttribute('x',mx);lbl.setAttribute('y',my);
-    lbl.setAttribute('font-size','7.5');lbl.setAttribute('fill','#1f6668');
-    lbl.setAttribute('font-style','italic');
-    lbl.setAttribute('transform','rotate(90,'+mx+','+my+')');
-    lbl.textContent='Y edge attrs.';
-    asvg.appendChild(lbl);
+    var rx=W-6,ry=8,sx=ea.right+2,sy=ea.bottom,ex=tp.right-14,ey=tp.top;
+    var d='M'+sx+','+sy+' L'+(rx-ry)+','+sy+' Q'+rx+','+sy+' '+rx+','+(sy+ry)+
+          ' L'+rx+','+(ey-ry)+' Q'+rx+','+ey+' '+(rx-ry)+','+ey+' L'+ex+','+ey;
+    var pe=document.createElementNS(NS,'path');
+    pe.setAttribute('d',d);pe.setAttribute('fill','none');
+    pe.setAttribute('stroke','#1f6668');pe.setAttribute('stroke-width','1.8');
+    pe.setAttribute('marker-end','url(#mah-b)');
+    asvg.appendChild(pe);
   }
 }
 
