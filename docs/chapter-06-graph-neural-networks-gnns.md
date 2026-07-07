@@ -56,6 +56,80 @@ and a final MLP maps $\mathbf{u}$ to the predicted property. The three standard 
 
 Weight sharing has two important consequences. First, the number of parameters does not grow with the number of nodes: a GCN on a 5-node graph and a 500-node graph has exactly the same number of trainable parameters. Second, a model trained on small graphs can be evaluated on larger graphs, because the weights encode a local operation rather than anything specific to a particular node's index or position. This is called **inductive** generalization.
 
+
+<div id="mp-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem 0.9rem;margin:1.8rem 0;">
+  <div style="text-align:center;font-size:0.83rem;font-weight:600;color:#555;margin-bottom:0.65rem;letter-spacing:0.01em;">Message Passing — click any node to trace one aggregation step</div>
+  <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+    <svg id="mp-svg" viewBox="0 0 330 255" width="330" height="255" style="flex-shrink:0;"></svg>
+    <div id="mp-panel" style="flex:1;min-width:210px;background:#fff;border:1px solid #e8e2da;border-radius:6px;padding:0.85rem;min-height:185px;font-size:0.81rem;line-height:1.68;color:#333;">
+      <div style="color:#bbb;font-style:italic;">Click any node to see its neighbours, the pooled message, and the updated embedding.</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:0.65rem;font-size:0.79rem;color:#555;">
+    Pooling:&nbsp;
+    <button id="mp-b-sum"  onclick="mpPool('sum')"  style="margin:0 3px;padding:3px 11px;border-radius:4px;border:1px solid #b5d4a0;background:#A4CE8B;cursor:pointer;font-size:0.79rem;">Sum</button>
+    <button id="mp-b-mean" onclick="mpPool('mean')" style="margin:0 3px;padding:3px 11px;border-radius:4px;border:1px solid #ccc;background:#f5f3f0;cursor:pointer;font-size:0.79rem;">Mean</button>
+    <button id="mp-b-max"  onclick="mpPool('max')"  style="margin:0 3px;padding:3px 11px;border-radius:4px;border:1px solid #ccc;background:#f5f3f0;cursor:pointer;font-size:0.79rem;">Max</button>
+  </div>
+</div>
+<script>
+(function(){
+var NS='http://www.w3.org/2000/svg';
+var ND=[{id:0,lbl:'A',x:165,y:32,v:3.0},{id:1,lbl:'B',x:52,y:108,v:1.5},
+        {id:2,lbl:'C',x:278,y:108,v:2.8},{id:3,lbl:'D',x:52,y:202,v:4.0},
+        {id:4,lbl:'E',x:278,y:202,v:0.5},{id:5,lbl:'F',x:165,y:218,v:2.2}];
+var ED=[[0,1],[0,2],[1,2],[1,3],[2,4],[3,5],[4,5],[1,5]];
+var ADJ={};ND.forEach(function(n){ADJ[n.id]=[];});
+ED.forEach(function(e){ADJ[e[0]].push(e[1]);ADJ[e[1]].push(e[0]);});
+var _pool='sum',_sel=null;
+function mk(tag,at,tx){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(tx!==undefined)e.textContent=tx;return e;}
+function draw(){
+  var svg=document.getElementById('mp-svg');if(!svg)return;svg.innerHTML='';
+  ED.forEach(function(e,i){var a=ND[e[0]],b=ND[e[1]];svg.appendChild(mk('line',{id:'mp-e'+i,x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'#d0cbc4','stroke-width':'2'}));});
+  ND.forEach(function(n){
+    var g=document.createElementNS(NS,'g');g.setAttribute('style','cursor:pointer;');
+    g.addEventListener('click',function(){mpSel(n.id);});
+    g.appendChild(mk('circle',{id:'mp-c'+n.id,cx:n.x,cy:n.y,r:'22',fill:'#A4CE8B',stroke:'#fff','stroke-width':'2.5'}));
+    g.appendChild(mk('text',{x:n.x,y:n.y-5,'text-anchor':'middle','font-size':'11','font-weight':'bold',fill:'#333'},n.lbl));
+    g.appendChild(mk('text',{x:n.x,y:n.y+8,'text-anchor':'middle','font-size':'10',fill:'#555'},n.v.toFixed(1)));
+    svg.appendChild(g);
+  });
+}
+function mpSel(id){
+  _sel=id;
+  var nb=ADJ[id];
+  ND.forEach(function(n){var c=document.getElementById('mp-c'+n.id);c.setAttribute('fill','#A4CE8B');c.setAttribute('r','22');});
+  ED.forEach(function(e,i){var l=document.getElementById('mp-e'+i);l.setAttribute('stroke','#d0cbc4');l.setAttribute('stroke-width','2');});
+  var sc=document.getElementById('mp-c'+id);sc.setAttribute('fill','#86BCBD');sc.setAttribute('r','25');
+  nb.forEach(function(b){var c=document.getElementById('mp-c'+b);c.setAttribute('fill','#F7E49B');c.setAttribute('r','24');});
+  ED.forEach(function(e,i){if(e[0]===id||e[1]===id){var l=document.getElementById('mp-e'+i);l.setAttribute('stroke','#86BCBD');l.setAttribute('stroke-width','3');}});
+  var vals=nb.map(function(b){return ND[b].v;}),ns=ND[id],msg=0;
+  if(_pool==='sum')msg=vals.reduce(function(a,b){return a+b;},0);
+  else if(_pool==='mean')msg=vals.length?vals.reduce(function(a,b){return a+b;},0)/vals.length:0;
+  else msg=vals.length?Math.max.apply(null,vals):0;
+  var upd=msg*0.6+ns.v*0.4;
+  var nbStr=nb.map(function(b){return '<b>'+ND[b].lbl+'</b>='+ND[b].v.toFixed(1);}).join(', ')||'<i>none</i>';
+  var vStr=vals.map(function(v){return v.toFixed(1);}).join(', ')||'—';
+  document.getElementById('mp-panel').innerHTML=
+    '<div style="margin-bottom:0.4rem;"><span style="background:#A4CE8B;color:#333;border-radius:3px;padding:1px 7px;font-size:0.78rem;font-weight:600;">Step 1 &mdash; Message</span></div>'+
+    'Node <b>'+ns.lbl+'</b> (v='+ns.v.toFixed(1)+') receives from: '+nbStr+
+    '<br><code style="font-size:0.79em;">msgs = ['+vStr+']</code>'+
+    '<hr style="margin:0.5rem 0;border:none;border-top:1px solid #eee;">'+
+    '<div style="margin-bottom:0.4rem;"><span style="background:#F7E49B;color:#555;border-radius:3px;padding:1px 7px;font-size:0.78rem;font-weight:600;">Step 2 &mdash; Pool&nbsp;('+_pool+')</span></div>'+
+    '<code style="font-size:0.79em;">m<sub>'+ns.lbl+'</sub> = '+_pool+'(['+vStr+']) = <b>'+msg.toFixed(3)+'</b></code>'+
+    '<hr style="margin:0.5rem 0;border:none;border-top:1px solid #eee;">'+
+    '<div style="margin-bottom:0.4rem;"><span style="background:#86BCBD;color:#fff;border-radius:3px;padding:1px 7px;font-size:0.78rem;font-weight:600;">Step 3 &mdash; Update</span></div>'+
+    '<code style="font-size:0.79em;">v\'<sub>'+ns.lbl+'</sub> = &sigma;(<b>W</b>&thinsp;m + <b>B</b>&thinsp;v<sub>self</sub>)</code><br>'+
+    '<span style="font-size:0.78em;opacity:0.65;">&approx; 0.6&sdot;'+msg.toFixed(2)+' + 0.4&sdot;'+ns.v.toFixed(1)+' = <b>'+upd.toFixed(3)+'</b>&ensp;(W=0.6, B=0.4 as illustration; real weights are learned)</span>';
+}
+window.mpPool=function(p){_pool=p;['sum','mean','max'].forEach(function(pp){var b=document.getElementById('mp-b-'+pp);if(b){b.style.background=pp===p?'#A4CE8B':'#f5f3f0';b.style.borderColor=pp===p?'#b5d4a0':'#ccc';}});if(_sel!==null)mpSel(_sel);};
+window.mpSel=mpSel;
+function init(){if(!document.getElementById('mp-svg'))return;draw();}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(init,50);});}
+})();
+</script>
+
 ## 6.6 Receptive Field and Oversmoothing
 
 After $t$ message-passing layers, node $i$ has received information from all nodes within $t$ hops. This is called the **receptive field** of node $i$ after $t$ layers. A single layer sees only immediate neighbors; two layers see neighbors-of-neighbors, and so on. Stacking more layers increases the receptive field, allowing the network to capture longer-range structural patterns.
@@ -85,6 +159,86 @@ and the full-layer update becomes
 $$\mathbf{H}^{(t+1)} = \sigma\!\left(\tilde{\mathbf{A}}\,\mathbf{H}^{(t)}\,\mathbf{W}^{(t)}\right).$$
 
 The self-loop in $\hat{\mathbf{A}}$ means node $i$ also aggregates its own embedding, equivalent to including $i \in \mathcal{N}(i)$. The symmetric normalization $\hat{D}_i^{-1/2}\hat{A}_{ij}\hat{D}_j^{-1/2}$ weights the contribution from node $j$ to node $i$ by $1/\sqrt{d_i d_j}$ (where $d_i, d_j$ are their degrees), preventing high-degree hub nodes from dominating aggregation. This matrix form makes the connection to spectral graph convolutions explicit and is efficient to compute via sparse matrix multiplication.
+
+
+<div id="gcn-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem 0.9rem;margin:1.8rem 0;">
+  <div style="text-align:center;font-size:0.83rem;font-weight:600;color:#555;margin-bottom:0.65rem;">GCN: Symmetric Normalisation &mdash; step through the matrix computation</div>
+  <div style="display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+    <div style="text-align:center;">
+      <div style="font-size:0.76rem;color:#999;margin-bottom:4px;">Graph</div>
+      <svg id="gcn-svg" viewBox="0 0 200 200" width="190" height="190"></svg>
+    </div>
+    <div style="flex:1;min-width:240px;">
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.65rem;align-items:center;">
+        <button onclick="gcnStep(-1)" style="padding:4px 13px;border-radius:4px;border:1px solid #ccc;background:#f5f3f0;cursor:pointer;font-size:0.8rem;">&larr;</button>
+        <span id="gcn-lbl" style="flex:1;text-align:center;font-size:0.8rem;font-weight:600;color:#555;"></span>
+        <button onclick="gcnStep(1)"  style="padding:4px 13px;border-radius:4px;border:1px solid #86BCBD;background:#86BCBD;color:#fff;cursor:pointer;font-size:0.8rem;">&rarr;</button>
+      </div>
+      <div id="gcn-mat" style="font-family:monospace;font-size:0.81rem;"></div>
+      <div id="gcn-desc" style="font-size:0.79rem;color:#666;margin-top:0.6rem;line-height:1.6;"></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+var NS='http://www.w3.org/2000/svg';
+var GN=[{x:75,y:55},{x:155,y:55},{x:155,y:145},{x:75,y:145}];
+var GE=[[0,1],[0,2],[1,2],[2,3]];
+var A=[[0,1,1,0],[1,0,1,0],[1,1,0,1],[0,0,1,0]];
+var AH=[[1,1,1,0],[1,1,1,0],[1,1,1,1],[0,0,1,1]];
+var D=[3,3,4,2];
+var AT=[];for(var ri=0;ri<4;ri++){AT.push([]);for(var ci2=0;ci2<4;ci2++){AT[ri].push(AH[ri][ci2]?AH[ri][ci2]/Math.sqrt(D[ri]*D[ci2]):0);}}
+var STEPS=[
+  {name:'Step 1 of 3 &mdash; <b>A</b>: adjacency matrix',mat:A,sl:false,
+   desc:'A<sub>ij</sub> = 1 if edge (i,j) exists, 0 otherwise. The diagonal is zero: no self-connections yet. Node 2 has the highest degree (3 neighbours).'},
+  {name:'Step 2 of 3 &mdash; <b>&#x00C2;</b> = A + I: add self-loops',mat:AH,sl:true,
+   desc:'Adding the identity puts a 1 on every diagonal entry (dashed rings on graph). Now each node\'s own embedding enters its own aggregation, so the update reads all nodes in N&#x0302;(i) = N(i) &cup; {i}. Degree d&#x0302;<sub>i</sub> = row-sum of &#x00C2;: [3,&thinsp;3,&thinsp;4,&thinsp;2].'},
+  {name:'Step 3 of 3 &mdash; <b>&#x00C3;</b> = D&#x0302;<sup>&minus;&frac12;</sup>&#x00C2;D&#x0302;<sup>&minus;&frac12;</sup>: normalise',mat:AT,sl:true,
+   desc:'Each entry is divided by &radic;(d&#x0302;<sub>i</sub>&thinsp;d&#x0302;<sub>j</sub>). Node 2 (highest degree 4) gets the smallest self-entry: 1/4 = 0.25. Low-degree node 3 (degree 2) has self-entry 1/2 = 0.50. Hub nodes contribute less per connection, preventing them from dominating aggregation.'}
+];
+var _s=0;
+function mk(tag,at,tx){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(tx!==undefined)e.textContent=tx;return e;}
+function drawG(){
+  var svg=document.getElementById('gcn-svg');if(!svg)return;svg.innerHTML='';
+  var step=STEPS[_s];
+  if(step.sl){GN.forEach(function(n){svg.appendChild(mk('circle',{cx:n.x,cy:n.y,r:'28',fill:'none',stroke:'#86BCBD','stroke-width':'1.5','stroke-dasharray':'4,3'}));});}
+  GE.forEach(function(e){var a=GN[e[0]],b=GN[e[1]];svg.appendChild(mk('line',{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'#d0cbc4','stroke-width':'2'}));});
+  GN.forEach(function(n,i){
+    svg.appendChild(mk('circle',{cx:n.x,cy:n.y,r:'20',fill:'#A4CE8B',stroke:'#fff','stroke-width':'2.5'}));
+    svg.appendChild(mk('text',{x:n.x,y:n.y-3,'text-anchor':'middle','font-size':'11','font-weight':'bold',fill:'#333'},i.toString()));
+    var dy=(n.y<100)?26:-26;
+    svg.appendChild(mk('text',{x:n.x,y:n.y+dy,'text-anchor':'middle','font-size':'8.5',fill:'#999'},'d̂='+D[i]));
+  });
+}
+function cellBg(v,mx){if(v===0)return '#f5f5f5';var t=v/mx;var a=Math.max(0.12,t).toFixed(2);return 'rgba(134,188,189,'+a+')';}
+function drawM(){
+  var step=STEPS[_s];var mat=step.mat;
+  var mx=0;for(var ri=0;ri<4;ri++)for(var ci2=0;ci2<4;ci2++)mx=Math.max(mx,mat[ri][ci2]);
+  var h='<table style="border-collapse:separate;border-spacing:2px;"><tr><td style="font-size:0.7rem;color:#bbb;padding:2px 4px;"></td>';
+  for(var ci2=0;ci2<4;ci2++)h+='<td style="font-size:0.73rem;color:#aaa;text-align:center;padding:2px 4px;">'+ci2+'</td>';
+  h+='</tr>';
+  for(var ri=0;ri<4;ri++){
+    h+='<tr><td style="font-size:0.73rem;color:#aaa;padding:2px 4px;">'+ri+'</td>';
+    for(var ci2=0;ci2<4;ci2++){
+      var v=mat[ri][ci2];
+      var bg=cellBg(v,mx);
+      var bd=ri===ci2?'2px solid #86BCBD':'1px solid #e0dbd4';
+      var disp=v===0?'0':(Number.isInteger(v)?v.toString():v.toFixed(3));
+      h+='<td style="padding:6px 8px;text-align:center;background:'+bg+';border:'+bd+';border-radius:3px;min-width:46px;">'+disp+'</td>';
+    }
+    h+='</tr>';
+  }
+  h+='</table>';
+  document.getElementById('gcn-mat').innerHTML=h;
+  document.getElementById('gcn-lbl').innerHTML=step.name;
+  document.getElementById('gcn-desc').innerHTML=step.desc;
+}
+window.gcnStep=function(d){_s=Math.max(0,Math.min(STEPS.length-1,_s+d));drawG();drawM();};
+function init(){if(!document.getElementById('gcn-svg'))return;_s=0;drawG();drawM();}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(init,50);});}
+})();
+</script>
 
 ## 6.8 Including Edge Embeddings
 
@@ -123,6 +277,79 @@ $$\mathbf{u}_c = \frac{1}{|G|}\sum_{i \in G} \mathbf{v}_i^{(T)}.$$
 $$E = \sigma(\mathbf{W}_r \mathbf{u}_c + \mathbf{b}_r).$$
 
 CGCNN demonstrated good accuracy for crystal property prediction (formation energy MAE $\approx 0.039$ eV/atom) but errors remain too large for reliable quantitative science, motivating more sophisticated architectures such as MEGNet (Chen et al., *Chem. Mater.* **31**, 3564, 2019; adds skip connections and set2set pooling) and M3GNet (Chen & Ong, *Nat. Comput. Sci.* **2**, 718, 2022; includes bond angles and dihedral angles in the message function).
+
+
+<div id="cgcnn-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem 0.9rem;margin:1.8rem 0;">
+  <div style="text-align:center;font-size:0.83rem;font-weight:600;color:#555;margin-bottom:0.3rem;">CGCNN: Bond Distance &rarr; Gaussian Basis Features</div>
+  <div style="text-align:center;font-size:0.78rem;color:#888;margin-bottom:0.75rem;">Each edge encodes its distance as a 16-dimensional vector. Move the slider to change the bond distance.</div>
+  <div style="display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+    <div style="text-align:center;">
+      <div style="font-size:0.75rem;color:#999;margin-bottom:3px;">g<sub>k</sub>(d) = exp(&minus;(d&minus;&mu;<sub>k</sub>)&sup2;&thinsp;/&thinsp;2&sigma;&sup2;)&ensp;&nbsp;&sigma;=0.5&#8239;&Aring;</div>
+      <svg id="cgcnn-plot" viewBox="0 0 320 165" width="320" height="165"></svg>
+      <div style="margin-top:0.45rem;font-size:0.8rem;color:#555;">
+        d&nbsp;=&nbsp;<input type="range" id="cgcnn-sl" min="10" max="79" value="28" oninput="cgcnnUp()" style="width:170px;vertical-align:middle;">&ensp;<span id="cgcnn-dv" style="font-weight:600;color:#86BCBD;min-width:3.5em;display:inline-block;"></span>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:0.75rem;color:#999;margin-bottom:3px;">Feature vector&ensp;<span style="color:#bbb;">(activations at d)</span></div>
+      <svg id="cgcnn-bars" viewBox="0 0 210 165" width="210" height="165"></svg>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+var NS='http://www.w3.org/2000/svg';
+var NK=16,SIG=0.5;
+var MU=[];for(var k=0;k<NK;k++)MU.push(0.5+(k*0.5));
+function gk(mu,d){return Math.exp(-(d-mu)*(d-mu)/(2*SIG*SIG));}
+function mk(tag,at,tx){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(tx!==undefined)e.textContent=tx;return e;}
+
+function drawPlot(d){
+  var svg=document.getElementById('cgcnn-plot');if(!svg)return;svg.innerHTML='';
+  var W=320,H=165,PL=28,PR=8,PT=10,PB=26,pw=W-PL-PR,ph=H-PT-PB,dmax=8.5;
+  svg.appendChild(mk('rect',{x:PL,y:PT,width:pw,height:ph,fill:'#fff',stroke:'#e0dbd4','stroke-width':'0.8'}));
+  for(var xi=1;xi<=8;xi++){var px=PL+pw*xi/dmax;svg.appendChild(mk('line',{x1:px,y1:PT+ph,x2:px,y2:PT+ph+4,stroke:'#ddd','stroke-width':'0.8'}));svg.appendChild(mk('text',{x:px,y:PT+ph+13,'text-anchor':'middle','font-size':'8',fill:'#aaa'},xi.toString()));}
+  svg.appendChild(mk('text',{x:PL+pw/2,y:H,'text-anchor':'middle','font-size':'8',fill:'#aaa'},'distance (Å)'));
+  svg.appendChild(mk('text',{x:5,y:PT+ph/2+3,'text-anchor':'middle','font-size':'8',fill:'#aaa','transform':'rotate(-90,5,'+(PT+ph/2)+')'},'g(d)'));
+  for(var ki=0;ki<NK;ki++){
+    var pts=[];
+    for(var xi2=0;xi2<=200;xi2++){var di=0.0+xi2*(dmax/200);var gi=gk(MU[ki],di);pts.push((PL+pw*di/dmax)+','+(PT+ph*(1-gi)));}
+    var act=gk(MU[ki],d);var col=act>0.05?'rgba(134,188,189,'+Math.min(1,act*2).toFixed(2)+')':'rgba(208,203,196,0.35)';
+    svg.appendChild(mk('polyline',{points:pts.join(' '),fill:'none',stroke:col,'stroke-width':act>0.05?'1.8':'0.9'}));
+  }
+  var lx=PL+pw*d/dmax;
+  svg.appendChild(mk('line',{x1:lx,y1:PT,x2:lx,y2:PT+ph,stroke:'#BA5A5A','stroke-width':'1.5','stroke-dasharray':'4,3'}));
+  svg.appendChild(mk('text',{x:Math.min(lx+3,W-30),y:PT+9,'font-size':'8',fill:'#BA5A5A'},d.toFixed(1)+'Å'));
+}
+
+function drawBars(d){
+  var svg=document.getElementById('cgcnn-bars');if(!svg)return;svg.innerHTML='';
+  var W=210,H=165,PL=8,PR=8,PT=10,PB=26,pw=W-PL-PR,ph=H-PT-PB;
+  svg.appendChild(mk('rect',{x:PL,y:PT,width:pw,height:ph,fill:'#fff',stroke:'#e0dbd4','stroke-width':'0.8'}));
+  var bw=Math.floor(pw/NK)-2;
+  for(var ki=0;ki<NK;ki++){
+    var v=gk(MU[ki],d);
+    var bh=Math.max(1,v*ph);
+    var bx=PL+ki*(pw/NK)+1;
+    var by=PT+ph-bh;
+    var col=v>0.05?'#86BCBD':'#d5eaeb';
+    svg.appendChild(mk('rect',{x:bx,y:by,width:bw,height:bh,fill:col,rx:'1.5'}));
+    if(ki%4===0)svg.appendChild(mk('text',{x:bx+bw/2,y:PT+ph+10,'text-anchor':'middle','font-size':'7.5',fill:'#bbb'},(ki+1).toString()));
+  }
+  svg.appendChild(mk('text',{x:PL+pw/2,y:H,'text-anchor':'middle','font-size':'8',fill:'#aaa'},'basis index'));
+}
+
+window.cgcnnUp=function(){
+  var sl=document.getElementById('cgcnn-sl');if(!sl)return;
+  var d=parseFloat(sl.value)/10;
+  document.getElementById('cgcnn-dv').textContent=d.toFixed(1)+'Å';
+  drawPlot(d);drawBars(d);
+};
+function init(){if(!document.getElementById('cgcnn-plot'))return;cgcnnUp();}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(init,50);});}
+})();
+</script>
 
 ## 6.10 Equivariant GNNs
 
