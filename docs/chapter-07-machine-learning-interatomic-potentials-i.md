@@ -284,7 +284,7 @@ GAP (Bartók et al., *Phys. Rev. Lett.* **104**, 136403, 2010) is not a new meth
 
 **Descriptor (SOAP):** for each atom $i$, compute a rotationally and permutationally invariant descriptor $\mathbf{q}_i$ of its local chemical environment within a cutoff $r_\text{cut}$. The SOAP kernel $k(\mathbf{q}_i, \mathbf{q}_j)$ measures environment similarity.
 
-**Regression (GPR/KRR):** treat the unknown atomic energy function as a Gaussian process with the SOAP kernel as covariance. Training on a dataset of $P$ DFT reference energies (and forces) reduces to solving a linear system $(K + \lambda I)\boldsymbol{\alpha} = \mathbf{y}$, exactly as in KRR (Section 4.3). The solution $\boldsymbol{\alpha}$ gives the GPR weights; GPR additionally provides an analytic uncertainty $\sigma^2(\mathbf{q})$ at no extra cost (Section 4.4).
+**Regression (GPR/KRR):** treat the unknown atomic energy function as a Gaussian process with the SOAP kernel as covariance. Training on a dataset of $P$ DFT reference energies (and forces) reduces to solving a linear system $(K + \lambda I)\boldsymbol{\alpha} = \mathbf{y}$, exactly as in KRR ([Section 4.3](chapter-04-regression-uncertainty-quantification.md#43-kernel-ridge-regression-krr)). The solution $\boldsymbol{\alpha}$ gives the GPR weights; GPR additionally provides an analytic uncertainty $\sigma^2(\mathbf{q})$ at no extra cost ([Section 4.4](chapter-04-regression-uncertainty-quantification.md#44-gaussian-process-regression-gpr)).
 
 **Prediction:** the energy of a new structure is a sum of atomic contributions,
 
@@ -404,7 +404,7 @@ The sum over $j$ makes the result permutation invariant. In pure ACE, this neigh
 
 $$B_{i,\eta,kLM}^{(s)} = \sum_{lm} C_{lm}^{LM}\prod_{\xi=1}^{\nu} A_{i,k_\xi l_\xi m_\xi}^{(s)}.$$
 
-This is exactly the ACE $B$-basis construction from Section 7.8, but computed inside a learned message-passing layer rather than over a fixed linear model. A learnable message is then formed as a linear combination over the $B$-basis channels:
+This is exactly the ACE $B$-basis construction from [Section 7.8](#78-ace-atomic-cluster-expansion-as-mlip), but computed inside a learned message-passing layer rather than over a fixed linear model. A learnable message is then formed as a linear combination over the $B$-basis channels:
 
 $$m_{i,kLM}^{(s)} = \sum_{\eta,k'} W_{\eta,kk'}^{(s)}\, B_{i,\eta,k'LM}^{(s)},$$
 
@@ -412,7 +412,7 @@ and the node features are updated additively (combining the message with the pre
 
 $$h_{i,kLM}^{(s+1)} = \sum_{k'} W_{kk',L}^{(s)}\, m_{i,k'LM}^{(s)} + \sum_{k'} W_{kk',L}^{(s)}\, h_{i,k'LM}^{(s)}.$$
 
-The key advantage over NequIP: NequIP takes one tensor product per layer, effectively reaching body order $S+1$ after $S$ layers. MACE takes $\nu$ tensor products *within* each product block, reaching body order $(\nu+1) \times S + 1$, much higher body order for the same number of layers.
+The key advantage over NequIP ([§7.10](#710-euclidean-graph-neural-networks-nequip)): NequIP takes one tensor product per layer, effectively reaching body order $S+1$ after $S$ layers. MACE takes $\nu$ tensor products *within* each product block, reaching body order $(\nu+1) \times S + 1$, much higher body order for the same number of layers.
 
 **Step 4: Readout.** After each interaction block $s$, the scalar channels ($l=0$) of the node features are read out to a per-atom energy contribution. For intermediate layers a linear readout is used; for the final layer ($s=S$) an MLP:
 
@@ -466,106 +466,116 @@ The initial node embedding $h_{i,k00}^{(0)}$ is `Kx0e` only: pure scalars, since
 
 The small model is suitable for fast MD on well-defined systems; the medium model is the typical research choice; the large model (similar to MACE-MP-0) is used for universal/foundation models trained on millions of structures across the periodic table.
 
-<div id="mace-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.2rem 1rem 1.1rem;margin:1.8rem 0;font-family:inherit;">
-<div style="text-align:center;font-size:0.85rem;font-weight:700;color:#444;margin-bottom:0.9rem;letter-spacing:0.01em;">MACE Architecture &mdash; click any block to expand</div>
+<div id="mace-fc" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 0.9rem;margin:1.8rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.75rem;letter-spacing:0.01em;">MACE Architecture &mdash; Embedding &rarr; [Interaction + Product + Readout] &times; <em>S</em> &rarr; Output</div>
 
-<div class="ms-blk" id="msb0" style="border:1.5px solid #A4CE8B;border-radius:6px;margin-bottom:0.45rem;overflow:hidden;">
-<div style="display:flex;align-items:center;gap:0.5rem;padding:0.55rem 0.85rem;background:rgba(164,206,139,0.13);cursor:pointer;" onclick="maceT(0)">
-<span style="background:#A4CE8B;color:#1e4a12;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:3px;white-space:nowrap;">STEP 1</span>
-<b style="font-size:0.82rem;color:#333;">Embedding</b>
-<span style="font-size:0.76rem;color:#999;margin-left:0.2rem;">· computed once</span>
-<span class="ms-prev" data-eq="h_{i,k00}^{(0)} = W_{km}" style="margin-left:0.5rem;font-size:0.8rem;"></span>
-<span id="msa0" style="margin-left:auto;color:#aaa;font-size:0.82rem;padding-left:0.5rem;">&#9660;</span>
+<div style="display:flex;justify-content:center;gap:0.7rem;margin-bottom:0.3rem;flex-wrap:wrap;">
+<div style="background:#f0ece6;border:1.5px solid #c8c2ba;border-radius:5px;padding:0.22rem 0.85rem;font-size:0.8rem;font-weight:600;color:#555;">Species Z<sub>i</sub></div>
+<div style="background:#f0ece6;border:1.5px solid #c8c2ba;border-radius:5px;padding:0.22rem 0.85rem;font-size:0.8rem;font-weight:600;color:#555;">Edges: r<sub>ij</sub>, &nbsp;r&#770;<sub>ij</sub></div>
 </div>
-<div id="msd0" style="display:none;padding:0.7rem 1rem 0.8rem;border-top:1px solid #d5e8c8;background:#fff;">
-<div style="font-size:0.77rem;color:#666;margin-bottom:0.5rem;">Three quantities are initialized once before the interaction loop:</div>
-<div class="ms-row"><span class="ms-lbl">Node</span><span data-eq="h_{i,k00}^{(0)} = W_{km}" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">Radial</span><span data-eq="\tilde{f}_n(r_{ij}) = \sqrt{\tfrac{2}{r_c}}\,\frac{\sin\!\left(\frac{n\pi\, r_{ij}}{r_c}\right)}{r_{ij}}\,f_c(r_{ij})" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">Angular</span><span data-eq="Y_l^{m_l}(\hat{\mathbf{r}}_{ij}), \quad l = 0, \ldots, L_{\max}" data-dm="1"></span></div>
-<div style="font-size:0.74rem;color:#aaa;margin-top:0.4rem;">Initial embedding is <code>Kx0e</code> (pure scalars); l&gt;0 channels are populated in Step 2.</div>
-</div>
-</div>
+<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
 
-<div style="border:1.5px dashed #86BCBD;border-radius:8px;padding:0.5rem 0.5rem 0.5rem;margin-bottom:0.45rem;">
-<div style="text-align:center;font-size:0.73rem;font-weight:700;color:#86BCBD;letter-spacing:0.03em;margin-bottom:0.4rem;">&#10227; &thinsp; &times;S &thinsp; interaction layers</div>
-
-<div class="ms-blk" id="msb1" style="border:1.5px solid #86BCBD;border-radius:6px;margin-bottom:0.35rem;overflow:hidden;">
-<div style="display:flex;align-items:center;gap:0.5rem;padding:0.55rem 0.85rem;background:rgba(134,188,189,0.12);cursor:pointer;" onclick="maceT(1)">
-<span style="background:#86BCBD;color:#0f3a3c;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:3px;white-space:nowrap;">STEP 2</span>
-<b style="font-size:0.82rem;color:#333;">Interaction</b>
-<span style="font-size:0.76rem;color:#999;margin-left:0.2rem;">· equivariant message passing &#8594; A-basis</span>
-<span id="msa1" style="margin-left:auto;color:#aaa;font-size:0.82rem;padding-left:0.5rem;">&#9660;</span>
-</div>
-<div id="msd1" style="display:none;padding:0.7rem 1rem 0.8rem;border-top:1px solid #c2dfe0;background:#fff;">
-<div style="font-size:0.77rem;color:#666;margin-bottom:0.5rem;">Four sequential sub-steps build the equivariant A-basis per atom:</div>
-<div class="ms-row"><span class="ms-lbl">Linear mix</span><span data-eq="\tilde{h}_{i,kl_2m_2}^{(s)} = \sum_{k'} W_{kk'l_2}^{(s)}\,h_{i,k'l_2m_2}^{(s)}" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">Radial MLP</span><span data-eq="R_{kl_1l_2l}^{(s)}(r_{ij}) = \mathrm{MLP}\!\left(\{\tilde{f}_n(r_{ij})\}_n\right)" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">Tensor product</span><span data-eq="\varphi_{i,klm}^{(s)} = \sum_{l_1l_2m_1m_2} C_{l_1m_1,\,l_2m_2}^{l,m}\,R_{kl_1l_2l}^{(s)}\,\tilde{h}_{j,kl_1m_1}^{(s)}\,Y_{l_2}^{m_2}(\hat{\mathbf{r}}_{ij})" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">A-basis</span><span data-eq="A_{i,klm}^{(s)} = \sum_{k'} W_{kk'}^{(s)}\sum_{j\in\mathcal{N}(i)}\varphi_{i,k'lm}^{(s)}" data-dm="1"></span></div>
-<div style="font-size:0.74rem;color:#aaa;margin-top:0.4rem;">CG coefficients <em>C</em> are fixed constants enforcing equivariance. The radial MLP generalises SchNet's cfconv to equivariant features.</div>
+<div style="border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;margin:0.2rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(164,206,139,0.12);color:#2a5a1a;border-bottom:1px solid #A4CE8B;">Embedding <span style="font-weight:400;text-transform:none;color:#888;">&middot; computed once, before the interaction loop</span></div>
+<div style="display:flex;gap:0.4rem;padding:0.45rem;flex-wrap:wrap;">
+<div style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Node</div>
+<span data-eq="h_{i,k00}^{(0)} = W_{km}" data-dm="1"></span></div>
+<div style="flex:1.2;min-width:200px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Radial basis</div>
+<span data-eq="\tilde{f}_n(r_{ij}) = \sqrt{\tfrac{2}{r_c}}\,\frac{\sin\!\left(\frac{n\pi r_{ij}}{r_c}\right)}{r_{ij}}\,f_c(r_{ij})" data-dm="1"></span></div>
+<div style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Angular basis</div>
+<span data-eq="Y_l^{m_l}(\hat{\mathbf{r}}_{ij}),\; l = 0,\ldots,L_{\max}" data-dm="1"></span></div>
 </div>
 </div>
 
-<div class="ms-blk" id="msb2" style="border:1.5px solid #C47070;border-radius:6px;margin-bottom:0.35rem;overflow:hidden;">
-<div style="display:flex;align-items:center;gap:0.5rem;padding:0.55rem 0.85rem;background:rgba(186,90,90,0.1);cursor:pointer;" onclick="maceT(2)">
-<span style="background:#BA5A5A;color:#fff;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:3px;white-space:nowrap;">STEP 3</span>
-<b style="font-size:0.82rem;color:#333;">Product</b>
-<span style="font-size:0.76rem;color:#999;margin-left:0.2rem;">· &nu;-body ACE correlations &#8594; B-basis &#8594; update h</span>
-<span id="msa2" style="margin-left:auto;color:#aaa;font-size:0.82rem;padding-left:0.5rem;">&#9660;</span>
-</div>
-<div id="msd2" style="display:none;padding:0.7rem 1rem 0.8rem;border-top:1px solid #e0c0c0;background:#fff;">
-<div style="font-size:0.77rem;color:#666;margin-bottom:0.5rem;">Take &nu;-fold tensor product of the A-basis to reach body order (&nu;+1)&times;S+1:</div>
-<div class="ms-row"><span class="ms-lbl">B-basis</span><span data-eq="B_{i,\eta,kLM}^{(s)} = \sum_{lm} C_{lm}^{LM}\prod_{\xi=1}^{\nu}A_{i,k_\xi l_\xi m_\xi}^{(s)}" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">Message</span><span data-eq="m_{i,kLM}^{(s)} = \sum_{\eta,k'} W_{\eta,kk'}^{(s)}\,B_{i,\eta,k'LM}^{(s)}" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">Update</span><span data-eq="h_{i,kLM}^{(s+1)} = \sum_{k'} W_{kk'L}^{(s)}\,m_{i,k'LM}^{(s)} + \sum_{k'} U_{kk'L}^{(s)}\,h_{i,k'LM}^{(s)}" data-dm="1"></span></div>
-<div style="font-size:0.74rem;color:#aaa;margin-top:0.4rem;">NequIP uses &nu;=1 (linear in A): body order S+1. MACE uses &nu;=2 or 3: body order 2&times;(S+1) or 3&times;(S+1) for the same number of layers.</div>
+<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
+
+<div style="border:1.5px dashed #86BCBD;border-radius:8px;padding:0.45rem;background:rgba(134,188,189,0.03);">
+<div style="text-align:center;font-size:0.73rem;font-weight:700;color:#86BCBD;letter-spacing:0.03em;margin-bottom:0.3rem;">&#10227;&thinsp;&times;S&thinsp; interaction layers</div>
+
+<div style="border:1.5px solid #86BCBD;border-radius:6px;overflow:hidden;margin-bottom:0.3rem;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(134,188,189,0.12);color:#0f3a3c;border-bottom:1px solid #86BCBD;">Interaction <span style="font-weight:400;text-transform:none;color:#888;">&middot; equivariant message passing &rarr; A-basis</span></div>
+<div style="padding:0.4rem 0.45rem;">
+<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">1 &middot; Linear mix</div>
+<span data-eq="\tilde{h}_{i,kl_2m_2}^{(s)} = \textstyle\sum_{k'} W_{kk'l_2}^{(s)}\,h_{i,k'l_2m_2}^{(s)}" data-dm="1"></span></div>
+<div style="text-align:center;color:#ccc;font-size:0.9rem;line-height:1.3;">&#8595;</div>
+<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">2 &middot; Radial MLP</div>
+<span data-eq="R_{kl_1l_2l}^{(s)}(r_{ij}) = \mathrm{MLP}\!\left(\{\tilde{f}_n(r_{ij})\}_n\right)" data-dm="1"></span></div>
+<div style="text-align:center;color:#ccc;font-size:0.9rem;line-height:1.3;">&#8595;</div>
+<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">3 &middot; Tensor product (Clebsch&ndash;Gordan)</div>
+<span data-eq="\varphi_{i,klm}^{(s)} = \textstyle\sum_{l_1l_2m_1m_2} C_{l_1m_1,l_2m_2}^{l,m}\,R_{kl_1l_2l}^{(s)}\,\tilde{h}_{j,kl_1m_1}^{(s)}\,Y_{l_2}^{m_2}(\hat{\mathbf{r}}_{ij})" data-dm="1"></span></div>
+<div style="text-align:center;color:#ccc;font-size:0.9rem;line-height:1.3;">&#8595;</div>
+<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">4 &middot; A-basis (neighbour sum)</div>
+<span data-eq="A_{i,klm}^{(s)} = \textstyle\sum_{k'} W_{kk'}^{(s)}\sum_{j\in\mathcal{N}(i)}\varphi_{i,k'lm}^{(s)}" data-dm="1"></span></div>
 </div>
 </div>
 
-<div class="ms-blk" id="msb3" style="border:1.5px solid #c8ad3a;border-radius:6px;overflow:hidden;">
-<div style="display:flex;align-items:center;gap:0.5rem;padding:0.55rem 0.85rem;background:rgba(247,228,155,0.3);cursor:pointer;" onclick="maceT(3)">
-<span style="background:#c8ad3a;color:#fff;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:3px;white-space:nowrap;">STEP 4</span>
-<b style="font-size:0.82rem;color:#333;">Readout</b>
-<span style="font-size:0.76rem;color:#999;margin-left:0.2rem;">· l=0 channels &#8594; atomic energy &epsilon;<sub>i</sub><sup>(s)</sup></span>
-<span id="msa3" style="margin-left:auto;color:#aaa;font-size:0.82rem;padding-left:0.5rem;">&#9660;</span>
+<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
+
+<div style="border:1.5px solid #C47070;border-radius:6px;overflow:hidden;margin-bottom:0.3rem;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(186,90,90,0.08);color:#5a1a1a;border-bottom:1px solid #C47070;">Product <span style="font-weight:400;text-transform:none;color:#888;">&middot; &nu;-body ACE correlations &rarr; B-basis &rarr; update h</span></div>
+<div style="padding:0.4rem 0.45rem;">
+<div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">B-basis</div>
+<span data-eq="B_{i,\eta,kLM}^{(s)} = \textstyle\sum_{lm} C_{lm}^{LM}\prod_{\xi=1}^{\nu} A_{i,k_\xi l_\xi m_\xi}^{(s)}" data-dm="1"></span></div>
+<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Message</div>
+<span data-eq="m_{i,kLM}^{(s)} = \textstyle\sum_{\eta,k'} W_{\eta,kk'}^{(s)}\,B_{i,\eta,k'LM}^{(s)}" data-dm="1"></span></div>
 </div>
-<div id="msd3" style="display:none;padding:0.7rem 1rem 0.8rem;border-top:1px solid #e5d88a;background:#fff;">
-<div style="font-size:0.77rem;color:#666;margin-bottom:0.5rem;">Scalar (l=0) channels are read out after each layer; only the final layer uses an MLP:</div>
-<div class="ms-row"><span class="ms-lbl">s &lt; S</span><span data-eq="\varepsilon_i^{(s)} = \sum_k W_k^{(s)}\,h_{i,k00}^{(s)} \quad \text{(linear)}" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">s = S</span><span data-eq="\varepsilon_i^{(S)} = \mathrm{MLP}\!\left(\{h_{i,k00}^{(S)}\}_k\right)" data-dm="1"></span></div>
-<div style="font-size:0.74rem;color:#aaa;margin-top:0.4rem;">Reading out at every layer (not just the last) boosts accuracy with minimal overhead.</div>
+<div style="text-align:center;color:#ccc;font-size:0.9rem;line-height:1.3;">&#8595;</div>
+<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Update (residual connection)</div>
+<span data-eq="h_{i,kLM}^{(s+1)} = \textstyle\sum_{k'} W_{kk'L}^{(s)}\,m_{i,k'LM}^{(s)} + \sum_{k'} U_{kk'L}^{(s)}\,h_{i,k'LM}^{(s)}" data-dm="1"></span></div>
 </div>
 </div>
 
-</div>
+<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
 
-<div class="ms-blk" id="msb4" style="border:1.5px solid #aaa;border-radius:6px;overflow:hidden;margin-top:0.45rem;">
-<div style="display:flex;align-items:center;gap:0.5rem;padding:0.55rem 0.85rem;background:rgba(170,170,170,0.1);cursor:pointer;" onclick="maceT(4)">
-<span style="background:#888;color:#fff;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:3px;white-space:nowrap;">OUTPUT</span>
-<b style="font-size:0.82rem;color:#333;">Total energy &amp; forces</b>
-<span style="font-size:0.76rem;color:#999;margin-left:0.2rem;">· sum over atoms and layers, autodiff for forces</span>
-<span id="msa4" style="margin-left:auto;color:#aaa;font-size:0.82rem;padding-left:0.5rem;">&#9660;</span>
-</div>
-<div id="msd4" style="display:none;padding:0.7rem 1rem 0.8rem;border-top:1px solid #ddd;background:#fff;">
-<div class="ms-row"><span class="ms-lbl">Atom energy</span><span data-eq="E_i = \sum_{s=1}^{S}\varepsilon_i^{(s)}" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">Total &amp; forces</span><span data-eq="E_{\mathrm{tot}} = \sum_i E_i, \qquad \mathbf{F}_i = -\frac{\partial E_{\mathrm{tot}}}{\partial \mathbf{r}_i}" data-dm="1"></span></div>
-<div class="ms-row"><span class="ms-lbl">Training loss</span><span data-eq="\mathcal{L} = \frac{\lambda_E}{B}\sum_b\!\left(\frac{E_b-\hat{E}_b}{N_b}\right)^{\!2} + \frac{\lambda_F}{3B}\sum_{b,i,\alpha}\!\left(\hat{F}_{i\alpha}+\frac{\partial E_b}{\partial r_{i\alpha}}\right)^{\!2}" data-dm="1"></span></div>
-<div style="font-size:0.74rem;color:#aaa;margin-top:0.4rem;">Forces give 3N training signals per structure, making MLIPs data-efficient. Forces are equivariant by construction since they are gradients of a scalar.</div>
+<div style="border:1.5px solid #c8ad3a;border-radius:6px;overflow:hidden;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(247,228,155,0.25);color:#5a4c00;border-bottom:1px solid #c8ad3a;">Readout <span style="font-weight:400;text-transform:none;color:#888;">&middot; l=0 scalars &rarr; atomic energy &epsilon;<sub>i</sub><sup>(s)</sup> per layer</span></div>
+<div style="display:flex;gap:0.4rem;padding:0.4rem 0.45rem;flex-wrap:wrap;">
+<div style="flex:1;min-width:155px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">s &lt; S &nbsp;(linear)</div>
+<span data-eq="\varepsilon_i^{(s)} = \textstyle\sum_k W_k^{(s)}\,h_{i,k00}^{(s)}" data-dm="1"></span></div>
+<div style="flex:1;min-width:155px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">s = S &nbsp;(MLP)</div>
+<span data-eq="\varepsilon_i^{(S)} = \mathrm{MLP}\!\left(\{h_{i,k00}^{(S)}\}_k\right)" data-dm="1"></span></div>
 </div>
 </div>
 
 </div>
-<style>
-.ms-blk{transition:box-shadow 0.15s;}
-.ms-blk:hover{box-shadow:0 2px 8px rgba(0,0,0,0.08);}
-.ms-row{display:flex;align-items:baseline;gap:0.6rem;margin:0.35rem 0;flex-wrap:wrap;}
-.ms-lbl{font-size:0.75rem;font-weight:600;color:#888;min-width:90px;flex-shrink:0;padding-top:0.15rem;}
-.ms-prev{font-size:0.8rem;color:#666;}
-</style>
+
+<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
+
+<div style="border:1.5px solid #aaa;border-radius:6px;overflow:hidden;margin:0.2rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(170,170,170,0.1);color:#444;border-bottom:1px solid #ccc;">Output <span style="font-weight:400;text-transform:none;color:#888;">&middot; sum over atoms and layers; forces via autodiff</span></div>
+<div style="padding:0.4rem 0.45rem;">
+<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.3rem;">
+<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Total energy</div>
+<span data-eq="E_i = \textstyle\sum_s \varepsilon_i^{(s)},\quad E_{\mathrm{tot}} = \sum_i E_i" data-dm="1"></span></div>
+<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Forces (conservative)</div>
+<span data-eq="\mathbf{F}_i = -\dfrac{\partial E_{\mathrm{tot}}}{\partial\mathbf{r}_i}" data-dm="1"></span></div>
+</div>
+<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Training loss</div>
+<span data-eq="\mathcal{L} = \frac{\lambda_E}{B}\sum_b\!\left(\frac{E_b-\hat{E}_b}{N_b}\right)^{\!2} + \frac{\lambda_F}{3B}\sum_{b,i,\alpha}\!\left(\hat{F}_{i\alpha}+\frac{\partial E_b}{\partial r_{i\alpha}}\right)^{\!2}" data-dm="1"></span></div>
+</div>
+</div>
+
+</div>
 <script>
 (function(){
 function maceInit(){
-  var el=document.getElementById('mace-widget');
+  var el=document.getElementById('mace-fc');
   if(!el||el.dataset.miInit)return;
   el.dataset.miInit='1';
   el.querySelectorAll('[data-eq]').forEach(function(e){
@@ -575,13 +585,6 @@ function maceInit(){
     }catch(err){}
   });
 }
-window.maceT=function(i){
-  var d=document.getElementById('msd'+i),a=document.getElementById('msa'+i);
-  if(!d||!a)return;
-  var open=d.style.display==='block';
-  d.style.display=open?'none':'block';
-  a.innerHTML=open?'&#9660;':'&#9650;';
-};
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',maceInit);}
 else{maceInit();}
 if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(maceInit,80);});}
