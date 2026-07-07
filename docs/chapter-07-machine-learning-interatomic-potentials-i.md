@@ -40,21 +40,21 @@ where $\Delta G^\ddagger$ is the free energy difference between the transition s
 
 <div id="pes-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.2rem 1rem 1rem;margin:1.8rem 0;font-family:inherit;">
 <div style="text-align:center;font-size:0.84rem;font-weight:700;color:#555;margin-bottom:0.8rem;letter-spacing:0.01em;">Potential Energy Surface &amp; Eyring Equation</div>
-<div style="font-size:0.77rem;text-align:center;color:#888;margin-bottom:0.7rem;">V(ξ) = a(ξ²−1)² + bξ &nbsp;|&nbsp; adjust sliders to see how barrier height controls reaction rate</div>
+<div style="font-size:0.77rem;text-align:center;color:#888;margin-bottom:0.7rem;">V(&xi;) = a(&xi;&sup2;&minus;1)&sup2; + b&xi; &nbsp;|&nbsp; adjust sliders to see how barrier height controls reaction rate</div>
 <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;">
-<svg id="pes-svg" viewBox="0 0 380 220" width="380" height="220" style="display:block;flex-shrink:0;"></svg>
-<div id="pes-info" style="min-width:155px;flex:1;padding-top:0.2rem;"></div>
+<svg id="pes-svg" style="flex:2;min-width:260px;height:270px;display:block;flex-shrink:0;"></svg>
+<div id="pes-info" style="flex:1;min-width:180px;padding-top:0.1rem;"></div>
 </div>
-<div style="margin-top:0.75rem;font-size:0.79rem;color:#555;display:grid;grid-template-columns:auto 1fr 62px;gap:0.3rem 0.6rem;align-items:center;">
+<div style="margin-top:0.6rem;font-size:0.74rem;color:#555;display:grid;grid-template-columns:auto 1fr 56px;gap:0.15rem 0.45rem;align-items:center;">
 <label>Barrier <em>a</em></label>
-<input type="range" id="pes-a" min="5" max="50" value="25" style="width:100%;" oninput="pesUp()">
-<span id="pes-av" style="text-align:right;">0.25 eV</span>
+<input type="range" id="pes-a" min="5" max="50" value="25" style="width:100%;height:16px;" oninput="pesUp()">
+<span id="pes-av" style="text-align:right;font-variant-numeric:tabular-nums;">0.25 eV</span>
 <label>Asymmetry <em>b</em></label>
-<input type="range" id="pes-b" min="-15" max="15" value="0" style="width:100%;" oninput="pesUp()">
-<span id="pes-bv" style="text-align:right;">+0.00 eV</span>
+<input type="range" id="pes-b" min="-15" max="15" value="0" style="width:100%;height:16px;" oninput="pesUp()">
+<span id="pes-bv" style="text-align:right;font-variant-numeric:tabular-nums;">+0.00 eV</span>
 <label>Temperature</label>
-<input type="range" id="pes-T" min="100" max="700" value="300" style="width:100%;" oninput="pesUp()">
-<span id="pes-Tv" style="text-align:right;">300 K</span>
+<input type="range" id="pes-T" min="100" max="700" value="300" style="width:100%;height:16px;" oninput="pesUp()">
+<span id="pes-Tv" style="text-align:right;font-variant-numeric:tabular-nums;">300 K</span>
 </div>
 </div>
 <script>
@@ -77,6 +77,7 @@ function findCrit(a,b){
   return res;
 }
 function mk(tag,at,tx){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(tx!=null)e.textContent=tx;return e;}
+function kx(s){try{return katex.renderToString(s,{throwOnError:false,displayMode:false});}catch(e){return s;}}
 window.pesUp=function(){
   var a=parseFloat(document.getElementById('pes-a').value)/100;
   var b=parseFloat(document.getElementById('pes-b').value)/100;
@@ -86,58 +87,64 @@ window.pesUp=function(){
   document.getElementById('pes-Tv').textContent=Math.round(T)+' K';
   var svg=document.getElementById('pes-svg');
   if(!svg)return;
+  var bbox=svg.getBoundingClientRect();
+  var W=bbox.width>20?Math.floor(bbox.width):320;
+  var H=bbox.height>20?Math.floor(bbox.height):270;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
   svg.innerHTML='';
   var cr=findCrit(a,b);
   if(!cr.R||!cr.TS||!cr.P)return;
   var vR=cr.R.v,vTS=cr.TS.v,vP=cr.P.v;
   var vlo=Math.min(vR,vP)-0.04,vhi=vTS+0.08;
-  var W=380,H=220,PL=48,PR=12,PT=18,PB=32,PW=W-PL-PR,PH=H-PT-PB;
+  var PL=52,PR=14,PT=18,PB=32,PW=W-PL-PR,PH=H-PT-PB;
   function px(x){return PL+PW*(x+1.8)/3.6;}
   function py(v){return PT+PH*(1-(v-vlo)/(vhi-vlo));}
-  svg.appendChild(mk('rect',{x:PL,y:PT,width:PW,height:PH,fill:'#fff',stroke:'#ddd','stroke-width':0.8}));
-  if(vlo<0&&vhi>0){svg.appendChild(mk('line',{x1:PL,y1:py(0),x2:PL+PW,y2:py(0),stroke:'#eee','stroke-width':1}));}
+  svg.appendChild(mk('rect',{x:PL,y:PT,width:PW,height:PH,fill:'#fff',stroke:'#e0dbd4','stroke-width':1}));
+  if(vlo<0&&vhi>0){svg.appendChild(mk('line',{x1:PL,y1:py(0),x2:PL+PW,y2:py(0),stroke:'#f0ece8','stroke-width':1}));}
   [[vR,'#A4CE8B'],[vTS,'#BA5A5A'],[vP,'#86BCBD']].forEach(function(p){
-    svg.appendChild(mk('line',{x1:PL,y1:py(p[0]),x2:PL+PW,y2:py(p[0]),stroke:p[1],'stroke-width':0.8,'stroke-dasharray':'3,3',opacity:0.55}));
+    svg.appendChild(mk('line',{x1:PL,y1:py(p[0]),x2:PL+PW,y2:py(p[0]),stroke:p[1],'stroke-width':0.9,'stroke-dasharray':'4,3',opacity:0.55}));
   });
   var pts=[];
-  for(var i=0;i<=350;i++){var xi=-1.8+i*3.6/350,vi=V(xi,a,b);if(vi<=vhi+0.3&&vi>=vlo-0.3)pts.push(px(xi).toFixed(1)+','+py(vi).toFixed(1));}
-  svg.appendChild(mk('polyline',{points:pts.join(' '),fill:'none',stroke:'#444','stroke-width':2.4,'stroke-linejoin':'round'}));
+  for(var i=0;i<=450;i++){var xi=-1.8+i*3.6/450,vi=V(xi,a,b);if(vi<=vhi+0.3&&vi>=vlo-0.3)pts.push(px(xi).toFixed(1)+','+py(vi).toFixed(1));}
+  svg.appendChild(mk('polyline',{points:pts.join(' '),fill:'none',stroke:'#333','stroke-width':2.3,'stroke-linejoin':'round','stroke-linecap':'round'}));
   var bfwd=vTS-vR,brv=vTS-vP,dG=vP-vR;
-  var xa=px(cr.R.x)+13;
-  svg.appendChild(mk('line',{x1:xa,y1:py(vR),x2:xa,y2:py(vTS),stroke:'#999','stroke-width':1,'stroke-dasharray':'2,2'}));
-  svg.appendChild(mk('text',{x:xa+3,y:(py(vR)+py(vTS))/2+3,'font-size':8.5,'fill':'#888'},'ΔG‡'));
-  var ya=py(Math.max(vR,vP))-8;
-  svg.appendChild(mk('line',{x1:px(cr.R.x),y1:ya,x2:px(cr.P.x),y2:ya,stroke:'#bbb','stroke-width':0.9,'stroke-dasharray':'2,2'}));
-  svg.appendChild(mk('text',{x:(px(cr.R.x)+px(cr.P.x))/2,y:ya-3,'text-anchor':'middle','font-size':7.5,'fill':'#bbb'},'ΔG'));
+  var xa=px(cr.R.x)+14;
+  svg.appendChild(mk('line',{x1:xa,y1:py(vR),x2:xa,y2:py(vTS),stroke:'#aaa','stroke-width':1,'stroke-dasharray':'2,2'}));
+  svg.appendChild(mk('text',{x:xa+3,y:(py(vR)+py(vTS))/2+3,'font-size':9.5,'fill':'#888','font-family':'inherit'},'ΔG‡'));
+  var ya=py(Math.max(vR,vP))-10;
+  svg.appendChild(mk('line',{x1:px(cr.R.x),y1:ya,x2:px(cr.P.x),y2:ya,stroke:'#ccc','stroke-width':0.9,'stroke-dasharray':'2,2'}));
+  svg.appendChild(mk('text',{x:(px(cr.R.x)+px(cr.P.x))/2,y:ya-3,'text-anchor':'middle','font-size':8.5,'fill':'#ccc','font-family':'inherit'},'ΔG'));
   svg.appendChild(mk('circle',{cx:px(cr.R.x),cy:py(vR),r:5.5,fill:'#A4CE8B',stroke:'#fff','stroke-width':1.5}));
   svg.appendChild(mk('circle',{cx:px(cr.TS.x),cy:py(vTS),r:5.5,fill:'#BA5A5A',stroke:'#fff','stroke-width':1.5}));
   svg.appendChild(mk('circle',{cx:px(cr.P.x),cy:py(vP),r:5.5,fill:'#86BCBD',stroke:'#fff','stroke-width':1.5}));
-  svg.appendChild(mk('text',{x:px(cr.R.x),y:py(vR)+16,'text-anchor':'middle','font-size':8.5,'fill':'#555','font-weight':'600'},'R'));
-  svg.appendChild(mk('text',{x:px(cr.TS.x),y:py(vTS)-9,'text-anchor':'middle','font-size':8.5,'fill':'#BA5A5A','font-weight':'600'},'TS'));
-  svg.appendChild(mk('text',{x:px(cr.P.x),y:py(vP)+16,'text-anchor':'middle','font-size':8.5,'fill':'#555','font-weight':'600'},'P'));
-  svg.appendChild(mk('text',{x:PL+PW/2,y:H-3,'text-anchor':'middle','font-size':9,'fill':'#bbb'},'Reaction coordinate ξ'));
-  svg.appendChild(mk('text',{x:11,y:PT+PH/2,'text-anchor':'middle','font-size':9,'fill':'#bbb',transform:'rotate(-90,11,'+(PT+PH/2)+')'},'V / eV'));
+  svg.appendChild(mk('text',{x:px(cr.R.x),y:py(vR)+17,'text-anchor':'middle','font-size':9.5,'fill':'#444','font-weight':'600','font-family':'inherit'},'R'));
+  svg.appendChild(mk('text',{x:px(cr.TS.x),y:py(vTS)-10,'text-anchor':'middle','font-size':9.5,'fill':'#BA5A5A','font-weight':'600','font-family':'inherit'},'TS'));
+  svg.appendChild(mk('text',{x:px(cr.P.x),y:py(vP)+17,'text-anchor':'middle','font-size':9.5,'fill':'#444','font-weight':'600','font-family':'inherit'},'P'));
+  svg.appendChild(mk('text',{x:PL+PW/2,y:H-4,'text-anchor':'middle','font-size':9,'fill':'#bbb','font-family':'inherit'},'Reaction coordinate ξ'));
+  svg.appendChild(mk('text',{x:11,y:PT+PH/2,'text-anchor':'middle','font-size':9,'fill':'#bbb',transform:'rotate(-90,11,'+(PT+PH/2)+')',  'font-family':'inherit'},'V / eV'));
   var vstep=(vhi-vlo)>0.3?0.1:0.05;
   for(var vi2=Math.ceil(vlo/vstep)*vstep;vi2<=vhi+0.001;vi2+=vstep){
     var yy=py(vi2);if(yy<PT-2||yy>PT+PH+2)continue;
     svg.appendChild(mk('line',{x1:PL-3,y1:yy,x2:PL,y2:yy,stroke:'#ccc','stroke-width':0.8}));
-    svg.appendChild(mk('text',{x:PL-5,y:yy+3,'text-anchor':'end','font-size':7.5,'fill':'#bbb'},vi2.toFixed(2)));
+    svg.appendChild(mk('text',{x:PL-5,y:yy+3,'text-anchor':'end','font-size':8,'fill':'#bbb','font-family':'inherit'},vi2.toFixed(2)));
   }
   var kBT=8.617e-5*T,krat=Math.exp(-dG/kBT);
   var kfmt=krat>1e5?krat.toExponential(1):krat>99?Math.round(krat).toString():krat.toFixed(krat<0.01?4:2);
-  document.getElementById('pes-info').innerHTML=
-    '<div style="background:#f5f2ee;border-radius:6px;padding:0.55rem 0.7rem;border:1px solid #e5dfd7;">'+
+  var info=document.getElementById('pes-info');
+  if(!info)return;
+  info.innerHTML=
+    '<div style="background:#f5f2ee;border-radius:6px;padding:0.5rem 0.65rem;border:1px solid #e5dfd7;">'+
     '<div style="font-size:0.79rem;font-weight:700;color:#555;margin-bottom:0.3rem;">Energetics</div>'+
-    '<table style="font-size:0.79rem;border-collapse:collapse;width:100%;"><tbody>'+
-    '<tr><td style="color:#A4CE8B;font-weight:600;padding-right:0.4rem;">ΔG‡<sub>fwd</sub></td><td>'+bfwd.toFixed(3)+' eV</td></tr>'+
-    '<tr><td style="color:#86BCBD;font-weight:600;">ΔG‡<sub>rev</sub></td><td>'+brv.toFixed(3)+' eV</td></tr>'+
-    '<tr><td style="font-weight:600;">ΔG<sub>rxn</sub></td><td>'+(dG>=0?'+':'')+dG.toFixed(3)+' eV</td></tr>'+
+    '<table style="font-size:0.8rem;border-collapse:collapse;width:100%;"><tbody>'+
+    '<tr><td style="color:#A4CE8B;font-weight:600;padding-right:0.5rem;padding-bottom:0.2rem;">'+kx('\\Delta G^\\ddagger_{\\mathrm{fwd}}')+'</td><td style="padding-bottom:0.2rem;">'+bfwd.toFixed(3)+' eV</td></tr>'+
+    '<tr><td style="color:#86BCBD;font-weight:600;padding-right:0.5rem;padding-bottom:0.2rem;">'+kx('\\Delta G^\\ddagger_{\\mathrm{rev}}')+'</td><td style="padding-bottom:0.2rem;">'+brv.toFixed(3)+' eV</td></tr>'+
+    '<tr><td style="font-weight:600;padding-right:0.5rem;">'+kx('\\Delta G_{\\mathrm{rxn}}')+'</td><td>'+(dG>=0?'+':'')+dG.toFixed(3)+' eV</td></tr>'+
     '</tbody></table>'+
     '<hr style="margin:0.35rem 0;border:none;border-top:1px solid #e0dbd4;">'+
-    '<div style="font-size:0.77rem;color:#888;">k<sub>B</sub>T = '+(kBT*1000).toFixed(1)+' meV</div>'+
-    '<div style="font-size:0.77rem;margin-top:0.2rem;">k<sub>fwd</sub>/k<sub>rev</sub> = e<sup>−ΔG/k<sub>B</sub>T</sup></div>'+
-    '<div style="font-size:0.9rem;font-weight:700;color:#333;margin-top:0.1rem;">= '+kfmt+'</div>'+
-    '<div style="font-size:0.7rem;color:#bbb;margin-top:0.25rem;line-height:1.4;">0.06 eV barrier ↓ at 300 K<br>⇒ rate ×10</div>'+
+    '<div style="font-size:0.78rem;color:#888;">'+kx('k_{\\mathrm{B}}T')+' = '+(kBT*1000).toFixed(1)+' meV</div>'+
+    '<div style="font-size:0.78rem;margin-top:0.12rem;">'+kx('\\dfrac{k_{\\mathrm{fwd}}}{k_{\\mathrm{rev}}} = e^{-\\Delta G / k_{\\mathrm{B}}T}')+'</div>'+
+    '<div style="font-size:0.97rem;font-weight:700;color:#333;margin-top:0.1rem;">= '+kfmt+'</div>'+
+    '<div style="font-size:0.7rem;color:#bbb;margin-top:0.25rem;line-height:1.4;">0.06 eV barrier &darr; at 300 K<br>&rArr; rate &times;10</div>'+
     '</div>';
 };
 function init(){if(!document.getElementById('pes-svg'))return;pesUp();}
@@ -466,7 +473,7 @@ The initial node embedding $h_{i,k00}^{(0)}$ is `Kx0e` only: pure scalars, since
 
 The small model is suitable for fast MD on well-defined systems; the medium model is the typical research choice; the large model (similar to MACE-MP-0) is used for universal/foundation models trained on millions of structures across the periodic table.
 
-<div id="mace-fc" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 0.9rem;margin:1.8rem 0;font-family:inherit;">
+<div id="mace-fc" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 0.9rem;margin:1.8rem 0;font-family:inherit;position:relative;padding-right:44px;">
 <div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.75rem;letter-spacing:0.01em;">MACE Architecture &mdash; Embedding &rarr; [Interaction + Product + Readout] &times; <em>S</em> &rarr; Output</div>
 
 <div style="display:flex;justify-content:center;gap:0.7rem;margin-bottom:0.15rem;flex-wrap:wrap;">
@@ -477,13 +484,13 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 <div style="border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(164,206,139,0.12);color:#2a5a1a;border-bottom:1px solid #A4CE8B;">Embedding <span style="font-weight:400;text-transform:none;color:#888;">&middot; computed once</span></div>
 <div style="display:flex;gap:0.4rem;padding:0.45rem;flex-wrap:wrap;">
-<div style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div id="mace-emb-node" style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Node <span style="color:#A4CE8B;">&#9679;</span> from species Z<sub>i</sub></div>
 <span data-eq="h_{i,k00}^{(0)} = W_{km}" data-dm="1"></span></div>
-<div style="flex:1.2;min-width:200px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div id="mace-emb-radial" style="flex:1.2;min-width:200px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Radial basis <span style="color:#86BCBD;">&#9679;</span> from edge distances r<sub>ij</sub></div>
 <span data-eq="\tilde{f}_n(r_{ij}) = \sqrt{\tfrac{2}{r_c}}\,\frac{\sin\!\left(\frac{n\pi r_{ij}}{r_c}\right)}{r_{ij}}\,f_c(r_{ij})" data-dm="1"></span></div>
-<div style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div id="mace-emb-angular" style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Angular basis <span style="color:#86BCBD;">&#9679;</span> from directions r&#770;<sub>ij</sub></div>
 <span data-eq="Y_l^{m_l}(\hat{\mathbf{r}}_{ij}),\; l = 0,\ldots,L_{\max}" data-dm="1"></span></div>
 </div>
@@ -496,15 +503,17 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(134,188,189,0.12);color:#0f3a3c;border-bottom:1px solid #86BCBD;">Interaction <span style="font-weight:400;text-transform:none;color:#888;">&middot; equivariant message passing &rarr; A-basis</span></div>
 <div style="padding:0.4rem 0.45rem;">
 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div id="mace-int-linear" style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">1 &middot; Linear mix &nbsp;<span style="color:#A4CE8B;">&#9679;</span><span style="font-weight:400;"> node features h</span></div>
 <span data-eq="\tilde{h}_{i,kl_2m_2}^{(s)} = \textstyle\sum_{k'} W_{kk'l_2}^{(s)}\,h_{i,k'l_2m_2}^{(s)}" data-dm="1"></span></div>
-<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div id="mace-int-radial" style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">2 &middot; Radial MLP &nbsp;<span style="color:#86BCBD;">&#9679;</span><span style="font-weight:400;"> edge features f&#771;</span></div>
 <span data-eq="R_{kl_1l_2l}^{(s)}(r_{ij}) = \mathrm{MLP}\!\left(\{\tilde{f}_n(r_{ij})\}_n\right)" data-dm="1"></span></div>
 </div>
-<div style="display:flex;justify-content:center;align-items:center;gap:1.2rem;padding:0.12rem 0.4rem;font-size:1.1rem;color:#666;font-weight:700;"><span>&#8600;</span><span style="font-size:0.65rem;font-weight:400;color:#bbb;white-space:nowrap;">+ Y<sub>l</sub><sup>m</sup> edge attrs.</span><span>&#8601;</span></div><svg width="10" height="18" viewBox="0 0 10 18" style="display:block;margin:0.1rem auto;"><line x1="5" y1="0" x2="5" y2="11" stroke="#888" stroke-width="1.5"/><polygon points="1,9 5,17 9,9" fill="#888"/></svg>
-<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.08rem 0;">
+<div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.18rem 0;font-size:0.69rem;color:#bbb;">
+<span style="color:#A4CE8B;font-weight:600;">h&#771;</span><span>+</span><span style="color:#86BCBD;font-weight:600;">R</span><span>+</span><span style="color:#86BCBD;font-weight:600;">Y<sub>l</sub><sup>m</sup></span><span>&darr;</span>
+</div>
+<div id="mace-int-tp" style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.08rem 0;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">3 &middot; Tensor product (Clebsch&ndash;Gordan) &nbsp;<span style="font-weight:400;color:#bbb;">combines h&#771; + R + Y</span></div>
 <span data-eq="\varphi_{i,klm}^{(s)} = \textstyle\sum_{l_1l_2m_1m_2} C_{l_1m_1,l_2m_2}^{l,m}\,R_{kl_1l_2l}^{(s)}\,\tilde{h}_{j,kl_1m_1}^{(s)}\,Y_{l_2}^{m_2}(\hat{\mathbf{r}}_{ij})" data-dm="1"></span></div>
 <svg width="10" height="18" viewBox="0 0 10 18" style="display:block;margin:0.1rem auto;"><line x1="5" y1="0" x2="5" y2="11" stroke="#888" stroke-width="1.5"/><polygon points="1,9 5,17 9,9" fill="#888"/></svg>
@@ -563,9 +572,75 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 </div>
 </div>
 
+<!-- JS-drawn connecting arrows overlay -->
+<svg id="mace-arrows" style="position:absolute;top:0;left:0;pointer-events:none;z-index:5;overflow:visible;"></svg>
 </div>
 <script>
 (function(){
+var NS='http://www.w3.org/2000/svg';
+
+function drawMaceArrows(){
+  var widget=document.getElementById('mace-fc');
+  var asvg=document.getElementById('mace-arrows');
+  if(!widget||!asvg)return;
+  var W=widget.offsetWidth,H=widget.offsetHeight;
+  asvg.setAttribute('width',W);
+  asvg.setAttribute('height',H);
+  asvg.setAttribute('viewBox','0 0 '+W+' '+H);
+  var wRect=widget.getBoundingClientRect();
+  asvg.innerHTML='<defs>'+
+    '<marker id="mah-g" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" fill="#3a7a28"/></marker>'+
+    '<marker id="mah-b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" fill="#1f6668"/></marker>'+
+    '</defs>';
+  function rel(id){
+    var el=document.getElementById(id);if(!el)return null;
+    var r=el.getBoundingClientRect();
+    return{left:r.left-wRect.left,top:r.top-wRect.top,right:r.right-wRect.left,
+           bottom:r.bottom-wRect.top,cx:r.left+r.width/2-wRect.left,cy:r.top+r.height/2-wRect.top};
+  }
+  function bezier(x1,y1,x2,y2,col,mid){
+    var dy=y2-y1;
+    var el=document.createElementNS(NS,'path');
+    el.setAttribute('d','M'+x1+','+y1+' C'+x1+','+(y1+dy*0.45)+' '+x2+','+(y1+dy*0.55)+' '+x2+','+y2);
+    el.setAttribute('fill','none');el.setAttribute('stroke',col);
+    el.setAttribute('stroke-width','1.8');el.setAttribute('marker-end','url(#'+mid+')');
+    asvg.appendChild(el);
+  }
+  // 1. Node (embedding) -> Linear mix (interaction)  [green]
+  var en=rel('mace-emb-node'),il=rel('mace-int-linear');
+  if(en&&il)bezier(en.cx,en.bottom,il.cx,il.top,'#3a7a28','mah-g');
+  // 2. Radial (embedding) -> Radial MLP (interaction)  [blue]
+  var er=rel('mace-emb-radial'),ir=rel('mace-int-radial');
+  if(er&&ir)bezier(er.cx,er.bottom,ir.cx,ir.top,'#1f6668','mah-b');
+  // 3. Angular (embedding) -> Tensor product  [blue bypass, right side]
+  var ea=rel('mace-emb-angular'),tp=rel('mace-int-tp');
+  if(ea&&tp){
+    var rx=W-6,ry=8;
+    var sx=ea.right+2,sy=ea.cy;   // exit: right side of Angular box
+    var ex=tp.right+2,ey=tp.cy;   // entry: right side of Tensor product box
+    var d='M'+sx+','+sy+
+      ' L'+(rx-ry)+','+sy+
+      ' Q'+rx+','+sy+' '+rx+','+(sy+ry)+
+      ' L'+rx+','+(ey-ry)+
+      ' Q'+rx+','+ey+' '+(rx-ry)+','+ey+
+      ' L'+ex+','+ey;
+    var el=document.createElementNS(NS,'path');
+    el.setAttribute('d',d);el.setAttribute('fill','none');
+    el.setAttribute('stroke','#1f6668');el.setAttribute('stroke-width','1.8');
+    el.setAttribute('marker-end','url(#mah-b)');
+    asvg.appendChild(el);
+    // small rotated label along the right rail
+    var lbl=document.createElementNS(NS,'text');
+    var my=(sy+ey)/2,mx=rx+3;
+    lbl.setAttribute('x',mx);lbl.setAttribute('y',my);
+    lbl.setAttribute('font-size','7.5');lbl.setAttribute('fill','#1f6668');
+    lbl.setAttribute('font-style','italic');
+    lbl.setAttribute('transform','rotate(90,'+mx+','+my+')');
+    lbl.textContent='Y edge attrs.';
+    asvg.appendChild(lbl);
+  }
+}
+
 function maceInit(){
   var el=document.getElementById('mace-fc');
   if(!el||el.dataset.miInit)return;
@@ -576,10 +651,13 @@ function maceInit(){
       e.innerHTML=katex.renderToString(eq,{throwOnError:false,displayMode:dm});
     }catch(err){}
   });
+  setTimeout(drawMaceArrows,200);
 }
+
+window.addEventListener('resize',function(){drawMaceArrows();});
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',maceInit);}
 else{maceInit();}
-if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(maceInit,80);});}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(function(){maceInit();setTimeout(drawMaceArrows,250);},80);});}
 })();
 </script>
 
