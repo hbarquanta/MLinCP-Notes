@@ -133,6 +133,32 @@ $$y = \sum_k \alpha_k (W_k x) = \underbrace{\left(\sum_k \alpha_k W_k\right)}_{W
 
 The routing weights $\alpha_k$ depend only on global, time-invariant information (element composition, charge, spin, DFT task) — not on atomic positions. So $W^*$ is precomputed once before the simulation and reused at every MD step. The model gains the capacity of $K$ experts at the inference cost of one. UMA-M has 1.4B total parameters but only 50M active per step.
 
+
+<div id="fm-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem 0.8rem;margin:1.8rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.8rem;">Foundation Model Scale &mdash; Training Data &amp; Parameters</div>
+<div style="display:flex;gap:0.6rem;align-items:flex-end;height:150px;padding:0 0.4rem;margin-bottom:0;">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+<div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">170k params</div>
+<div style="width:100%;height:61%;background:rgba(134,188,189,0.3);border-radius:4px 4px 0 0;border:1.5px solid #86BCBD;border-bottom:none;"></div></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+<div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">~5M params</div>
+<div style="width:100%;height:71%;background:rgba(164,206,139,0.35);border-radius:4px 4px 0 0;border:1.5px solid #A4CE8B;border-bottom:none;"></div></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+<div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">large (eSEN)</div>
+<div style="width:100%;height:92%;background:rgba(200,173,58,0.25);border-radius:4px 4px 0 0;border:1.5px solid #c8ad3a;border-bottom:none;"></div></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+<div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">1.4B (50M active)</div>
+<div style="width:100%;height:100%;background:rgba(186,90,90,0.25);border-radius:4px 4px 0 0;border:1.5px solid #BA5A5A;border-bottom:none;"></div></div>
+</div>
+<div style="display:flex;gap:0.6rem;padding:0 0.4rem;">
+<div style="flex:1;text-align:center;border-top:2px solid #86BCBD;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">M3GNet</div><div style="font-size:0.62rem;color:#888;">2022 &middot; 89 el.</div><div style="font-size:0.62rem;color:#aaa;">190k struct.</div></div>
+<div style="flex:1;text-align:center;border-top:2px solid #A4CE8B;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">MACE-MP-0</div><div style="font-size:0.62rem;color:#888;">2024 &middot; 89 el.</div><div style="font-size:0.62rem;color:#aaa;">1.5M struct.</div></div>
+<div style="flex:1;text-align:center;border-top:2px solid #c8ad3a;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">OMat24</div><div style="font-size:0.62rem;color:#888;">2024 &middot; many el.</div><div style="font-size:0.62rem;color:#aaa;">100M+ struct.</div></div>
+<div style="flex:1;text-align:center;border-top:2px solid #BA5A5A;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">Meta UMA</div><div style="font-size:0.62rem;color:#888;">2025 &middot; MoLE arch.</div><div style="font-size:0.62rem;color:#aaa;">500M struct.</div></div>
+</div>
+<div style="font-size:0.64rem;color:#ccc;text-align:center;margin-top:0.45rem;">Bar height &prop; log(training structures). Parameter counts annotated above bars.</div>
+</div>
+
 ## 8.6 Transfer Learning and Fine-Tuning
 
 **Transfer learning** is the idea of taking a model pre-trained on a large, general dataset and adapting it to a specific downstream task, rather than training from scratch. The pretrained model has already learned useful representations — in the MLIP context, a foundation model like MACE-MP-0 has learned general interatomic interactions across 89 elements. Fine-tuning then steers those representations toward a specific system (e.g. a particular surface or molecule) using a small amount of system-specific DFT data. This is far more data-efficient than training from scratch because the network does not need to relearn chemistry from zero.
@@ -152,6 +178,169 @@ $$W' = W + \Delta W = W + BA,$$
 where $B \in \mathbb{R}^{d \times r}$ and $A \in \mathbb{R}^{r \times k}$ with $r \ll \min(d, k)$. The number of trainable parameters drops from $dk$ to $r(d+k)$ — for a $768 \times 768$ matrix with $r=8$ this is roughly 50$\times$ fewer. $B$ is initialized to zero so $\Delta W = 0$ at the start, meaning training begins exactly from the pretrained weights with no disruption. After fine-tuning, $W + BA$ can be merged into a single matrix, so inference is identical to a non-LoRA model with no overhead.
 
 **In the MLIP context** (Radova et al., 2025): fine-tuning MACE-MP-0 on just 10% of system-specific data outperforms training ACE from scratch on the full dataset, and beats a from-scratch MACE trained on fewer than 200 DFT points. MACE-MP-0 out of the box is inadequate for surface chemistry — fine-tuning bridges that gap efficiently. A practical workflow is MACE-MP-0 → fine-tuned MACE → distill into ACE for fast production MD.
+
+
+<div id="ft-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem;margin:1.8rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.75rem;">Fine-Tuning Strategies &mdash; Which Parameters are Trained?</div>
+<div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;">
+
+<div style="text-align:center;min-width:100px;">
+<div style="display:inline-flex;flex-direction:column;gap:3px;align-items:center;margin-bottom:0.35rem;">
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;">output</div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;">input</div>
+</div>
+<div style="font-size:0.73rem;font-weight:700;color:#444;">Naive</div>
+<div style="font-size:0.63rem;color:#888;">All updated</div>
+<div style="font-size:0.62rem;color:#BA5A5A;">Forgetting risk</div>
+</div>
+
+<div style="text-align:center;min-width:100px;">
+<div style="display:inline-flex;flex-direction:column;gap:3px;align-items:center;margin-bottom:0.35rem;">
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;">output</div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="font-size:0.62rem;color:#aaa;font-style:italic;">frozen</div>
+</div>
+<div style="font-size:0.73rem;font-weight:700;color:#444;">Freeze backbone</div>
+<div style="font-size:0.63rem;color:#888;">Head only</div>
+<div style="font-size:0.62rem;color:#888;">Very data-efficient</div>
+</div>
+
+<div style="text-align:center;min-width:110px;">
+<div style="display:inline-flex;flex-direction:column;gap:3px;align-items:center;margin-bottom:0.35rem;">
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;">task A &nbsp; task B</div>
+<div style="display:flex;gap:3px;">
+<div style="width:32px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:32px;height:13px;background:#86BCBD;border-radius:2px;border:1px solid #5a9a9c;"></div>
+</div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="font-size:0.62rem;color:#aaa;font-style:italic;">shared frozen</div>
+</div>
+<div style="font-size:0.73rem;font-weight:700;color:#444;">Multi-head</div>
+<div style="font-size:0.63rem;color:#888;">Shared backbone</div>
+<div style="font-size:0.62rem;color:#888;">No forgetting</div>
+</div>
+
+<div style="text-align:center;min-width:110px;">
+<div style="display:inline-flex;flex-direction:column;gap:3px;align-items:flex-start;margin-bottom:0.35rem;">
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;text-align:center;width:100%;">output</div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="display:flex;align-items:center;gap:2px;">
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:18px;height:9px;background:#f7e49b;border-radius:2px;border:1px solid #c8ad3a;font-size:5.5px;color:#555;text-align:center;line-height:9px;">BA</div>
+</div>
+<div style="display:flex;align-items:center;gap:2px;">
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:18px;height:9px;background:#f7e49b;border-radius:2px;border:1px solid #c8ad3a;font-size:5.5px;color:#555;text-align:center;line-height:9px;">BA</div>
+</div>
+<div style="display:flex;align-items:center;gap:2px;">
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:18px;height:9px;background:#f7e49b;border-radius:2px;border:1px solid #c8ad3a;font-size:5.5px;color:#555;text-align:center;line-height:9px;">BA</div>
+</div>
+<div style="display:flex;align-items:center;gap:2px;">
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:18px;height:9px;background:#f7e49b;border-radius:2px;border:1px solid #c8ad3a;font-size:5.5px;color:#555;text-align:center;line-height:9px;">BA</div>
+</div>
+<div style="font-size:0.62rem;color:#aaa;font-style:italic;">frozen + adapters</div>
+</div>
+<div style="font-size:0.73rem;font-weight:700;color:#444;">LoRA</div>
+<div style="font-size:0.63rem;color:#888;">Frozen + rank-<em>r</em> BA</div>
+<div style="font-size:0.62rem;color:#5a9a40;">r &#8810; d,k</div>
+</div>
+</div>
+
+<hr style="margin:0.75rem 0;border:none;border-top:1px solid #e5dfd7;">
+<div style="text-align:center;font-size:0.8rem;font-weight:700;color:#444;margin-bottom:0.6rem;">LoRA Parameter Savings &mdash; Interactive</div>
+<div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;">
+<svg id="lora-svg" style="flex:2;min-width:240px;height:130px;display:block;flex-shrink:0;"></svg>
+<div id="lora-info" style="flex:1;min-width:170px;background:#f5f2ee;border-radius:6px;padding:0.5rem 0.65rem;border:1px solid #e5dfd7;font-size:0.79rem;"></div>
+</div>
+<div style="margin-top:0.55rem;font-size:0.74rem;color:#555;display:grid;grid-template-columns:auto 1fr 52px;gap:0.12rem 0.4rem;align-items:center;">
+<label>Dim <em>d</em></label>
+<input type="range" id="lora-d" min="128" max="2048" step="128" value="768" style="width:100%;height:16px;" oninput="loraUp()">
+<span id="lora-dv" style="text-align:right;font-variant-numeric:tabular-nums;">768</span>
+<label>Dim <em>k</em></label>
+<input type="range" id="lora-k" min="128" max="2048" step="128" value="768" style="width:100%;height:16px;" oninput="loraUp()">
+<span id="lora-kv" style="text-align:right;font-variant-numeric:tabular-nums;">768</span>
+<label>Rank <em>r</em></label>
+<input type="range" id="lora-r" min="1" max="64" value="8" style="width:100%;height:16px;" oninput="loraUp()">
+<span id="lora-rv" style="text-align:right;font-variant-numeric:tabular-nums;">8</span>
+</div>
+</div>
+<script>
+(function(){
+var NS='http://www.w3.org/2000/svg';
+function mk(tag,at,tx){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(tx!=null)e.textContent=tx;return e;}
+function kx(s){try{return katex.renderToString(s,{throwOnError:false,displayMode:false});}catch(e){return s;}}
+window.loraUp=function(){
+  var d=parseInt(document.getElementById('lora-d').value);
+  var kk=parseInt(document.getElementById('lora-k').value);
+  var r=parseInt(document.getElementById('lora-r').value);
+  document.getElementById('lora-dv').textContent=d;
+  document.getElementById('lora-kv').textContent=kk;
+  document.getElementById('lora-rv').textContent=r;
+  var full=d*kk, lp=r*(d+kk), red=(full/lp).toFixed(1), pct=(lp/full*100).toFixed(1);
+  var svg=document.getElementById('lora-svg');
+  if(!svg)return;
+  var W=Math.max(svg.getBoundingClientRect().width||0,240), H=130;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  svg.innerHTML='';
+  var asp=d/kk, bw=70, bh=Math.min(72,Math.max(28,bw*asp));
+  var by=(H-bh)/2;
+  // W (frozen)
+  svg.appendChild(mk('rect',{x:8,y:by,width:bw,height:bh,fill:'#f0ece6',stroke:'#c8c2ba','stroke-width':1.5,rx:3}));
+  svg.appendChild(mk('text',{x:8+bw/2,y:by-5,'text-anchor':'middle','font-size':8.5,'fill':'#aaa'},'frozen'));
+  svg.appendChild(mk('text',{x:8+bw/2,y:by+bh/2+3.5,'text-anchor':'middle','font-size':11,'fill':'#777','font-weight':'600'},'W'));
+  svg.appendChild(mk('text',{x:8+bw/2,y:by+bh+12,'text-anchor':'middle','font-size':7.5,'fill':'#bbb'},d+'×'+kk));
+  // +
+  svg.appendChild(mk('text',{x:88,'y':H/2+5,'text-anchor':'middle','font-size':16,'fill':'#aaa'},'+'));
+  // B (d×r)
+  var bmw=Math.max(7,Math.min(22,r*0.9)), bmh=bh, bmx=100, bmy=by;
+  svg.appendChild(mk('rect',{x:bmx,y:bmy,width:bmw,height:bmh,fill:'rgba(164,206,139,0.3)',stroke:'#A4CE8B','stroke-width':1.5,rx:2}));
+  svg.appendChild(mk('text',{x:bmx+bmw/2,y:bmy-5,'text-anchor':'middle','font-size':8.5,'fill':'#5a9a40'},'B'));
+  svg.appendChild(mk('text',{x:bmx+bmw/2,y:bmy+bmh+12,'text-anchor':'middle','font-size':7,'fill':'#bbb'},d+'×'+r));
+  // A (r×k)
+  var amh=Math.max(7,Math.min(22,r*0.9)), amw=bw, amx=bmx+bmw+5, amy=by+bmh/2-amh/2;
+  svg.appendChild(mk('rect',{x:amx,y:amy,width:amw,height:amh,fill:'rgba(164,206,139,0.3)',stroke:'#A4CE8B','stroke-width':1.5,rx:2}));
+  svg.appendChild(mk('text',{x:amx+amw/2,y:amy-5,'text-anchor':'middle','font-size':8.5,'fill':'#5a9a40'},'A'));
+  svg.appendChild(mk('text',{x:amx+amw/2,y:amy+amh+12,'text-anchor':'middle','font-size':7,'fill':'#bbb'},r+'×'+kk));
+  // =
+  var eqx=amx+amw+6;
+  svg.appendChild(mk('text',{x:eqx,y:H/2+5,'font-size':14,'fill':'#aaa'},'='));
+  // W' dashed
+  var wpx=eqx+14, wpy=by;
+  svg.appendChild(mk('rect',{x:wpx,y:wpy,width:bw,height:bh,fill:'rgba(164,206,139,0.07)',stroke:'#A4CE8B','stroke-width':2,rx:3,'stroke-dasharray':'4,2.5'}));
+  svg.appendChild(mk('text',{x:wpx+bw/2,y:wpy-5,'text-anchor':'middle','font-size':8.5,'fill':'#5a9a40'},"W’=W+BA"));
+  // info
+  var info=document.getElementById('lora-info');
+  if(!info)return;
+  info.innerHTML='<div style="font-weight:700;color:#555;margin-bottom:0.25rem;">Parameters</div>'+
+    '<table style="border-collapse:collapse;width:100%;font-size:0.79rem;"><tbody>'+
+    '<tr><td style="color:#888;padding-right:0.35rem;padding-bottom:0.15rem;">Full W:</td><td style="font-variant-numeric:tabular-nums;padding-bottom:0.15rem;font-weight:600;">'+(full).toLocaleString()+'</td></tr>'+
+    '<tr><td style="color:#5a9a40;padding-right:0.35rem;">B + A:</td><td style="color:#5a9a40;font-weight:600;font-variant-numeric:tabular-nums;">'+(lp).toLocaleString()+'</td></tr>'+
+    '</tbody></table>'+
+    '<hr style="margin:0.28rem 0;border:none;border-top:1px solid #e0dbd4;">'+
+    '<div><strong>'+red+'×</strong> fewer params</div>'+
+    '<div style="color:#aaa;font-size:0.72rem;">'+pct+'% of original</div>'+
+    '<hr style="margin:0.28rem 0;border:none;border-top:1px solid #e0dbd4;">'+
+    '<div style="font-size:0.72rem;color:#bbb;">'+kx('W\'=W+BA')+'; &thinsp;B init to 0</div>';
+};
+function init(){if(!document.getElementById('lora-svg'))return;loraUp();}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(init,50);});}
+})();
+</script>
 
 ## 8.7 Long-Range Interactions
 
@@ -184,6 +373,71 @@ $$E = E_\text{SR} + E_\text{LR}$$
 $$E_\text{LR} = \frac{1}{\Omega}\sum_{0<|\mathbf{k}|<k_\text{cut}}\frac{1}{k^2}e^{-\sigma^2k^2/2}\left|\sum_i q_i^\text{les}\,e^{-i\mathbf{k}\cdot\mathbf{r}_i}\right|^2$$
 
 where $\Omega$ is the simulation cell volume, $\mathbf{k}$ are reciprocal lattice vectors, and $\sigma$ controls the Gaussian damping that separates short-range from long-range contributions. The inner sum $\sum_i q_i^\text{les} e^{-i\mathbf{k}\cdot\mathbf{r}_i}$ is the structure factor at wavevector $\mathbf{k}$; it couples all atoms simultaneously in reciprocal space, giving the model global sensitivity.
+
+
+<div id="lr-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem;margin:1.8rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.75rem;">Long-Range Interactions &mdash; Generational Progression</div>
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+
+<div style="flex:1;min-width:140px;border:1.5px solid #c8c2ba;border-radius:6px;overflow:hidden;">
+<div style="background:rgba(200,194,186,0.2);padding:0.3rem 0.6rem;font-size:0.7rem;font-weight:700;color:#666;letter-spacing:0.03em;border-bottom:1px solid #c8c2ba;">2nd gen HDNNP</div>
+<div style="padding:0.35rem 0.6rem;">
+<div style="font-size:0.65rem;color:#888;margin-bottom:0.25rem;">Local SR network only</div>
+<span data-eq="E = E_\text{SR}^\text{NN}" data-dm="1" style="display:block;margin:0.2rem 0;"></span>
+<div style="font-size:0.63rem;color:#BA5A5A;margin-top:0.3rem;">&#10007; No long-range<br>&#10007; Fails ionic/polar</div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;color:#aaa;font-size:1rem;">&#8594;</div>
+
+<div style="flex:1;min-width:140px;border:1.5px solid #86BCBD;border-radius:6px;overflow:hidden;">
+<div style="background:rgba(134,188,189,0.12);padding:0.3rem 0.6rem;font-size:0.7rem;font-weight:700;color:#0f3a3c;letter-spacing:0.03em;border-bottom:1px solid #86BCBD;">3rd gen &middot; PhysNet / SpookyNet</div>
+<div style="padding:0.35rem 0.6rem;">
+<div style="font-size:0.65rem;color:#888;margin-bottom:0.25rem;">NN predicts local charges; explicit Coulomb</div>
+<span data-eq="E = E_\text{SR} + \sum_{i<j}\frac{q_i q_j}{r_{ij}}" data-dm="1" style="display:block;margin:0.2rem 0;"></span>
+<div style="font-size:0.63rem;color:#5a9a40;margin-top:0.3rem;">&#10003; 1/r electrostatics<br>&#10007; No charge transfer</div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;color:#aaa;font-size:1rem;">&#8594;</div>
+
+<div style="flex:1;min-width:140px;border:1.5px solid #c8ad3a;border-radius:6px;overflow:hidden;">
+<div style="background:rgba(200,173,58,0.12);padding:0.3rem 0.6rem;font-size:0.7rem;font-weight:700;color:#5a4c00;letter-spacing:0.03em;border-bottom:1px solid #c8ad3a;">4th gen &middot; QEq (Ko et al.)</div>
+<div style="padding:0.35rem 0.6rem;">
+<div style="font-size:0.65rem;color:#888;margin-bottom:0.25rem;">Global charge equilibration; NN predicts &chi;<sub>i</sub>, J<sub>i</sub></div>
+<span data-eq="\min_{\{Q_i\}} E_\text{Qeq} \text{ s.t. } \textstyle\sum_i Q_i = Q_\text{tot}" data-dm="1" style="display:block;margin:0.2rem 0;"></span>
+<div style="font-size:0.63rem;color:#5a9a40;margin-top:0.3rem;">&#10003; Charge transfer<br>&#10007; Physical charge req'd</div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;color:#aaa;font-size:1rem;">&#8594;</div>
+
+<div style="flex:1;min-width:140px;border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;">
+<div style="background:rgba(164,206,139,0.15);padding:0.3rem 0.6rem;font-size:0.7rem;font-weight:700;color:#2a5a1a;letter-spacing:0.03em;border-bottom:1px solid #A4CE8B;">MACE-LES &middot; Latent Ewald</div>
+<div style="padding:0.35rem 0.6rem;">
+<div style="font-size:0.65rem;color:#888;margin-bottom:0.25rem;">Learned latent charges; Ewald in reciprocal space</div>
+<span data-eq="E_\text{LR} = \frac{1}{\Omega}\sum_\mathbf{k}\frac{e^{-\sigma^2 k^2}}{k^2}\bigl|\textstyle\sum_i q_i^\text{les} e^{-i\mathbf{k}\cdot\mathbf{r}_i}\bigr|^2" data-dm="1" style="display:block;margin:0.2rem 0;"></span>
+<div style="font-size:0.63rem;color:#5a9a40;margin-top:0.3rem;">&#10003; No physical charges<br>&#10003; E2E trainable</div>
+</div>
+</div>
+
+</div>
+</div>
+<script>
+(function(){
+function lrInit(){
+  var el=document.getElementById('lr-widget');
+  if(!el||el.dataset.lrInit)return;
+  el.dataset.lrInit='1';
+  el.querySelectorAll('[data-eq]').forEach(function(e){
+    try{var eq=e.getAttribute('data-eq'),dm=e.getAttribute('data-dm')==='1';
+    e.innerHTML=katex.renderToString(eq,{throwOnError:false,displayMode:dm});}catch(err){}
+  });
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',lrInit);}else{lrInit();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(lrInit,80);});}
+})();
+</script>
 
 ## 8.8 Beyond MLIPs: Electronic Structure ML
 
@@ -218,6 +472,74 @@ MACE-H (Qian et al., npj Comp. Mater., 2026) addresses all three problems by bui
 **Edge update blocks** convert the node-wise features into edge-wise features $e_{ij}$. This step is essential because the Hamiltonian block $H_{IJ}$ is a property of an atom *pair*, not an individual atom — the output must live on edges of the graph, not on nodes.
 
 The resulting model achieves MAE = 0.278 meV per matrix element on Bi₂Te₃ bilayer, reproducing band structure and DOS from DFT, and has been applied to magic-angle bilayer graphene — a system of current interest for correlated electron physics — including spin-orbit coupling effects. Ongoing extensions include analytic derivatives, non-adiabatic couplings, and variational formulations for excited states.
+
+
+<div id="maceh-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 0.9rem;margin:1.8rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.75rem;">MACE-H &mdash; Equivariant Hamiltonian Learning</div>
+
+<div style="display:flex;justify-content:center;gap:0.7rem;margin-bottom:0.15rem;flex-wrap:wrap;">
+<div style="background:#f0ece6;border:1.5px solid #c8c2ba;border-radius:5px;padding:0.22rem 0.85rem;font-size:0.8rem;font-weight:600;color:#555;">Geometry <span data-eq="\{R_I, Z_I\}" data-dm="0"></span></div>
+</div>
+<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.1rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
+
+<div style="border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(164,206,139,0.12);color:#2a5a1a;border-bottom:1px solid #A4CE8B;">MACE Blocks <span style="font-weight:400;text-transform:none;color:#888;">&middot; &times;T &mdash; equivariant message passing</span></div>
+<div style="padding:0.4rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;color:#999;margin-bottom:0.1rem;">Output: equivariant node features per atom</div>
+<span data-eq="h_i^{(t)} \in \bigoplus_{l=0}^{L_\text{max}} \mathbb{R}^{K\times(2l+1)}" data-dm="1"></span>
+</div>
+</div>
+<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.1rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
+
+<div style="border:1.5px solid #86BCBD;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(134,188,189,0.12);color:#0f3a3c;border-bottom:1px solid #86BCBD;">Node Degree Expansion (NDE) <span style="font-weight:400;text-transform:none;color:#888;">&middot; elevates l<sub>max</sub> for orbital basis</span></div>
+<div style="padding:0.4rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;color:#999;margin-bottom:0.1rem;">Elevates angular momentum to match AO basis (s, p, d, f &rarr; higher l)</div>
+<span data-eq="h_i \;\xrightarrow{\;\text{NDE}\;}\; \tilde{h}_i \;\text{ with }l_\text{max}\text{ matching AO basis}" data-dm="1"></span>
+</div>
+</div>
+<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.1rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
+
+<div style="border:1.5px solid #C47070;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(186,90,90,0.08);color:#5a1a1a;border-bottom:1px solid #C47070;">Edge Update <span style="font-weight:400;text-transform:none;color:#888;">&middot; node features &rarr; atom-pair features e<sub>ij</sub></span></div>
+<div style="padding:0.4rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;color:#999;margin-bottom:0.1rem;">H<sub>IJ</sub> is a pair property &mdash; must live on graph edges, not nodes</div>
+<span data-eq="e_{ij} = f\!\left(\tilde{h}_i,\;\tilde{h}_j,\;\hat{\mathbf{r}}_{ij}\right)" data-dm="1"></span>
+</div>
+</div>
+<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.1rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
+
+<div style="border:1.5px solid #aaa;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(170,170,170,0.1);color:#444;border-bottom:1px solid #ccc;">Output <span style="font-weight:400;text-transform:none;color:#888;">&middot; Hamiltonian block &rarr; observables via diagonalisation</span></div>
+<div style="padding:0.4rem 0.45rem;">
+<div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+<div style="flex:1;min-width:160px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Hamiltonian block</div>
+<span data-eq="H_{IJ}(\mathbf{R}) = \mathrm{Linear}(e_{ij})\in\mathbb{R}^{n_I\times n_J}" data-dm="1"></span>
+</div>
+<div style="flex:1;min-width:160px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Observables via diagonalisation</div>
+<span data-eq="H\Psi = E\Psi \;\Rightarrow\; \text{DOS, bands, couplings}" data-dm="1"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+(function(){
+function mhInit(){
+  var el=document.getElementById('maceh-widget');
+  if(!el||el.dataset.mhInit)return;
+  el.dataset.mhInit='1';
+  el.querySelectorAll('[data-eq]').forEach(function(e){
+    try{var eq=e.getAttribute('data-eq'),dm=e.getAttribute('data-dm')==='1';
+    e.innerHTML=katex.renderToString(eq,{throwOnError:false,displayMode:dm});}catch(err){}
+  });
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',mhInit);}else{mhInit();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(mhInit,80);});}
+})();
+</script>
 
 ---
 
