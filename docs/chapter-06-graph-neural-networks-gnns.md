@@ -86,6 +86,10 @@ var ED=[[0,1],[0,2],[1,2],[1,3],[2,4],[3,5],[4,5],[1,5]];
 var ADJ={};ND.forEach(function(n){ADJ[n.id]=[];});
 ED.forEach(function(e){ADJ[e[0]].push(e[1]);ADJ[e[1]].push(e[0]);});
 var _pool='sum',_sel=null,_mode='example';
+
+function ktx(s){try{return katex.renderToString(s,{throwOnError:false});}catch(e){return '<i style="font-size:0.88em;">'+s+'</i>';}}
+function ktxd(s){try{return '<div style="margin:0.3rem 0 0.2rem;text-align:center;">'+katex.renderToString(s,{throwOnError:false,displayMode:true})+'</div>';}catch(e){return '<div style="text-align:center;font-style:italic;">'+s+'</div>';}}
+
 function mk(tag,at,tx){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(tx!==undefined)e.textContent=tx;return e;}
 function draw(){
   var svg=document.getElementById('mp-svg');if(!svg)return;svg.innerHTML='';
@@ -104,20 +108,21 @@ function draw(){
 function setDefaultPanel(){
   var p=document.getElementById('mp-panel');if(!p)return;
   if(_mode==='general'){
-    p.innerHTML='<div style="color:#888;font-size:0.8rem;margin-bottom:0.5rem;font-style:italic;">Click any node <i>i</i> to see the update equations for that specific neighbourhood.</div>'+
-    '<div style="font-size:0.8rem;color:#555;line-height:1.75;">General layer update:<br>'+
-    '<code style="font-size:0.82em;">v\'<sub>i</sub> = U<sub>t</sub>( v<sub>i</sub>,&ensp;&#x2A01;<sub>j&isin;N(i)</sub> M<sub>t</sub>(v<sub>i</sub>, v<sub>j</sub>, e<sub>ij</sub>) )</code>'+
-    '<hr style="margin:0.55rem 0;border:none;border-top:1px solid #eee;">'+
-    '<b>M<sub>t</sub></b>: message function &mdash; what node <i>j</i> sends to <i>i</i><br>'+
-    '<b>&#x2A01;</b>: pooling (Sum / Mean / Max) &mdash; permutation-invariant<br>'+
-    '<b>U<sub>t</sub></b>: update &mdash; e.g. &sigma;(<b>W</b>&thinsp;m<sub>i</sub> + <b>B</b>&thinsp;v<sub>i</sub>)</div>';
+    p.innerHTML='<div style="color:#888;font-size:0.79rem;font-style:italic;margin-bottom:0.2rem;">Click any node <i>i</i> to see the update equations for that neighbourhood.</div>'+
+    '<div style="font-size:0.79rem;color:#666;">Full layer update:</div>'+
+    ktxd('v^{\\prime}_i = U_t\\!\\left(v_i,\\;\\bigoplus_{j\\in\\mathcal{N}(i)} M_t(v_i,\\,v_j,\\,e_{ij})\\right)')+
+    '<div style="font-size:0.78rem;color:#666;line-height:1.7;margin-top:0.1rem;">'+
+    ktx('M_t')+': message function &mdash; what each neighbour sends<br>'+
+    ktx('\\bigoplus')+': pooling (Sum / Mean / Max), permutation-invariant<br>'+
+    ktx('U_t')+': update &mdash; e.g. '+ktx('\\sigma(\\mathbf{W}\\,m_i + \\mathbf{B}\\,v_i)')+'</div>';
   } else {
     p.innerHTML='<div style="color:#bbb;font-style:italic;font-size:0.8rem;">Click any node to trace the numerical computation.</div>';
   }
 }
+
 function mpSel(id){
   _sel=id;
-  var nb=ADJ[id],ns=ND[id];
+  var nb=ADJ[id],ns=ND[id],lbl=ns.lbl;
   ND.forEach(function(n){var c=document.getElementById('mp-c'+n.id);c.setAttribute('fill','#A4CE8B');c.setAttribute('r','22');});
   ED.forEach(function(e,i){var l=document.getElementById('mp-e'+i);l.setAttribute('stroke','#d0cbc4');l.setAttribute('stroke-width','2');});
   document.getElementById('mp-c'+id).setAttribute('fill','#86BCBD');
@@ -125,43 +130,47 @@ function mpSel(id){
   nb.forEach(function(b){var c=document.getElementById('mp-c'+b);c.setAttribute('fill','#F7E49B');c.setAttribute('r','24');});
   ED.forEach(function(e,i){if(e[0]===id||e[1]===id){var l=document.getElementById('mp-e'+i);l.setAttribute('stroke','#86BCBD');l.setAttribute('stroke-width','3');}});
 
-  var lbl=ns.lbl;
   var nbLbls=nb.map(function(b){return ND[b].lbl;});
-  var nbSet='{'+( nbLbls.length?nbLbls.join(', '):'&empty;' )+'}';
-  var s1hdr='<div style="margin-bottom:0.4rem;"><span style="background:#A4CE8B;color:#333;border-radius:3px;padding:1px 7px;font-size:0.78rem;font-weight:600;">Step 1 &mdash; Message</span></div>';
-  var s2hdr='<div style="margin-bottom:0.4rem;"><span style="background:#F7E49B;color:#555;border-radius:3px;padding:1px 7px;font-size:0.78rem;font-weight:600;">Step 2 &mdash; Pool&nbsp;('+_pool+')</span></div>';
-  var s3hdr='<div style="margin-bottom:0.4rem;"><span style="background:#86BCBD;color:#fff;border-radius:3px;padding:1px 7px;font-size:0.78rem;font-weight:600;">Step 3 &mdash; Update</span></div>';
-  var hr='<hr style="margin:0.5rem 0;border:none;border-top:1px solid #eee;">';
+  var hr='<hr style="margin:0.45rem 0;border:none;border-top:1px solid #eee;">';
+  function hdr(bg,tc,txt){return '<div style="margin-bottom:0.3rem;"><span style="background:'+bg+';color:'+tc+';border-radius:3px;padding:1px 7px;font-size:0.78rem;font-weight:600;">'+txt+'</span></div>';}
 
   if(_mode==='general'){
-    var poolExpr;
-    if(_pool==='sum')poolExpr='&Sigma;<sub>j&isin;'+nbSet+'</sub>&thinsp;M<sub>t</sub>(v<sub>'+lbl+'</sub>,&thinsp;v<sub>j</sub>,&thinsp;e<sub>'+lbl+'j</sub>)';
-    else if(_pool==='mean')poolExpr='<sup>1</sup>&frasl;<sub>'+nb.length+'</sub>&thinsp;&Sigma;<sub>j&isin;'+nbSet+'</sub>&thinsp;M<sub>t</sub>(v<sub>'+lbl+'</sub>,&thinsp;v<sub>j</sub>,&thinsp;e<sub>'+lbl+'j</sub>)';
-    else poolExpr='max<sub>j&isin;'+nbSet+'</sub>&thinsp;M<sub>t</sub>(v<sub>'+lbl+'</sub>,&thinsp;v<sub>j</sub>,&thinsp;e<sub>'+lbl+'j</sub>)';
+    var nbSet = nb.length ? '\\{'+nbLbls.join(',\\,')+'\\}' : '\\emptyset';
+    var s1f = ktxd('M_t(v_{'+lbl+'},\\,v_j,\\,e_{'+lbl+'j})\\quad \\text{for each } j \\in \\mathcal{N}('+lbl+')');
+    var s2f;
+    if(_pool==='sum')
+      s2f=ktxd('m_{'+lbl+'} = \\sum_{j\\in '+nbSet+'} M_t(v_{'+lbl+'},\\,v_j,\\,e_{'+lbl+'j})');
+    else if(_pool==='mean')
+      s2f=ktxd('m_{'+lbl+'} = \\frac{1}{|\\mathcal{N}('+lbl+')|} \\sum_{j\\in '+nbSet+'} M_t(v_{'+lbl+'},\\,v_j,\\,e_{'+lbl+'j})');
+    else
+      s2f=ktxd('m_{'+lbl+'} = \\max_{j\\in '+nbSet+'} M_t(v_{'+lbl+'},\\,v_j,\\,e_{'+lbl+'j})');
+    var s3f=ktxd('v^{\\prime}_{'+lbl+'} = U_t(v_{'+lbl+'},\\,m_{'+lbl+'}) = \\sigma(\\mathbf{W}\\,m_{'+lbl+'} + \\mathbf{B}\\,v_{'+lbl+'})');
     document.getElementById('mp-panel').innerHTML=
-      s1hdr+'Node <b>'+lbl+'</b> has |N('+lbl+')| = '+nb.length+' neighbour'+(nb.length!==1?'s':'')+': '+nbSet+'.<br>'+
-      '<code style="font-size:0.8em;">M<sub>t</sub>(v<sub>'+lbl+'</sub>,&thinsp;v<sub>j</sub>,&thinsp;e<sub>'+lbl+'j</sub>)</code>&ensp;for each j'+
-      hr+s2hdr+
-      '<code style="font-size:0.8em;">m<sub>'+lbl+'</sub> = '+poolExpr+'</code>'+
-      hr+s3hdr+
-      '<code style="font-size:0.8em;">v\'<sub>'+lbl+'</sub> = U<sub>t</sub>(v<sub>'+lbl+'</sub>,&thinsp;m<sub>'+lbl+'</sub>)</code><br>'+
-      '<span style="opacity:0.65;font-size:0.78em;">e.g.&ensp;&sigma;(<b>W</b>&thinsp;m<sub>'+lbl+'</sub> + <b>B</b>&thinsp;v<sub>'+lbl+'</sub>)&ensp;with learned <b>W</b>, <b>B</b></span>';
+      hdr('#A4CE8B','#333','Step 1 — Message')+
+      'Node '+ktx('\\mathbf{'+lbl+'}')+'&ensp;has '+ktx('|\\mathcal{N}('+lbl+')|')+' = '+nb.length+' neighbour'+(nb.length!==1?'s':'')+': '+ktx(nbSet.replace(/\\\\/g,'\\'))+
+      s1f+hr+
+      hdr('#F7E49B','#555','Step 2 — Pool ('+_pool+')')+s2f+hr+
+      hdr('#86BCBD','#fff','Step 3 — Update')+s3f+
+      '<div style="font-size:0.77rem;color:#aaa;margin-top:0.1rem;text-align:center;">'+ktx('\\mathbf{W}')+'&thinsp;and&thinsp;'+ktx('\\mathbf{B}')+'&ensp;are shared learned weight matrices</div>';
   } else {
     var vals=nb.map(function(b){return ND[b].v;}),msg=0;
     if(_pool==='sum')msg=vals.reduce(function(a,b){return a+b;},0);
     else if(_pool==='mean')msg=vals.length?vals.reduce(function(a,b){return a+b;},0)/vals.length:0;
     else msg=vals.length?Math.max.apply(null,vals):0;
     var upd=msg*0.6+ns.v*0.4;
-    var nbStr=nb.map(function(b){return '<b>'+ND[b].lbl+'</b>='+ND[b].v.toFixed(1);}).join(', ')||'<i>none</i>';
-    var vStr=vals.map(function(v){return v.toFixed(1);}).join(', ')||'&mdash;';
+    var vStr=vals.map(function(v){return v.toFixed(1);}).join(', ');
+    var nbStr=nb.map(function(b){return '\\mathbf{'+ND[b].lbl+'}\\!=\\!'+ND[b].v.toFixed(1);}).join(',\\;')||'\\emptyset';
+    var s2f2;
+    if(_pool==='sum') s2f2=ktxd('m_{'+lbl+'} = '+vals.map(function(v){return v.toFixed(1);}).join(' + ')+' = \\mathbf{'+msg.toFixed(3)+'}');
+    else if(_pool==='mean') s2f2=ktxd('m_{'+lbl+'} = \\tfrac{1}{'+nb.length+'}('+vals.map(function(v){return v.toFixed(1);}).join('+')+') = \\mathbf{'+msg.toFixed(3)+'}');
+    else s2f2=ktxd('m_{'+lbl+'} = \\max('+vals.map(function(v){return v.toFixed(1);}).join(',\\,')+') = \\mathbf{'+msg.toFixed(3)+'}');
     document.getElementById('mp-panel').innerHTML=
-      s1hdr+'Node <b>'+lbl+'</b> (v='+ns.v.toFixed(1)+') receives from: '+nbStr+
-      '<br><code style="font-size:0.79em;">msgs = ['+vStr+']</code>'+
-      hr+s2hdr+
-      '<code style="font-size:0.79em;">m<sub>'+lbl+'</sub> = '+_pool+'(['+vStr+']) = <b>'+msg.toFixed(3)+'</b></code>'+
-      hr+s3hdr+
-      '<code style="font-size:0.79em;">v\'<sub>'+lbl+'</sub> = &sigma;(<b>W</b>&thinsp;m + <b>B</b>&thinsp;v<sub>self</sub>)</code><br>'+
-      '<span style="font-size:0.78em;opacity:0.65;">&approx; 0.6&sdot;'+msg.toFixed(2)+' + 0.4&sdot;'+ns.v.toFixed(1)+' = <b>'+upd.toFixed(3)+'</b>&ensp;(W=0.6, B=0.4 illustration)</span>';
+      hdr('#A4CE8B','#333','Step 1 — Message')+
+      'Node '+ktx('\\mathbf{'+lbl+'}')+'&ensp;('+ktx('v_{'+lbl+'}')+'&nbsp;=&nbsp;'+ns.v.toFixed(1)+') receives from: '+ktx(nbStr)+
+      hr+hdr('#F7E49B','#555','Step 2 — Pool ('+_pool+')')+s2f2+
+      hr+hdr('#86BCBD','#fff','Step 3 — Update')+
+      ktxd('v^{\\prime}_{'+lbl+'} = \\sigma(\\mathbf{W}\\,m_{'+lbl+'} + \\mathbf{B}\\,v_{'+lbl+'}) \\approx 0.6 \\cdot '+msg.toFixed(2)+' + 0.4 \\cdot '+ns.v.toFixed(1)+' = \\mathbf{'+upd.toFixed(3)+'}')+
+      '<div style="font-size:0.77rem;color:#aaa;text-align:center;">W=0.6, B=0.4 for illustration; real weights are learned</div>';
   }
 }
 window.mpPool=function(p){_pool=p;['sum','mean','max'].forEach(function(pp){var b=document.getElementById('mp-b-'+pp);if(b){b.style.background=pp===p?'#A4CE8B':'#f5f3f0';b.style.borderColor=pp===p?'#b5d4a0':'#ccc';}});if(_sel!==null)mpSel(_sel);};
@@ -178,6 +187,7 @@ if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded'
 if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(init,50);});}
 })();
 </script>
+
 
 
 ## 6.6 Receptive Field and Oversmoothing
