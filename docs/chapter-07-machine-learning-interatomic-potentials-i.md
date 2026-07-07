@@ -64,7 +64,7 @@ function V(x,a,b){return a*(x*x-1)*(x*x-1)+b*x;}
 function dV(x,a,b){return 4*a*x*(x*x-1)+b;}
 function d2V(x,a){return 12*a*x*x-4*a;}
 function findCrit(a,b){
-  var res={R:null,TS:null,P:null},N=800,xlo=-1.8,xhi=1.8,dp=null,xp=null;
+  var res={R:null,TS:null,P:null},N=801,xlo=-1.8,xhi=1.8,dp=null,xp=null;
   for(var i=0;i<=N;i++){
     var x=xlo+i*(xhi-xlo)/N,d=dV(x,a,b);
     if(dp!==null&&dp*d<0){
@@ -473,24 +473,24 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 <div style="background:#f0ece6;border:1.5px solid #c8c2ba;border-radius:5px;padding:0.22rem 0.85rem;font-size:0.8rem;font-weight:600;color:#555;">Species Z<sub>i</sub></div>
 <div style="background:#f0ece6;border:1.5px solid #c8c2ba;border-radius:5px;padding:0.22rem 0.85rem;font-size:0.8rem;font-weight:600;color:#555;">Edges: r<sub>ij</sub>, &nbsp;r&#770;<sub>ij</sub></div>
 </div>
-<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
+<div style="text-align:center;color:#555;font-size:1.2rem;font-weight:700;line-height:1.4;">&#8595;</div>
 
-<div style="border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;margin:0.2rem 0;">
+<div style="border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(164,206,139,0.12);color:#2a5a1a;border-bottom:1px solid #A4CE8B;">Embedding <span style="font-weight:400;text-transform:none;color:#888;">&middot; computed once, before the interaction loop</span></div>
 <div style="display:flex;gap:0.4rem;padding:0.45rem;flex-wrap:wrap;">
 <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Node</div>
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Node (from species)</div>
 <span data-eq="h_{i,k00}^{(0)} = W_{km}" data-dm="1"></span></div>
 <div style="flex:1.2;min-width:200px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Radial basis</div>
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Radial basis (from edge distances)</div>
 <span data-eq="\tilde{f}_n(r_{ij}) = \sqrt{\tfrac{2}{r_c}}\,\frac{\sin\!\left(\frac{n\pi r_{ij}}{r_c}\right)}{r_{ij}}\,f_c(r_{ij})" data-dm="1"></span></div>
 <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Angular basis</div>
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Angular basis (from edge directions)</div>
 <span data-eq="Y_l^{m_l}(\hat{\mathbf{r}}_{ij}),\; l = 0,\ldots,L_{\max}" data-dm="1"></span></div>
 </div>
 </div>
 
-<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
+<div style="text-align:center;color:#555;font-size:1.2rem;font-weight:700;line-height:1.4;">&#8595;</div>
 
 <div style="border:1.5px dashed #86BCBD;border-radius:8px;padding:0.45rem;background:rgba(134,188,189,0.03);">
 <div style="text-align:center;font-size:0.73rem;font-weight:700;color:#86BCBD;letter-spacing:0.03em;margin-bottom:0.3rem;">&#10227;&thinsp;&times;S&thinsp; interaction layers</div>
@@ -498,45 +498,50 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 <div style="border:1.5px solid #86BCBD;border-radius:6px;overflow:hidden;margin-bottom:0.3rem;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(134,188,189,0.12);color:#0f3a3c;border-bottom:1px solid #86BCBD;">Interaction <span style="font-weight:400;text-transform:none;color:#888;">&middot; equivariant message passing &rarr; A-basis</span></div>
 <div style="padding:0.4rem 0.45rem;">
-<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">1 &middot; Linear mix</div>
+<div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">1 &middot; Linear mix &nbsp;<span style="font-weight:400;color:#bbb;">(node features h)</span></div>
 <span data-eq="\tilde{h}_{i,kl_2m_2}^{(s)} = \textstyle\sum_{k'} W_{kk'l_2}^{(s)}\,h_{i,k'l_2m_2}^{(s)}" data-dm="1"></span></div>
-<div style="text-align:center;color:#ccc;font-size:0.9rem;line-height:1.3;">&#8595;</div>
-<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">2 &middot; Radial MLP</div>
+<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">2 &middot; Radial MLP &nbsp;<span style="font-weight:400;color:#bbb;">(edge features f&#771;)</span></div>
 <span data-eq="R_{kl_1l_2l}^{(s)}(r_{ij}) = \mathrm{MLP}\!\left(\{\tilde{f}_n(r_{ij})\}_n\right)" data-dm="1"></span></div>
-<div style="text-align:center;color:#ccc;font-size:0.9rem;line-height:1.3;">&#8595;</div>
-<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">3 &middot; Tensor product (Clebsch&ndash;Gordan)</div>
+</div>
+<div style="display:flex;justify-content:center;align-items:center;gap:2rem;padding:0.18rem 0;font-size:1.05rem;color:#777;font-weight:700;">
+<span>&#8601;</span>
+<span style="font-size:0.7rem;font-weight:400;color:#aaa;">+ Y<sub>l</sub><sup>m</sup> edge attrs.</span>
+<span>&#8600;</span>
+</div>
+<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.08rem 0;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">3 &middot; Tensor product (Clebsch&ndash;Gordan) &nbsp;<span style="font-weight:400;color:#bbb;">combines h&#771;, R, and Y</span></div>
 <span data-eq="\varphi_{i,klm}^{(s)} = \textstyle\sum_{l_1l_2m_1m_2} C_{l_1m_1,l_2m_2}^{l,m}\,R_{kl_1l_2l}^{(s)}\,\tilde{h}_{j,kl_1m_1}^{(s)}\,Y_{l_2}^{m_2}(\hat{\mathbf{r}}_{ij})" data-dm="1"></span></div>
-<div style="text-align:center;color:#ccc;font-size:0.9rem;line-height:1.3;">&#8595;</div>
-<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">4 &middot; A-basis (neighbour sum)</div>
+<div style="text-align:center;color:#777;font-size:1rem;font-weight:700;line-height:1.4;">&#8595;</div>
+<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.08rem 0;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">4 &middot; A-basis (neighbour sum + linear)</div>
 <span data-eq="A_{i,klm}^{(s)} = \textstyle\sum_{k'} W_{kk'}^{(s)}\sum_{j\in\mathcal{N}(i)}\varphi_{i,k'lm}^{(s)}" data-dm="1"></span></div>
 </div>
 </div>
 
-<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
+<div style="text-align:center;color:#555;font-size:1.2rem;font-weight:700;line-height:1.4;">&#8595;</div>
 
 <div style="border:1.5px solid #C47070;border-radius:6px;overflow:hidden;margin-bottom:0.3rem;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(186,90,90,0.08);color:#5a1a1a;border-bottom:1px solid #C47070;">Product <span style="font-weight:400;text-transform:none;color:#888;">&middot; &nu;-body ACE correlations &rarr; B-basis &rarr; update h</span></div>
 <div style="padding:0.4rem 0.45rem;">
 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
 <div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">B-basis</div>
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">B-basis &nbsp;<span style="font-weight:400;color:#bbb;">&nu;-fold product of A</span></div>
 <span data-eq="B_{i,\eta,kLM}^{(s)} = \textstyle\sum_{lm} C_{lm}^{LM}\prod_{\xi=1}^{\nu} A_{i,k_\xi l_\xi m_\xi}^{(s)}" data-dm="1"></span></div>
 <div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Message</div>
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Message &nbsp;<span style="font-weight:400;color:#bbb;">linear over B channels</span></div>
 <span data-eq="m_{i,kLM}^{(s)} = \textstyle\sum_{\eta,k'} W_{\eta,kk'}^{(s)}\,B_{i,\eta,k'LM}^{(s)}" data-dm="1"></span></div>
 </div>
-<div style="text-align:center;color:#ccc;font-size:0.9rem;line-height:1.3;">&#8595;</div>
-<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.12rem 0;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Update (residual connection)</div>
+<div style="text-align:center;color:#777;font-size:1rem;font-weight:700;line-height:1.4;">&#8595;</div>
+<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.08rem 0;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Update (residual connection) &nbsp;<span style="font-weight:400;color:#bbb;">m + skip from h<sup>(s)</sup></span></div>
 <span data-eq="h_{i,kLM}^{(s+1)} = \textstyle\sum_{k'} W_{kk'L}^{(s)}\,m_{i,k'LM}^{(s)} + \sum_{k'} U_{kk'L}^{(s)}\,h_{i,k'LM}^{(s)}" data-dm="1"></span></div>
 </div>
 </div>
 
-<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
+<div style="text-align:center;color:#555;font-size:1.2rem;font-weight:700;line-height:1.4;">&#8595;</div>
 
 <div style="border:1.5px solid #c8ad3a;border-radius:6px;overflow:hidden;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(247,228,155,0.25);color:#5a4c00;border-bottom:1px solid #c8ad3a;">Readout <span style="font-weight:400;text-transform:none;color:#888;">&middot; l=0 scalars &rarr; atomic energy &epsilon;<sub>i</sub><sup>(s)</sup> per layer</span></div>
@@ -552,9 +557,9 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 
 </div>
 
-<div style="text-align:center;color:#bbb;font-size:1.1rem;line-height:1.4;">&#8595;</div>
+<div style="text-align:center;color:#555;font-size:1.2rem;font-weight:700;line-height:1.4;">&#8595;</div>
 
-<div style="border:1.5px solid #aaa;border-radius:6px;overflow:hidden;margin:0.2rem 0;">
+<div style="border:1.5px solid #aaa;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(170,170,170,0.1);color:#444;border-bottom:1px solid #ccc;">Output <span style="font-weight:400;text-transform:none;color:#888;">&middot; sum over atoms and layers; forces via autodiff</span></div>
 <div style="padding:0.4rem 0.45rem;">
 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.3rem;">
