@@ -102,14 +102,40 @@ Subtracting $\tau\sigma$ adds a bias force $\tau\,\nabla_i\sigma$ on top of the 
 
 Different MLIP architectures occupy different points in the speed–accuracy tradeoff. The following wall-clock times for a single MD trajectory on a single CPU core illustrate the spread:
 
-| Model | Architecture | Equivariant | Effective body order | Accuracy | Speed (1 traj, 1 core) |
-|-------|-------------|:-----------:|:--------------------:|:--------:|------------------------|
-| DFT | Ab initio QM | ✓ | exact | reference | ~1 year |
-| PaiNN | Equivariant MPNN (vector features) | ✓ | ~2-body msg | high | ~55 min |
-| SchNet | Invariant MPNN (cfconv, scalar) | ✗ | ~2-body msg | moderate | ~45 min |
-| MACE | Equivariant MPNN + ACE many-body | ✓ | up to 4-body | highest | ~1 min |
-| REANN | MPNN with equivariant GTO basis, scalar messages | ✓ (basis) / ✗ (messages) | up to N-body via recursion | moderate–good | ~0.9 min |
-| ACE | Linear model on many-body B-basis | ✗ (invariant descriptors) | up to N-body | good | ~33 s |
+<div id="speed-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.2rem 1.2rem 0.9rem;margin:1.4rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.9rem;">Speed &ndash; Accuracy Overview</div>
+<div style="display:grid;grid-template-columns:70px 1fr 74px 96px;gap:0.28rem 0.6rem;align-items:center;">
+<div style="font-size:0.63rem;color:#bbb;">Model</div>
+<div style="font-size:0.63rem;color:#bbb;">Wall-clock time (log scale) &#x27F6;</div>
+<div style="font-size:0.63rem;color:#bbb;text-align:right;">Time</div>
+<div style="font-size:0.63rem;color:#bbb;text-align:center;">Accuracy</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">ACE</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:5%;height:100%;background:rgba(134,188,189,0.55);border-radius:0 3px 3px 0;border:1px solid #86BCBD;border-left:2.5px solid #86BCBD;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~33 s</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:3px;padding:1px 4px;color:#1f6668;">good</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">REANN</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:8%;height:100%;background:rgba(164,206,139,0.45);border-radius:0 3px 3px 0;border:1px solid #A4CE8B;border-left:2.5px solid #A4CE8B;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~54 s</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(164,206,139,0.15);border:1px solid #A4CE8B;border-radius:3px;padding:1px 4px;color:#2a5a1a;">mod&ndash;good</div>
+<div style="font-size:0.77rem;font-weight:700;color:#2a5a1a;">MACE &#9733;</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:9%;height:100%;background:rgba(90,154,64,0.5);border-radius:0 3px 3px 0;border:1.5px solid #5a9a40;border-left:2.5px solid #5a9a40;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~1 min</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(90,154,64,0.15);border:1.5px solid #5a9a40;border-radius:3px;padding:1px 4px;color:#2a5a1a;font-weight:600;">highest</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">SchNet</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:35%;height:100%;background:rgba(200,173,58,0.35);border-radius:0 3px 3px 0;border:1px solid #c8ad3a;border-left:2.5px solid #c8ad3a;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~45 min</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(200,173,58,0.12);border:1px solid #c8ad3a;border-radius:3px;padding:1px 4px;color:#5a4c00;">moderate</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">PaiNN</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:37%;height:100%;background:rgba(134,188,189,0.35);border-radius:0 3px 3px 0;border:1px solid #86BCBD;border-left:2.5px solid #86BCBD;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~55 min</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:3px;padding:1px 4px;color:#1f6668;">high</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">DFT</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:100%;height:100%;background:rgba(186,90,90,0.3);border-radius:0 3px 3px 0;border:1px solid #BA5A5A;border-left:2.5px solid #BA5A5A;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~1 year</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(186,90,90,0.12);border:1px solid #BA5A5A;border-radius:3px;padding:1px 4px;color:#BA5A5A;">reference</div>
+</div>
+<div style="font-size:0.63rem;color:#ccc;text-align:center;margin-top:0.5rem;">Bar width &prop; log<sub>10</sub>(time). MACE/ACE/REANN &asymp; 1 min; PaiNN/SchNet &asymp; 1 h; DFT &asymp; 1 year (10<sup>6</sup>&times; slower than MACE).</div>
+</div>
 
 The speed gap between SchNet/PaiNN and MACE/ACE is mainly architectural: equivariance requires CG tensor contractions at every message-passing step, but MACE recovers speed through GPU efficiency and the fact that its many-body expansion is computed in a single pass. ACE is the fastest non-DFT option because inference reduces to a single dot product once the B-basis is precomputed.
 
@@ -139,13 +165,13 @@ The routing weights $\alpha_k$ depend only on global, time-invariant information
 <div style="display:flex;gap:0.6rem;align-items:flex-end;height:150px;padding:0 0.4rem;margin-bottom:0;">
 <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
 <div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">170k params</div>
-<div style="width:100%;height:61%;background:rgba(134,188,189,0.3);border-radius:4px 4px 0 0;border:1.5px solid #86BCBD;border-bottom:none;"></div></div>
+<div style="width:100%;height:15%;background:rgba(134,188,189,0.3);border-radius:4px 4px 0 0;border:1.5px solid #86BCBD;border-bottom:none;"></div></div>
 <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
 <div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">~5M params</div>
-<div style="width:100%;height:71%;background:rgba(164,206,139,0.35);border-radius:4px 4px 0 0;border:1.5px solid #A4CE8B;border-bottom:none;"></div></div>
+<div style="width:100%;height:37%;background:rgba(164,206,139,0.35);border-radius:4px 4px 0 0;border:1.5px solid #A4CE8B;border-bottom:none;"></div></div>
 <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
 <div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">large (eSEN)</div>
-<div style="width:100%;height:92%;background:rgba(200,173,58,0.25);border-radius:4px 4px 0 0;border:1.5px solid #c8ad3a;border-bottom:none;"></div></div>
+<div style="width:100%;height:83%;background:rgba(200,173,58,0.25);border-radius:4px 4px 0 0;border:1.5px solid #c8ad3a;border-bottom:none;"></div></div>
 <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
 <div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">1.4B (50M active)</div>
 <div style="width:100%;height:100%;background:rgba(186,90,90,0.25);border-radius:4px 4px 0 0;border:1.5px solid #BA5A5A;border-bottom:none;"></div></div>
@@ -156,7 +182,7 @@ The routing weights $\alpha_k$ depend only on global, time-invariant information
 <div style="flex:1;text-align:center;border-top:2px solid #c8ad3a;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">OMat24</div><div style="font-size:0.62rem;color:#888;">2024 &middot; many el.</div><div style="font-size:0.62rem;color:#aaa;">100M+ struct.</div></div>
 <div style="flex:1;text-align:center;border-top:2px solid #BA5A5A;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">Meta UMA</div><div style="font-size:0.62rem;color:#888;">2025 &middot; MoLE arch.</div><div style="font-size:0.62rem;color:#aaa;">500M struct.</div></div>
 </div>
-<div style="font-size:0.64rem;color:#ccc;text-align:center;margin-top:0.45rem;">Bar height &prop; log(training structures). Parameter counts annotated above bars.</div>
+<div style="font-size:0.64rem;color:#ccc;text-align:center;margin-top:0.45rem;">Bar height &prop; log(structures), range-scaled to show spread. Parameter counts above bars.</div>
 </div>
 
 ## 8.6 Transfer Learning and Fine-Tuning
@@ -262,10 +288,8 @@ where $B \in \mathbb{R}^{d \times r}$ and $A \in \mathbb{R}^{r \times k}$ with $
 
 <hr style="margin:0.75rem 0;border:none;border-top:1px solid #e5dfd7;">
 <div style="text-align:center;font-size:0.8rem;font-weight:700;color:#444;margin-bottom:0.6rem;">LoRA Parameter Savings &mdash; Interactive</div>
-<div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;">
-<svg id="lora-svg" style="flex:2;min-width:240px;height:130px;display:block;flex-shrink:0;"></svg>
-<div id="lora-info" style="flex:1;min-width:170px;background:#f5f2ee;border-radius:6px;padding:0.5rem 0.65rem;border:1px solid #e5dfd7;font-size:0.79rem;"></div>
-</div>
+<svg id="lora-svg" style="display:block;width:100%;height:200px;"></svg>
+<div id="lora-info" style="background:#f5f2ee;border-radius:6px;padding:0.55rem 0.75rem;border:1px solid #e5dfd7;font-size:0.79rem;max-width:520px;margin:0.5rem auto 0;"></div>
 <div style="margin-top:0.55rem;font-size:0.74rem;color:#555;display:grid;grid-template-columns:auto 1fr 52px;gap:0.12rem 0.4rem;align-items:center;">
 <label>Dim <em>d</em></label>
 <input type="range" id="lora-d" min="128" max="2048" step="128" value="768" style="width:100%;height:16px;" oninput="loraUp()">
@@ -293,48 +317,53 @@ window.loraUp=function(){
   var full=d*kk, lp=r*(d+kk), red=(full/lp).toFixed(1), pct=(lp/full*100).toFixed(1);
   var svg=document.getElementById('lora-svg');
   if(!svg)return;
-  var W=Math.max(svg.getBoundingClientRect().width||0,240), H=130;
+  var W=Math.max(svg.getBoundingClientRect().width||0,360), H=200;
   svg.setAttribute('viewBox','0 0 '+W+' '+H);
   svg.innerHTML='';
-  var asp=d/kk, bw=70, bh=Math.min(72,Math.max(28,bw*asp));
-  var by=(H-bh)/2;
+  var asp=d/kk, bw=90, bh=Math.min(110,Math.max(44,Math.round(bw*asp)));
+  var by=Math.round((H-bh)/2);
+  var bmw=Math.max(9,Math.min(28,Math.round(r*1.1)));
+  var amh=Math.max(9,Math.min(28,Math.round(r*1.1)));
+  var amw=bw;
+  var tw=bw+20+bmw+5+amw+20+bw;
+  var ox=Math.max(8,Math.round((W-tw)/2));
   // W (frozen)
-  svg.appendChild(mk('rect',{x:8,y:by,width:bw,height:bh,fill:'#f0ece6',stroke:'#c8c2ba','stroke-width':1.5,rx:3}));
-  svg.appendChild(mk('text',{x:8+bw/2,y:by-5,'text-anchor':'middle','font-size':8.5,'fill':'#aaa'},'frozen'));
-  svg.appendChild(mk('text',{x:8+bw/2,y:by+bh/2+3.5,'text-anchor':'middle','font-size':11,'fill':'#777','font-weight':'600'},'W'));
-  svg.appendChild(mk('text',{x:8+bw/2,y:by+bh+12,'text-anchor':'middle','font-size':7.5,'fill':'#bbb'},d+'×'+kk));
-  // +
-  svg.appendChild(mk('text',{x:88,'y':H/2+5,'text-anchor':'middle','font-size':16,'fill':'#aaa'},'+'));
-  // B (d×r)
-  var bmw=Math.max(7,Math.min(22,r*0.9)), bmh=bh, bmx=100, bmy=by;
-  svg.appendChild(mk('rect',{x:bmx,y:bmy,width:bmw,height:bmh,fill:'rgba(164,206,139,0.3)',stroke:'#A4CE8B','stroke-width':1.5,rx:2}));
-  svg.appendChild(mk('text',{x:bmx+bmw/2,y:bmy-5,'text-anchor':'middle','font-size':8.5,'fill':'#5a9a40'},'B'));
-  svg.appendChild(mk('text',{x:bmx+bmw/2,y:bmy+bmh+12,'text-anchor':'middle','font-size':7,'fill':'#bbb'},d+'×'+r));
-  // A (r×k)
-  var amh=Math.max(7,Math.min(22,r*0.9)), amw=bw, amx=bmx+bmw+5, amy=by+bmh/2-amh/2;
+  svg.appendChild(mk('rect',{x:ox,y:by,width:bw,height:bh,fill:'#f0ece6',stroke:'#c8c2ba','stroke-width':1.5,rx:3}));
+  svg.appendChild(mk('text',{x:ox+bw/2,y:by-6,'text-anchor':'middle','font-size':9.5,'fill':'#aaa'},'frozen'));
+  svg.appendChild(mk('text',{x:ox+bw/2,y:by+bh/2+5,'text-anchor':'middle','font-size':13,'fill':'#777','font-weight':'600'},'W'));
+  svg.appendChild(mk('text',{x:ox+bw/2,y:by+bh+14,'text-anchor':'middle','font-size':8,'fill':'#bbb'},d+'\xd7'+kk));
+  // + sign
+  svg.appendChild(mk('text',{x:ox+bw+10,y:H/2+6,'text-anchor':'middle','font-size':18,'fill':'#aaa'},'+'));
+  // B (d\xd7r)
+  var bmx=ox+bw+20, bmy=by;
+  svg.appendChild(mk('rect',{x:bmx,y:bmy,width:bmw,height:bh,fill:'rgba(164,206,139,0.3)',stroke:'#A4CE8B','stroke-width':1.5,rx:2}));
+  svg.appendChild(mk('text',{x:bmx+bmw/2,y:bmy-6,'text-anchor':'middle','font-size':9.5,'fill':'#5a9a40'},'B'));
+  svg.appendChild(mk('text',{x:bmx+bmw/2,y:bmy+bh+14,'text-anchor':'middle','font-size':8,'fill':'#bbb'},d+'\xd7'+r));
+  // A (r\xd7k)
+  var amx=bmx+bmw+5, amy=by+Math.round(bh/2-amh/2);
   svg.appendChild(mk('rect',{x:amx,y:amy,width:amw,height:amh,fill:'rgba(164,206,139,0.3)',stroke:'#A4CE8B','stroke-width':1.5,rx:2}));
-  svg.appendChild(mk('text',{x:amx+amw/2,y:amy-5,'text-anchor':'middle','font-size':8.5,'fill':'#5a9a40'},'A'));
-  svg.appendChild(mk('text',{x:amx+amw/2,y:amy+amh+12,'text-anchor':'middle','font-size':7,'fill':'#bbb'},r+'×'+kk));
+  svg.appendChild(mk('text',{x:amx+amw/2,y:amy-6,'text-anchor':'middle','font-size':9.5,'fill':'#5a9a40'},'A'));
+  svg.appendChild(mk('text',{x:amx+amw/2,y:amy+amh+14,'text-anchor':'middle','font-size':8,'fill':'#bbb'},r+'\xd7'+kk));
   // =
-  var eqx=amx+amw+6;
-  svg.appendChild(mk('text',{x:eqx,y:H/2+5,'font-size':14,'fill':'#aaa'},'='));
-  // W' dashed
-  var wpx=eqx+14, wpy=by;
-  svg.appendChild(mk('rect',{x:wpx,y:wpy,width:bw,height:bh,fill:'rgba(164,206,139,0.07)',stroke:'#A4CE8B','stroke-width':2,rx:3,'stroke-dasharray':'4,2.5'}));
-  svg.appendChild(mk('text',{x:wpx+bw/2,y:wpy-5,'text-anchor':'middle','font-size':8.5,'fill':'#5a9a40'},"W’=W+BA"));
-  // info
+  var eqx=amx+amw+10;
+  svg.appendChild(mk('text',{x:eqx,y:H/2+6,'text-anchor':'middle','font-size':16,'fill':'#aaa'},'='));
+  // W’ dashed
+  var wpx=eqx+10;
+  svg.appendChild(mk('rect',{x:wpx,y:by,width:bw,height:bh,fill:'rgba(164,206,139,0.07)',stroke:'#A4CE8B','stroke-width':2,rx:3,'stroke-dasharray':'4,2.5'}));
+  svg.appendChild(mk('text',{x:wpx+bw/2,y:by-6,'text-anchor':'middle','font-size':9.5,'fill':'#5a9a40'},"W’=W+BA"));
+  svg.appendChild(mk('text',{x:wpx+bw/2,y:by+bh+14,'text-anchor':'middle','font-size':8,'fill':'#bbb'},d+'\xd7'+kk));
+  // info panel
   var info=document.getElementById('lora-info');
   if(!info)return;
-  info.innerHTML='<div style="font-weight:700;color:#555;margin-bottom:0.25rem;">Parameters</div>'+
-    '<table style="border-collapse:collapse;width:100%;font-size:0.79rem;"><tbody>'+
-    '<tr><td style="color:#888;padding-right:0.35rem;padding-bottom:0.15rem;">Full W:</td><td style="font-variant-numeric:tabular-nums;padding-bottom:0.15rem;font-weight:600;">'+(full).toLocaleString()+'</td></tr>'+
-    '<tr><td style="color:#5a9a40;padding-right:0.35rem;">B + A:</td><td style="color:#5a9a40;font-weight:600;font-variant-numeric:tabular-nums;">'+(lp).toLocaleString()+'</td></tr>'+
+  info.innerHTML='<div style="font-weight:700;color:#555;margin-bottom:0.3rem;">Parameters</div>'+
+    '<table style="border-collapse:collapse;width:100%;font-size:0.8rem;"><tbody>'+
+    '<tr><td style="color:#888;padding-right:0.5rem;padding-bottom:0.18rem;">Full W:</td><td style="font-variant-numeric:tabular-nums;padding-bottom:0.18rem;font-weight:600;">'+(full).toLocaleString()+'</td></tr>'+
+    '<tr><td style="color:#5a9a40;padding-right:0.5rem;">B + A:</td><td style="color:#5a9a40;font-weight:600;font-variant-numeric:tabular-nums;">'+(lp).toLocaleString()+'</td></tr>'+
     '</tbody></table>'+
-    '<hr style="margin:0.28rem 0;border:none;border-top:1px solid #e0dbd4;">'+
-    '<div><strong>'+red+'×</strong> fewer params</div>'+
-    '<div style="color:#aaa;font-size:0.72rem;">'+pct+'% of original</div>'+
-    '<hr style="margin:0.28rem 0;border:none;border-top:1px solid #e0dbd4;">'+
-    '<div style="font-size:0.72rem;color:#bbb;">'+kx('W\'=W+BA')+'; &thinsp;B init to 0</div>';
+    '<hr style="margin:0.3rem 0;border:none;border-top:1px solid #e0dbd4;">'+
+    '<div style="font-size:0.82rem;"><strong>'+red+'\xd7</strong> fewer params&nbsp;&nbsp;<span style="color:#aaa;font-size:0.72rem;">'+pct+'% of original</span></div>'+
+    '<hr style="margin:0.3rem 0;border:none;border-top:1px solid #e0dbd4;">'+
+    "<div style='font-size:0.73rem;color:#bbb;'>"+kx("W'=W+BA")+'; &thinsp;B&thinsp;init to&thinsp;0</div>';
 };
 function init(){if(!document.getElementById('lora-svg'))return;loraUp();}
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
