@@ -477,9 +477,9 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 <div id="mace-fc" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 2.4rem;margin:1.8rem 0;font-family:inherit;position:relative;color:#333;">
 <div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.85rem;letter-spacing:0.01em;">MACE Architecture &mdash; Embedding &rarr; [Interaction + Product] &times; <em>S</em> &rarr; Readout</div>
 
-<div style="display:flex;justify-content:center;gap:2.2rem;margin-bottom:0.3rem;flex-wrap:wrap;font-size:0.78rem;font-weight:600;color:#555;">
-<div>Atom&rsquo;s chemical species</div>
-<div>graph &lsquo;edge&rsquo;</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;margin-bottom:0.3rem;font-size:0.78rem;font-weight:600;color:#555;text-align:center;">
+<div id="mace-label-species">Atom&rsquo;s chemical species</div>
+<div id="mace-label-edge" style="grid-column:2 / span 2;">graph &lsquo;edge&rsquo;</div>
 </div>
 
 <div style="border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
@@ -526,8 +526,7 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 <div id="mace-int-radial" style="background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">2 &middot; Radial MLP <span style="color:#86BCBD;">&#9679;</span></div>
 <span data-eq="R_{kl_1l_2l}^{(s)}(r_{ij}) = \mathrm{MLP}\!\left(\{\tilde{f}_n(r_{ij})\}_n\right)" data-dm="1"></span></div>
-<div id="mace-int-spacer" style="border:1px dashed #d8d2ca;border-radius:5px;display:flex;align-items:center;justify-content:center;">
-<span style="font-size:0.63rem;color:#c3bdb4;text-align:center;padding:0.3rem;">Y passes<br>straight through</span></div>
+<div id="mace-int-spacer"></div>
 </div>
 
 <div id="mace-int-tp" style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin-bottom:0.35rem;">
@@ -620,13 +619,33 @@ function drawMaceArrows(){
     p.setAttribute('marker-end','url(#'+mid+')');
     asvg.appendChild(p);
   }
+  // One source splitting into two targets: short vertical stem, then
+  // diverging diagonal branches (matches the slide's Y-shaped split).
+  function ySplit(x0,y0,x1,y1,x2,y2,col,mid){
+    var stemY = y0 + (Math.min(y1,y2)-y0)*0.4;
+    var stem=document.createElementNS(NS,'line');
+    stem.setAttribute('x1',x0);stem.setAttribute('y1',y0);stem.setAttribute('x2',x0);stem.setAttribute('y2',stemY);
+    stem.setAttribute('stroke',col);stem.setAttribute('stroke-width','1.8');
+    asvg.appendChild(stem);
+    [[x1,y1],[x2,y2]].forEach(function(pt){
+      var b=document.createElementNS(NS,'line');
+      b.setAttribute('x1',x0);b.setAttribute('y1',stemY);b.setAttribute('x2',pt[0]);b.setAttribute('y2',pt[1]-6);
+      b.setAttribute('stroke',col);b.setAttribute('stroke-width','1.8');b.setAttribute('marker-end','url(#'+mid+')');
+      asvg.appendChild(b);
+    });
+  }
 
+  var labelSpecies=rel('mace-label-species'), labelEdge=rel('mace-label-edge');
   var onehot=rel('mace-onehot'), nodeEmb=rel('mace-node-emb');
   var radEmb=rel('mace-radial-emb'), angEmb=rel('mace-angular-emb');
   var fn0=rel('mace-feat-node0'), fef=rel('mace-feat-edgef'), fea=rel('mace-feat-edgea');
   var il=rel('mace-int-linear'), ir=rel('mace-int-radial'), spacer=rel('mace-int-spacer'), tp=rel('mace-int-tp'), ab=rel('mace-int-abasis');
   var pb=rel('mace-prod-b'), pu=rel('mace-prod-update');
   var fn1=rel('mace-feat-node1'), ro=rel('mace-readout'), out=rel('mace-output');
+
+  // Top labels -> Embedding row
+  if(labelSpecies&&onehot) vArrow(onehot.cx, labelSpecies.bottom, onehot.top,'#3a7a28','mah-g');
+  if(labelEdge&&radEmb&&angEmb) ySplit(labelEdge.cx, labelEdge.bottom, radEmb.cx, radEmb.top, angEmb.cx, angEmb.top, '#1f6668','mah-b');
 
   // Embedding internals (same column -> vertical)
   if(onehot&&nodeEmb) vArrow(nodeEmb.cx, onehot.bottom, nodeEmb.top,'#3a7a28','mah-g');
