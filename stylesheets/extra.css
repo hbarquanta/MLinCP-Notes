@@ -1,0 +1,247 @@
+/* Site-wide 4-color palette: terracotta-red / soft yellow / sage
+   green / dusty teal. Body text stays the theme's normal black/white
+   — these four colors cover every accent role (header, links,
+   badges, highlights). Light-mode teal and red are deepened from
+   their source swatch to clear WCAG AA; dark-mode values use the
+   swatch as-is since it already has plenty of contrast there.
+   Contrast-checked: header (white on red) 5.21:1, links (light)
+   5.35:1, links (dark) 7.61:1, badge ink is the theme's own body
+   text color over a low-alpha tint, so contrast is unaffected. */
+
+[data-md-color-scheme="default"][data-md-color-primary] {
+  --md-typeset-a-color: #3C7071;
+  --md-primary-fg-color: #AE4F4F;
+  --md-primary-fg-color--light: #C17777;
+  --md-primary-fg-color--dark: #8F3F3F;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: #ffffffb3;
+
+  --md-accent-fg-color: #3C7071;
+  --md-accent-fg-color--transparent: #3C70711a;
+  --md-accent-bg-color: #ffffff;
+
+  --md-typeset-mark-color: #F7E49B99;
+  --md-badge-color: #A4CE8B4d;
+
+  --md-default-bg-color: #FDF9F6;
+}
+
+[data-md-color-scheme="slate"][data-md-color-primary] {
+  --md-typeset-a-color: #86BCBD;
+  --md-primary-fg-color: #AE4F4F;
+  --md-primary-fg-color--light: #C17777;
+  --md-primary-fg-color--dark: #8F3F3F;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: #ffffffb3;
+
+  --md-accent-fg-color: #86BCBD;
+  --md-accent-fg-color--transparent: #86BCBD1a;
+  --md-accent-bg-color: #26201D;
+
+  --md-typeset-mark-color: #F7E49B66;
+  --md-badge-color: #A4CE8B40;
+
+  --md-default-bg-color: #26201D;
+  --md-hue: 25;
+}
+
+/* Widen the primary sidebar — the default 12.1rem wraps chapter
+   titles onto 2-3 lines, and with toc.integrate it also nests each
+   page's sections, which need the extra width for indentation.
+   Scoped to the same desktop breakpoint Material itself uses for the
+   sidebar, so the mobile off-canvas drawer (which reuses this class)
+   is untouched. */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar {
+    width: 16.5rem;
+  }
+
+  /* A visible boundary between nav and content — without it, the
+     leftover space past short nav labels (nav text rarely reaches
+     the full sidebar width) reads as an accidental gap rather than
+     an intentional column edge. */
+  .md-sidebar--primary {
+    border-right: 0.05rem solid var(--md-default-fg-color--lightest);
+  }
+
+  [dir="ltr"] .md-sidebar--primary:not([hidden]) ~ .md-content > .md-content__inner {
+    margin-left: 1.6rem;
+  }
+}
+
+/* Material caps the whole page at a fixed 61rem regardless of actual
+   screen size, which on a large monitor leaves the reading column
+   cramped in the middle of a mostly-empty window. Scale with the
+   viewport instead (with a sane upper cap so lines don't get
+   unreadably long on ultra-wide displays). */
+@media screen and (min-width: 76.25em) {
+  .md-grid {
+    max-width: min(92vw, 110rem);
+  }
+}
+
+/* Justified body text ("Blocksatz"). Scoped to prose (paragraphs,
+   list items) — headings, code and tables are left alone since
+   justify looks wrong on short lines and monospace content. */
+.md-typeset p,
+.md-typeset li {
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Simple +/- text-size control, injected into the header by
+   javascripts/font-size.js. Scales the whole page (rem-based), and
+   the choice persists across visits via localStorage. */
+.md-font-size {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-right: 0.4rem;
+}
+
+.md-font-size button {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--md-primary-bg-color);
+  font-family: var(--md-text-font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+
+.md-font-size button:hover {
+  opacity: 1;
+  background-color: hsla(0, 0%, 100%, 0.25);
+}
+
+/* Collapsible left nav / right TOC panels, injected by
+   javascripts/collapsible-sidebars.js. Collapsing shrinks the panel
+   to a slim strip (not 0) so the toggle stays reachable, and fades
+   its contents out rather than clipping them abruptly. */
+@media screen and (min-width: 76.25em) {
+  .md-sidebar {
+    transition: width 0.2s ease;
+    position: sticky;
+  }
+
+  .md-sidebar--collapsed {
+    width: 1.4rem !important;
+    overflow: hidden;
+  }
+
+  .md-sidebar--collapsed .md-sidebar__scrollwrap {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+  }
+
+  .md-sidebar__toggle {
+    appearance: none;
+    background: var(--md-default-bg-color);
+    border: 0.075rem solid var(--md-accent-fg-color);
+    color: var(--md-accent-fg-color);
+    position: absolute;
+    top: 0.6rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    border-radius: 50%;
+    line-height: 1;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: var(--md-shadow-z1);
+  }
+
+  .md-sidebar__toggle:hover {
+    background: var(--md-accent-fg-color);
+    color: var(--md-default-bg-color);
+  }
+
+  .md-sidebar--primary .md-sidebar__toggle {
+    right: -0.6rem;
+  }
+}
+
+/* Home page hero + chapter card grid (docs/index.md). */
+.hero {
+  text-align: center;
+  padding: 2.4rem 1rem 1.6rem;
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.hero__logo {
+  width: 4.8rem;
+  height: 4.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.hero h1 {
+  margin-bottom: 0.6rem;
+}
+
+.hero__subtitle {
+  text-align: center !important;
+  font-size: 1.05rem;
+  color: var(--md-default-fg-color--light);
+  line-height: 1.6;
+}
+
+.chapter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(16rem, 100%), 1fr));
+  gap: 1rem;
+  margin: 1.6rem 0 2.4rem;
+}
+
+.chapter-card {
+  display: block;
+  position: relative;
+  padding: 1.2rem 1.2rem 1.4rem;
+  border-radius: 0.5rem;
+  border: 0.05rem solid var(--md-default-fg-color--lightest);
+  background-color: var(--md-code-bg-color);
+  text-decoration: none !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.chapter-card:hover {
+  transform: translateY(-0.2rem);
+  box-shadow: var(--md-shadow-z2);
+  border-color: var(--md-accent-fg-color);
+}
+
+.chapter-card__num {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--md-default-fg-color);
+  background-color: var(--md-badge-color);
+  border-radius: 1rem;
+  padding: 0.15rem 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.chapter-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.05rem;
+  color: var(--md-default-fg-color);
+}
+
+.chapter-card p {
+  text-align: left !important;
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--md-default-fg-color--light);
+  line-height: 1.5;
+  hyphens: none !important;
+}

@@ -1,0 +1,1309 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Lecture notes for Machine Learning in Computational Physics">
+      
+      
+      
+        <link rel="canonical" href="https://hbarquanta.github.io/MLinCP-Notes/chapter-08-machine-learning-interatomic-potentials-ii/">
+      
+      
+        <link rel="prev" href="../chapter-07-machine-learning-interatomic-potentials-i/">
+      
+      
+        <link rel="next" href="../chapter-09-generative-models/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Chapter 8 — Machine Learning Interatomic Potentials II - ML in Computational Physics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-8-machine-learning-interatomic-potentials-ii" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ML in Computational Physics" class="md-header__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ML in Computational Physics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 8 — Machine Learning Interatomic Potentials II
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ML in Computational Physics" class="md-nav__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    ML in Computational Physics
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-01-introduction-core-ml-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1 — Introduction & Core ML Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-02-descriptors-featurization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2 — Descriptors & Featurization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-03-dimensionality-reduction-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3 — Dimensionality Reduction & Clustering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-04-regression-uncertainty-quantification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4 — Regression & Uncertainty Quantification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-05-neural-networks-trees-regularization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5 — Neural Networks, Trees & Regularization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-06-graph-neural-networks-gnns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6 — Graph Neural Networks (GNNs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-07-machine-learning-interatomic-potentials-i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 7 — Machine Learning Interatomic Potentials I
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 8 — Machine Learning Interatomic Potentials II
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 8 — Machine Learning Interatomic Potentials II
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#81-from-test-error-to-production-quality-potentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1 From Test Error to Production-Quality Potentials
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.1 From Test Error to Production-Quality Potentials">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#three-levels-of-mlip-accuracy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three Levels of MLIP Accuracy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#82-dynamic-observables-and-time-correlation-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2 Dynamic Observables and Time-Correlation Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#83-training-data-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3 Training Data Strategies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#84-speedaccuracy-benchmarks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4 Speed–Accuracy Benchmarks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#85-foundation-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.5 Foundation Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#86-transfer-learning-and-fine-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.6 Transfer Learning and Fine-Tuning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#87-long-range-interactions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.7 Long-Range Interactions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#88-beyond-mlips-electronic-structure-ml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.8 Beyond MLIPs: Electronic Structure ML
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8.8 Beyond MLIPs: Electronic Structure ML">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-dft-hamiltonian-in-an-atomic-orbital-basis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The DFT Hamiltonian in an atomic orbital basis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schnorb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SchNOrb
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mace-h" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MACE-H
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-09-generative-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 9 — Generative Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-10-ml-methods-for-rare-events-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 10 — ML Methods for Rare Events Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-8-machine-learning-interatomic-potentials-ii">Chapter 8 — Machine Learning Interatomic Potentials II<a class="headerlink" href="#chapter-8-machine-learning-interatomic-potentials-ii" title="Permanent link">&para;</a></h1>
+<h2 id="81-from-test-error-to-production-quality-potentials">8.1 From Test Error to Production-Quality Potentials<a class="headerlink" href="#81-from-test-error-to-production-quality-potentials" title="Permanent link">&para;</a></h2>
+<p>Training an MLIP and achieving a low test RMSE on a held-out dataset is only the first step. A potential that performs well on static benchmark configurations may still fail catastrophically when deployed in a molecular dynamics simulation, and a potential that keeps MD stable may still produce incorrect thermodynamic averages or kinetics. This gap between paper benchmarks and real-world utility motivates L8, which is concerned with the practical challenges of deploying MLIPs and the strategies developed to address them. Five open problems structure the discussion:</p>
+<p><strong>MD stability</strong> — small errors can accumulate over millions of time steps and drive the system into unphysical configurations. Low test RMSE does not guarantee stability.</p>
+<p><strong>Speed vs. accuracy</strong> — more expressive architectures (equivariant, high body-order) are slower to evaluate, while faster models sacrifice physical fidelity. Practical deployment always involves this tradeoff.</p>
+<p><strong>Data efficiency</strong> — every training point requires an expensive DFT calculation. Generating enough data to cover the relevant portion of chemical space is a major bottleneck.</p>
+<p><strong>Long-range interactions</strong> — GNNs with local cutoffs cannot capture electrostatics (<span class="arithmatex">\(1/r\)</span>) or London dispersion (<span class="arithmatex">\(1/r^6\)</span>), which are crucial in polar systems, ionic materials, and van der Waals complexes.</p>
+<p><strong>Quantum observables beyond energy and forces</strong> — many applications need electronic spectra, NMR shifts, or dielectric functions, none of which are provided by the standard MLIP energy-and-forces framework.</p>
+<h3 id="three-levels-of-mlip-accuracy">Three Levels of MLIP Accuracy<a class="headerlink" href="#three-levels-of-mlip-accuracy" title="Permanent link">&para;</a></h3>
+<p>It is useful to distinguish three qualitatively different quality levels when evaluating an MLIP:</p>
+<p><strong>Level 1 — Low RMSE.</strong> The model achieves a small mean-squared error on a static test set. This is the entry requirement, but it says nothing about dynamical behaviour. A potential can have excellent RMSE yet still produce trajectories that diverge within picoseconds because the test configurations do not represent the rare but critical regions of phase space visited during dynamics.</p>
+<p><strong>Level 2 — MD stable.</strong> The model keeps the simulation stable over arbitrarily long times (<span class="arithmatex">\(\tau_\text{stab} \to \infty\)</span>): no atom collisions, no non-physical geometries, no integrator blow-ups. Stability is a necessary but not sufficient condition for physical correctness.</p>
+<p><strong>Level 3 — MD accurate.</strong> The model reproduces correct thermodynamic averages <span class="arithmatex">\(\langle A \rangle\)</span> and dynamical observables such as time-correlation functions <span class="arithmatex">\(\langle A(0) A(t) \rangle\)</span>. This is the ultimate standard for production simulations and is often the hardest to achieve because it requires the potential energy surface to be correct not just at minima but across the full accessible portion of configurational space.</p>
+<h2 id="82-dynamic-observables-and-time-correlation-functions">8.2 Dynamic Observables and Time-Correlation Functions<a class="headerlink" href="#82-dynamic-observables-and-time-correlation-functions" title="Permanent link">&para;</a></h2>
+<p>Many physically relevant quantities are not static energies but time-averaged properties derived from long trajectories. The general framework is the <strong>time-correlation function</strong> (TCF) between two dynamical variables <span class="arithmatex">\(a\)</span> and <span class="arithmatex">\(b\)</span>:</p>
+<div class="arithmatex">\[C_{ab}(t) = \langle a(t_0)\, b(t_0 + t) \rangle_{t_0} = \frac{1}{Q_\text{cl}} \int d\mathbf{r}_0\, d\mathbf{p}_0\; e^{-\beta H}\, a(t_0)\cdot b(t_0 + t).\]</div>
+<p>The ensemble average over initial conditions <span class="arithmatex">\(t_0\)</span> is equivalent to a Boltzmann-weighted phase-space integral. For the special case <span class="arithmatex">\(a = b\)</span>, this becomes the autocorrelation function, satisfying <span class="arithmatex">\(C_{aa}(0) = \langle a(t_0)^2 \rangle\)</span>.</p>
+<p>Equations that relate TCFs to macroscopic transport properties are called <strong>Green-Kubo relations</strong>. The central example is the <strong>diffusion coefficient</strong>, defined as the time-integral of the velocity autocorrelation function (VACF):</p>
+<div class="arithmatex">\[D = \frac{1}{3} \int_0^\infty dt\; C_{vv}(t) = \frac{1}{3} \int_0^\infty dt\; \langle \mathbf{v}(t) \cdot \mathbf{v}(0) \rangle.\]</div>
+<p>Physically, the VACF measures how long a particle remembers its direction of motion. It typically decays fast (within tenths of a ps in a liquid) but can show a rebound — a brief anti-correlation — as the particle bounces off its cage of neighbours before diffusing away. The diffusion coefficient is the area under this curve.</p>
+<p>The same Green-Kubo framework applies to a range of other observables:</p>
+<p><strong>Thermal transport</strong> — the thermal conductivity <span class="arithmatex">\(\kappa\)</span> is the integral of the heat-flux autocorrelation function, where <span class="arithmatex">\(\mathbf{J}_Q\)</span> is the instantaneous energy-current density through the simulation cell:</p>
+<div class="arithmatex">\[\kappa \propto \int_0^\infty dt\; \langle \mathbf{J}_Q(0) \cdot \mathbf{J}_Q(t) \rangle.\]</div>
+<p><strong>IR spectrum</strong> — the infrared absorption spectrum is the Fourier transform of the dipole-moment autocorrelation function:</p>
+<div class="arithmatex">\[I_\text{IR}(\omega) \propto \int_{-\infty}^\infty dt\; e^{i\omega t}\, \langle \boldsymbol{\mu}(0) \cdot \boldsymbol{\mu}(t) \rangle.\]</div>
+<p>A vibration absorbs IR radiation when it modulates the dipole moment; the TCF approach captures anharmonicity and finite-temperature broadening automatically, which static normal-mode analysis cannot.</p>
+<p><strong>SFG spectrum</strong> — sum-frequency generation (SFG) is a surface-sensitive nonlinear spectroscopy whose spectrum comes from the cross-correlation of dipole moment and polarizability <span class="arithmatex">\(\boldsymbol{\alpha}\)</span>:</p>
+<div class="arithmatex">\[I_\text{SFG}(\omega) \propto \int_{-\infty}^\infty dt\; e^{i\omega t}\, \langle \boldsymbol{\mu}(0) \cdot \boldsymbol{\alpha}(t) \rangle.\]</div>
+<p>Because both a dipole change and a polarizability change are required simultaneously, SFG is sensitive only to non-centrosymmetric environments such as interfaces.</p>
+<p><strong>Chemical reaction rates</strong> — the rate constant is related to the flux-flux autocorrelation function, where <span class="arithmatex">\(F\)</span> is the reactive flux through the transition state dividing surface:</p>
+<div class="arithmatex">\[k \propto \int_0^\infty dt\; \langle F(0)\, F(t) \rangle.\]</div>
+<p>Integrating this TCF recovers the classical rate constant and forms the basis of reactive MD simulations.</p>
+<p>All of these require long, statistically converged MD trajectories and thus demand Level 3 accuracy from the underlying MLIP — correct thermodynamics and dynamics, not just structural accuracy.</p>
+<h2 id="83-training-data-strategies">8.3 Training Data Strategies<a class="headerlink" href="#83-training-data-strategies" title="Permanent link">&para;</a></h2>
+<p>How the training set is constructed has a major impact on both the quality and the data efficiency of the resulting model. Four strategies of increasing sophistication are used in practice.</p>
+<p><strong>Strategy I — Fixed pre-generated dataset.</strong> The simplest approach is to generate a large set of configurations using, for example, AIMD or random structure searches, compute their energies and forces with DFT, and train on this fixed corpus. The main limitation is that the dataset is constructed without reference to the specific observable of interest: configurations that are important during a long production run may not appear in the training data, particularly for rare events or high-temperature dynamics.</p>
+<p><strong>Strategy II — Iterative training.</strong> A closed-loop procedure that alternates between fitting and simulation. Each iteration extends coverage into regions of phase space actually visited during dynamics; the process converges when the model runs arbitrarily long MD without encountering novel configurations.</p>
+<ol>
+<li>Fit an MLIP on the current dataset.</li>
+<li>Run MD using that MLIP.</li>
+<li>Identify configurations where the model fails or is uncertain.</li>
+<li>Recompute those structures with the reference method (DFT or higher).</li>
+<li>Add the new labelled structures to the dataset and go to 1.</li>
+</ol>
+<p><strong>Strategy III — Active learning (unsupervised iterative).</strong> Iterative training still requires a human-defined criterion for selecting "failed" configurations. Active learning replaces this with an automatic selection criterion based on the model's own uncertainty estimate — configurations where the model is least confident are selected for reference-method labelling, with no human judgement required. The central question is therefore: <em>how do we obtain that uncertainty estimate?</em> Two approaches are used in practice.</p>
+<p><strong>(a) Bayesian / analytical uncertainty</strong> — for linear and kernel models such as GAP and ACE, the posterior variance is available in closed form, exactly as derived in Section 4.4 for GPR. Given training observations <span class="arithmatex">\(\boldsymbol{y}\)</span> and a test point <span class="arithmatex">\(\boldsymbol{x}_*\)</span>, the posterior predictive variance is</p>
+<div class="arithmatex">\[\sigma^2(\boldsymbol{x}_*) = k_{**} - \mathbf{k}_*^T(\mathbf{K} + \lambda\mathbf{I})^{-1}\mathbf{k}_*,\]</div>
+<p>where <span class="arithmatex">\(\mathbf{K}\)</span> is the kernel (Gram) matrix, <span class="arithmatex">\(\mathbf{k}_*\)</span> is the vector of kernel evaluations between <span class="arithmatex">\(\boldsymbol{x}_*\)</span> and the training points, and <span class="arithmatex">\(k_{**} = k(\boldsymbol{x}_*, \boldsymbol{x}_*)\)</span> is the prior variance. For ACE and other explicit-basis models with basis vector <span class="arithmatex">\(\mathbf{B}(\boldsymbol{x}_*)\)</span> and posterior weight covariance <span class="arithmatex">\(\boldsymbol{\Sigma}\)</span>, this reduces to the equivalent parametric form <span class="arithmatex">\(\sigma = \sqrt{1/\lambda + \mathbf{B}^T\boldsymbol{\Sigma}\mathbf{B}}\)</span>. Either way, the uncertainty is exact and well-calibrated, but computing it requires inverting the <span class="arithmatex">\(N_\text{basis} \times N_\text{basis}\)</span> matrix <span class="arithmatex">\(\mathbf{K} + \lambda\mathbf{I}\)</span>, which scales as <span class="arithmatex">\(\mathcal{O}(N_\text{basis}^2)\)</span> in storage and becomes prohibitive for large basis sets.</p>
+<p><strong>(b) Committee (ensemble) uncertainty</strong> — for nonlinear neural networks such as MACE, no tractable analytical posterior exists. Instead, a <strong>committee</strong> of <span class="arithmatex">\(K\)</span> independently trained models (differing in random seed, data subset, or hyperparameters) is used, and their disagreement serves as a surrogate uncertainty:</p>
+<div class="arithmatex">\[\tilde{\sigma} = \sqrt{\frac{1}{\lambda} + \frac{1}{K} \sum_{k=1}^K \left(E^k - \bar{E}\right)^2}.\]</div>
+<p>Committee disagreement correlates well with the true error and requires no modification to the underlying model class — just <span class="arithmatex">\(K\)</span> forward passes instead of one. The <span class="arithmatex">\(1/\lambda\)</span> term is a Bayesian regularisation contribution; for NN committees it is often dropped, reducing <span class="arithmatex">\(\tilde{\sigma}\)</span> to the plain variance across predictions. Configurations where <span class="arithmatex">\(\tilde{\sigma}\)</span> exceeds a threshold are selected for reference-method recalculation and added to the training set.</p>
+<p><strong>Strategy IV — Hyper-active Learning (HAL)</strong> (van der Oord et al., <em>npj Comput. Mater.</em> <strong>9</strong>, 168, 2023). Rather than waiting for ordinary MD to stumble into uncertain regions, HAL biases the PES to actively steer the simulation there:</p>
+<div class="arithmatex">\[E_\text{HAL} = E - \tau \sigma.\]</div>
+<p>Subtracting <span class="arithmatex">\(\tau\sigma\)</span> adds a bias force <span class="arithmatex">\(\tau\,\nabla_i\sigma\)</span> on top of the physical force, pointing in the direction of increasing uncertainty. The stopping criterion is the softmax-normalised relative force uncertainty <span class="arithmatex">\(s(f_i)\)</span>: when <span class="arithmatex">\(\max_i s(f_i) &gt; s^\text{tol}\)</span> (default 0.5), the run stops, the configuration is labelled by DFT, and the cycle restarts. The bias strength <span class="arithmatex">\(\tau\)</span> is a key hyperparameter — too small and the bias has no effect; too large and the trajectory escapes to unphysical geometries. Compared to plain AL, HAL reaches uncertain configurations in far fewer MD steps and requires fewer DFT evaluations to converge. HAL was developed for ACE but extends to MACE by replacing the analytical <span class="arithmatex">\(\sigma\)</span> with the committee spread <span class="arithmatex">\(\tilde\sigma\)</span>.</p>
+<h2 id="84-speedaccuracy-benchmarks">8.4 Speed–Accuracy Benchmarks<a class="headerlink" href="#84-speedaccuracy-benchmarks" title="Permanent link">&para;</a></h2>
+<p>Different MLIP architectures occupy different points in the speed–accuracy tradeoff. The following wall-clock times for a single MD trajectory on a single CPU core illustrate the spread:</p>
+<div id="speed-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.2rem 1.2rem 0.9rem;margin:1.4rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.9rem;">Speed &ndash; Accuracy Overview</div>
+<div style="display:grid;grid-template-columns:70px 1fr 74px 96px;gap:0.28rem 0.6rem;align-items:center;">
+<div style="font-size:0.63rem;color:#bbb;">Model</div>
+<div style="font-size:0.63rem;color:#bbb;">Wall-clock time (log scale) &#x27F6;</div>
+<div style="font-size:0.63rem;color:#bbb;text-align:right;">Time</div>
+<div style="font-size:0.63rem;color:#bbb;text-align:center;">Accuracy</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">ACE</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:5%;height:100%;background:rgba(134,188,189,0.55);border-radius:0 3px 3px 0;border:1px solid #86BCBD;border-left:2.5px solid #86BCBD;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~33 s</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:3px;padding:1px 4px;color:#1f6668;">good</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">REANN</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:8%;height:100%;background:rgba(164,206,139,0.45);border-radius:0 3px 3px 0;border:1px solid #A4CE8B;border-left:2.5px solid #A4CE8B;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~54 s</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(164,206,139,0.15);border:1px solid #A4CE8B;border-radius:3px;padding:1px 4px;color:#2a5a1a;">mod&ndash;good</div>
+<div style="font-size:0.77rem;font-weight:700;color:#2a5a1a;">MACE &#9733;</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:9%;height:100%;background:rgba(90,154,64,0.5);border-radius:0 3px 3px 0;border:1.5px solid #5a9a40;border-left:2.5px solid #5a9a40;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~1 min</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(90,154,64,0.15);border:1.5px solid #5a9a40;border-radius:3px;padding:1px 4px;color:#2a5a1a;font-weight:600;">highest</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">SchNet</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:35%;height:100%;background:rgba(200,173,58,0.35);border-radius:0 3px 3px 0;border:1px solid #c8ad3a;border-left:2.5px solid #c8ad3a;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~45 min</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(200,173,58,0.12);border:1px solid #c8ad3a;border-radius:3px;padding:1px 4px;color:#5a4c00;">moderate</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">PaiNN</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:37%;height:100%;background:rgba(134,188,189,0.35);border-radius:0 3px 3px 0;border:1px solid #86BCBD;border-left:2.5px solid #86BCBD;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~55 min</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:3px;padding:1px 4px;color:#1f6668;">high</div>
+<div style="font-size:0.77rem;font-weight:600;color:#444;">DFT</div>
+<div style="height:20px;position:relative;"><div style="position:absolute;left:0;top:0;width:100%;height:100%;background:rgba(186,90,90,0.3);border-radius:0 3px 3px 0;border:1px solid #BA5A5A;border-left:2.5px solid #BA5A5A;"></div></div>
+<div style="text-align:right;font-size:0.73rem;color:#777;">~1 year</div>
+<div style="text-align:center;font-size:0.67rem;background:rgba(186,90,90,0.12);border:1px solid #BA5A5A;border-radius:3px;padding:1px 4px;color:#BA5A5A;">reference</div>
+</div>
+<div style="font-size:0.63rem;color:#ccc;text-align:center;margin-top:0.5rem;">Bar width &prop; log<sub>10</sub>(time). MACE/ACE/REANN &asymp; 1 min; PaiNN/SchNet &asymp; 1 h; DFT &asymp; 1 year (10<sup>6</sup>&times; slower than MACE).</div>
+</div>
+
+<p>The speed gap between SchNet/PaiNN and MACE/ACE is mainly architectural: equivariance requires CG tensor contractions at every message-passing step, but MACE recovers speed through GPU efficiency and the fact that its many-body expansion is computed in a single pass. ACE is the fastest non-DFT option because inference reduces to a single dot product once the B-basis is precomputed.</p>
+<h2 id="85-foundation-models">8.5 Foundation Models<a class="headerlink" href="#85-foundation-models" title="Permanent link">&para;</a></h2>
+<p>Training a separate MLIP for every chemical system is unsustainable. The foundation model approach instead trains a single large model on a massively diverse dataset spanning many elements and chemical environments, aiming for zero-shot generalization to new systems — much like large language models generalize across tasks. The first notable example was M3GNet (Chen &amp; Ong, <em>Nat. Comput. Sci.</em>, 2022), trained on the Materials Project database. The most widely adopted model in this paradigm is <strong>MACE-MP-0</strong> (Batatia et al., 2024): trained on 89 elements and ~1.5M configurations from the Materials Project (XC = PBE+U), using 2 MACE layers, <span class="arithmatex">\(l_\text{max}=3\)</span>, correlation order 3 (4-body), 128 channels, and <span class="arithmatex">\(R_\text{cut}=6\)</span> Å. It demonstrated that a single model can provide reasonable accuracy across inorganic materials without system-specific retraining, though it requires fine-tuning for demanding applications such as surface chemistry.</p>
+<p><strong>Open Materials 2024 (OMat24)</strong> pushed the dataset frontier further: 100M+ non-equilibrium structures generated via Boltzmann sampling at multiple temperatures and AIMD, providing far denser coverage of the PES than equilibrium-only datasets.</p>
+<p><strong>Meta UMA</strong> (Wood et al., <em>NeurIPS</em>, 2025) is a notable recent foundation model trained on ~500M structures, discussed here for its distinctive <strong>Mixture of Linear Experts (MoLE)</strong> architecture.</p>
+<p><strong>Mixture of Experts (MoE).</strong> Rather than one monolithic network, MoE uses <span class="arithmatex">\(K\)</span> parallel expert sub-networks plus a lightweight router that assigns a weight <span class="arithmatex">\(\alpha_k\)</span> to each expert depending on the input:</p>
+<div class="arithmatex">\[y = \sum_k \alpha_k(x)\, f_k(x), \qquad \sum_k \alpha_k = 1.\]</div>
+<p>In sparse MoE (standard in LLMs), only the top-2 or top-3 experts are activated per input, so a model with <span class="arithmatex">\(K\)</span> experts worth of parameters only runs a small fraction per forward pass. The idea is specialization: the router learns to direct different types of inputs to different experts, without any single expert having to learn everything.</p>
+<p><strong>Mixture of Linear Experts (MoLE).</strong> UMA takes MoE further by restricting experts to linear weight matrices <span class="arithmatex">\(W_k\)</span>, which allows the weighted sum to be collapsed before it ever touches the input:</p>
+<div class="arithmatex">\[y = \sum_k \alpha_k (W_k x) = \underbrace{\left(\sum_k \alpha_k W_k\right)}_{W^*} x.\]</div>
+<p>The routing weights <span class="arithmatex">\(\alpha_k\)</span> depend only on global, time-invariant information (element composition, charge, spin, DFT task) — not on atomic positions. So <span class="arithmatex">\(W^*\)</span> is precomputed once before the simulation and reused at every MD step. The model gains the capacity of <span class="arithmatex">\(K\)</span> experts at the inference cost of one. UMA-M has 1.4B total parameters but only 50M active per step.</p>
+<div id="fm-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem 0.8rem;margin:1.8rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.8rem;">Foundation Model Scale &mdash; Training Data &amp; Parameters</div>
+<div style="display:flex;gap:0.6rem;align-items:flex-end;height:150px;padding:0 0.4rem;margin-bottom:0;">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+<div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">170k params</div>
+<div style="width:100%;height:15%;background:rgba(134,188,189,0.3);border-radius:4px 4px 0 0;border:1.5px solid #86BCBD;border-bottom:none;"></div></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+<div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">~5M params</div>
+<div style="width:100%;height:37%;background:rgba(164,206,139,0.35);border-radius:4px 4px 0 0;border:1.5px solid #A4CE8B;border-bottom:none;"></div></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+<div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">large (eSEN)</div>
+<div style="width:100%;height:83%;background:rgba(200,173,58,0.25);border-radius:4px 4px 0 0;border:1.5px solid #c8ad3a;border-bottom:none;"></div></div>
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+<div style="font-size:0.61rem;color:#aaa;margin-bottom:0.1rem;">1.4B (50M active)</div>
+<div style="width:100%;height:100%;background:rgba(186,90,90,0.25);border-radius:4px 4px 0 0;border:1.5px solid #BA5A5A;border-bottom:none;"></div></div>
+</div>
+<div style="display:flex;gap:0.6rem;padding:0 0.4rem;">
+<div style="flex:1;text-align:center;border-top:2px solid #86BCBD;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">M3GNet</div><div style="font-size:0.62rem;color:#888;">2022 &middot; 89 el.</div><div style="font-size:0.62rem;color:#aaa;">190k struct.</div></div>
+<div style="flex:1;text-align:center;border-top:2px solid #A4CE8B;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">MACE-MP-0</div><div style="font-size:0.62rem;color:#888;">2024 &middot; 89 el.</div><div style="font-size:0.62rem;color:#aaa;">1.5M struct.</div></div>
+<div style="flex:1;text-align:center;border-top:2px solid #c8ad3a;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">OMat24</div><div style="font-size:0.62rem;color:#888;">2024 &middot; many el.</div><div style="font-size:0.62rem;color:#aaa;">100M+ struct.</div></div>
+<div style="flex:1;text-align:center;border-top:2px solid #BA5A5A;padding-top:0.3rem;"><div style="font-size:0.72rem;font-weight:700;color:#444;">Meta UMA</div><div style="font-size:0.62rem;color:#888;">2025 &middot; MoLE arch.</div><div style="font-size:0.62rem;color:#aaa;">500M struct.</div></div>
+</div>
+<div style="font-size:0.64rem;color:#ccc;text-align:center;margin-top:0.45rem;">Bar height &prop; log(structures), range-scaled to show spread. Parameter counts above bars.</div>
+</div>
+
+<h2 id="86-transfer-learning-and-fine-tuning">8.6 Transfer Learning and Fine-Tuning<a class="headerlink" href="#86-transfer-learning-and-fine-tuning" title="Permanent link">&para;</a></h2>
+<p><strong>Transfer learning</strong> is the idea of taking a model pre-trained on a large, general dataset and adapting it to a specific downstream task, rather than training from scratch. The pretrained model has already learned useful representations — in the MLIP context, a foundation model like MACE-MP-0 has learned general interatomic interactions across 89 elements. Fine-tuning then steers those representations toward a specific system (e.g. a particular surface or molecule) using a small amount of system-specific DFT data. This is far more data-efficient than training from scratch because the network does not need to relearn chemistry from zero.</p>
+<p>Four fine-tuning strategies exist, each with different tradeoffs:</p>
+<p><strong>Naive fine-tuning (full unfreeze).</strong> All weights are updated on the new dataset. This gives the model maximum flexibility to adapt, but risks <strong>catastrophic forgetting</strong>: gradient updates for the new task overwrite the general representations learned during pretraining, degrading performance on everything outside the fine-tuning distribution. It also requires more data to work well.</p>
+<p><strong>Freeze backbone, train head only.</strong> The pretrained layers are frozen and only a small task-specific output head is trained. The general features are preserved exactly, and very little data is needed. The limitation is that the backbone cannot adapt at all, so if the target system involves chemistry poorly covered by the pretraining data, the fixed features may be insufficient regardless of how the head is trained.</p>
+<p><strong>Multi-head.</strong> A shared pretrained backbone is kept, and separate output heads are trained for each task. This avoids catastrophic forgetting entirely — old task heads are untouched — while allowing multiple specializations to coexist on top of the same feature extractor.</p>
+<p><strong>LoRA (Low-Rank Adaptation).</strong> The key observation is that the weight update <span class="arithmatex">\(\Delta W\)</span> needed to adapt to a new task has low <em>intrinsic rank</em> — adaptation does not require moving in all directions of parameter space, only a small subspace. LoRA makes this explicit: the pretrained weight matrix <span class="arithmatex">\(W \in \mathbb{R}^{d \times k}\)</span> is frozen, and only a low-rank correction is trained:</p>
+<div class="arithmatex">\[W' = W + \Delta W = W + BA,\]</div>
+<p>where <span class="arithmatex">\(B \in \mathbb{R}^{d \times r}\)</span> and <span class="arithmatex">\(A \in \mathbb{R}^{r \times k}\)</span> with <span class="arithmatex">\(r \ll \min(d, k)\)</span>. The number of trainable parameters drops from <span class="arithmatex">\(dk\)</span> to <span class="arithmatex">\(r(d+k)\)</span> — for a <span class="arithmatex">\(768 \times 768\)</span> matrix with <span class="arithmatex">\(r=8\)</span> this is roughly 50<span class="arithmatex">\(\times\)</span> fewer. <span class="arithmatex">\(B\)</span> is initialized to zero so <span class="arithmatex">\(\Delta W = 0\)</span> at the start, meaning training begins exactly from the pretrained weights with no disruption. After fine-tuning, <span class="arithmatex">\(W + BA\)</span> can be merged into a single matrix, so inference is identical to a non-LoRA model with no overhead.</p>
+<p><strong>In the MLIP context</strong> (Radova et al., 2025): fine-tuning MACE-MP-0 on just 10% of system-specific data outperforms training ACE from scratch on the full dataset, and beats a from-scratch MACE trained on fewer than 200 DFT points. MACE-MP-0 out of the box is inadequate for surface chemistry — fine-tuning bridges that gap efficiently. A practical workflow is MACE-MP-0 → fine-tuned MACE → distill into ACE for fast production MD.</p>
+<div id="ft-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem;margin:1.8rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.75rem;">Fine-Tuning Strategies &mdash; Which Parameters are Trained?</div>
+<div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;">
+
+<div style="text-align:center;min-width:100px;">
+<div style="display:inline-flex;flex-direction:column;gap:3px;align-items:center;margin-bottom:0.35rem;">
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;">output</div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;">input</div>
+</div>
+<div style="font-size:0.73rem;font-weight:700;color:#444;">Naive</div>
+<div style="font-size:0.63rem;color:#888;">All updated</div>
+<div style="font-size:0.62rem;color:#BA5A5A;">Forgetting risk</div>
+</div>
+
+<div style="text-align:center;min-width:100px;">
+<div style="display:inline-flex;flex-direction:column;gap:3px;align-items:center;margin-bottom:0.35rem;">
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;">output</div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="font-size:0.62rem;color:#aaa;font-style:italic;">frozen</div>
+</div>
+<div style="font-size:0.73rem;font-weight:700;color:#444;">Freeze backbone</div>
+<div style="font-size:0.63rem;color:#888;">Head only</div>
+<div style="font-size:0.62rem;color:#888;">Very data-efficient</div>
+</div>
+
+<div style="text-align:center;min-width:110px;">
+<div style="display:inline-flex;flex-direction:column;gap:3px;align-items:center;margin-bottom:0.35rem;">
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;">task A &nbsp; task B</div>
+<div style="display:flex;gap:3px;">
+<div style="width:32px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="width:32px;height:13px;background:#86BCBD;border-radius:2px;border:1px solid #5a9a9c;"></div>
+</div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="font-size:0.62rem;color:#aaa;font-style:italic;">shared frozen</div>
+</div>
+<div style="font-size:0.73rem;font-weight:700;color:#444;">Multi-head</div>
+<div style="font-size:0.63rem;color:#888;">Shared backbone</div>
+<div style="font-size:0.62rem;color:#888;">No forgetting</div>
+</div>
+
+<div style="text-align:center;min-width:110px;">
+<div style="display:inline-flex;flex-direction:column;gap:3px;align-items:flex-start;margin-bottom:0.35rem;">
+<div style="font-size:0.62rem;color:#5a9a40;font-style:italic;text-align:center;width:100%;">output</div>
+<div style="width:68px;height:13px;background:#A4CE8B;border-radius:2px;border:1px solid #7ab865;"></div>
+<div style="display:flex;align-items:center;gap:2px;">
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:18px;height:9px;background:#f7e49b;border-radius:2px;border:1px solid #c8ad3a;font-size:5.5px;color:#555;text-align:center;line-height:9px;">BA</div>
+</div>
+<div style="display:flex;align-items:center;gap:2px;">
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:18px;height:9px;background:#f7e49b;border-radius:2px;border:1px solid #c8ad3a;font-size:5.5px;color:#555;text-align:center;line-height:9px;">BA</div>
+</div>
+<div style="display:flex;align-items:center;gap:2px;">
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:18px;height:9px;background:#f7e49b;border-radius:2px;border:1px solid #c8ad3a;font-size:5.5px;color:#555;text-align:center;line-height:9px;">BA</div>
+</div>
+<div style="display:flex;align-items:center;gap:2px;">
+<div style="width:68px;height:13px;background:#f0ece6;border-radius:2px;border:1px solid #c8c2ba;"></div>
+<div style="width:18px;height:9px;background:#f7e49b;border-radius:2px;border:1px solid #c8ad3a;font-size:5.5px;color:#555;text-align:center;line-height:9px;">BA</div>
+</div>
+<div style="font-size:0.62rem;color:#aaa;font-style:italic;">frozen + adapters</div>
+</div>
+<div style="font-size:0.73rem;font-weight:700;color:#444;">LoRA</div>
+<div style="font-size:0.63rem;color:#888;">Frozen + rank-<em>r</em> BA</div>
+<div style="font-size:0.62rem;color:#5a9a40;">r &#8810; d,k</div>
+</div>
+</div>
+
+<hr style="margin:0.75rem 0;border:none;border-top:1px solid #e5dfd7;">
+<div style="text-align:center;font-size:0.8rem;font-weight:700;color:#444;margin-bottom:0.6rem;">LoRA Parameter Savings &mdash; Interactive</div>
+<svg id="lora-svg" style="display:block;width:100%;height:200px;"></svg>
+<div id="lora-info" style="background:#f5f2ee;border-radius:6px;padding:0.55rem 0.75rem;border:1px solid #e5dfd7;font-size:0.79rem;max-width:520px;margin:0.5rem auto 0;"></div>
+<div style="margin-top:0.55rem;font-size:0.74rem;color:#555;display:grid;grid-template-columns:auto 1fr 52px;gap:0.12rem 0.4rem;align-items:center;">
+<label>Dim <em>d</em></label>
+<input type="range" id="lora-d" min="128" max="2048" step="128" value="768" style="width:100%;height:16px;" oninput="loraUp()">
+<span id="lora-dv" style="text-align:right;font-variant-numeric:tabular-nums;">768</span>
+<label>Dim <em>k</em></label>
+<input type="range" id="lora-k" min="128" max="2048" step="128" value="768" style="width:100%;height:16px;" oninput="loraUp()">
+<span id="lora-kv" style="text-align:right;font-variant-numeric:tabular-nums;">768</span>
+<label>Rank <em>r</em></label>
+<input type="range" id="lora-r" min="1" max="64" value="8" style="width:100%;height:16px;" oninput="loraUp()">
+<span id="lora-rv" style="text-align:right;font-variant-numeric:tabular-nums;">8</span>
+</div>
+</div>
+<script>
+(function(){
+var NS='http://www.w3.org/2000/svg';
+function mk(tag,at,tx){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(tx!=null)e.textContent=tx;return e;}
+function kx(s){try{return katex.renderToString(s,{throwOnError:false,displayMode:false});}catch(e){return s;}}
+window.loraUp=function(){
+  var d=parseInt(document.getElementById('lora-d').value);
+  var kk=parseInt(document.getElementById('lora-k').value);
+  var r=parseInt(document.getElementById('lora-r').value);
+  document.getElementById('lora-dv').textContent=d;
+  document.getElementById('lora-kv').textContent=kk;
+  document.getElementById('lora-rv').textContent=r;
+  var full=d*kk, lp=r*(d+kk), red=(full/lp).toFixed(1), pct=(lp/full*100).toFixed(1);
+  var svg=document.getElementById('lora-svg');
+  if(!svg)return;
+  var W=Math.max(svg.getBoundingClientRect().width||0,360), H=200;
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  svg.innerHTML='';
+  var asp=d/kk, bw=90, bh=Math.min(110,Math.max(44,Math.round(bw*asp)));
+  var by=Math.round((H-bh)/2);
+  var bmw=Math.max(9,Math.min(28,Math.round(r*1.1)));
+  var amh=Math.max(9,Math.min(28,Math.round(r*1.1)));
+  var amw=bw;
+  var tw=bw+20+bmw+5+amw+20+bw;
+  var ox=Math.max(8,Math.round((W-tw)/2));
+  // W (frozen)
+  svg.appendChild(mk('rect',{x:ox,y:by,width:bw,height:bh,fill:'#f0ece6',stroke:'#c8c2ba','stroke-width':1.5,rx:3}));
+  svg.appendChild(mk('text',{x:ox+bw/2,y:by-6,'text-anchor':'middle','font-size':9.5,'fill':'#aaa'},'frozen'));
+  svg.appendChild(mk('text',{x:ox+bw/2,y:by+bh/2+5,'text-anchor':'middle','font-size':13,'fill':'#777','font-weight':'600'},'W'));
+  svg.appendChild(mk('text',{x:ox+bw/2,y:by+bh+14,'text-anchor':'middle','font-size':8,'fill':'#bbb'},d+'\xd7'+kk));
+  // + sign
+  svg.appendChild(mk('text',{x:ox+bw+10,y:H/2+6,'text-anchor':'middle','font-size':18,'fill':'#aaa'},'+'));
+  // B (d\xd7r)
+  var bmx=ox+bw+20, bmy=by;
+  svg.appendChild(mk('rect',{x:bmx,y:bmy,width:bmw,height:bh,fill:'rgba(164,206,139,0.3)',stroke:'#A4CE8B','stroke-width':1.5,rx:2}));
+  svg.appendChild(mk('text',{x:bmx+bmw/2,y:bmy-6,'text-anchor':'middle','font-size':9.5,'fill':'#5a9a40'},'B'));
+  svg.appendChild(mk('text',{x:bmx+bmw/2,y:bmy+bh+14,'text-anchor':'middle','font-size':8,'fill':'#bbb'},d+'\xd7'+r));
+  // A (r\xd7k)
+  var amx=bmx+bmw+5, amy=by+Math.round(bh/2-amh/2);
+  svg.appendChild(mk('rect',{x:amx,y:amy,width:amw,height:amh,fill:'rgba(164,206,139,0.3)',stroke:'#A4CE8B','stroke-width':1.5,rx:2}));
+  svg.appendChild(mk('text',{x:amx+amw/2,y:amy-6,'text-anchor':'middle','font-size':9.5,'fill':'#5a9a40'},'A'));
+  svg.appendChild(mk('text',{x:amx+amw/2,y:amy+amh+14,'text-anchor':'middle','font-size':8,'fill':'#bbb'},r+'\xd7'+kk));
+  // =
+  var eqx=amx+amw+10;
+  svg.appendChild(mk('text',{x:eqx,y:H/2+6,'text-anchor':'middle','font-size':16,'fill':'#aaa'},'='));
+  // W’ dashed
+  var wpx=eqx+10;
+  svg.appendChild(mk('rect',{x:wpx,y:by,width:bw,height:bh,fill:'rgba(164,206,139,0.07)',stroke:'#A4CE8B','stroke-width':2,rx:3,'stroke-dasharray':'4,2.5'}));
+  svg.appendChild(mk('text',{x:wpx+bw/2,y:by-6,'text-anchor':'middle','font-size':9.5,'fill':'#5a9a40'},"W’=W+BA"));
+  svg.appendChild(mk('text',{x:wpx+bw/2,y:by+bh+14,'text-anchor':'middle','font-size':8,'fill':'#bbb'},d+'\xd7'+kk));
+  // info panel
+  var info=document.getElementById('lora-info');
+  if(!info)return;
+  info.innerHTML='<div style="font-weight:700;color:#555;margin-bottom:0.3rem;">Parameters</div>'+
+    '<table style="border-collapse:collapse;width:100%;font-size:0.8rem;"><tbody>'+
+    '<tr><td style="color:#888;padding-right:0.5rem;padding-bottom:0.18rem;">Full W:</td><td style="font-variant-numeric:tabular-nums;padding-bottom:0.18rem;font-weight:600;">'+(full).toLocaleString()+'</td></tr>'+
+    '<tr><td style="color:#5a9a40;padding-right:0.5rem;">B + A:</td><td style="color:#5a9a40;font-weight:600;font-variant-numeric:tabular-nums;">'+(lp).toLocaleString()+'</td></tr>'+
+    '</tbody></table>'+
+    '<hr style="margin:0.3rem 0;border:none;border-top:1px solid #e0dbd4;">'+
+    '<div style="font-size:0.82rem;"><strong>'+red+'\xd7</strong> fewer params&nbsp;&nbsp;<span style="color:#aaa;font-size:0.72rem;">'+pct+'% of original</span></div>'+
+    '<hr style="margin:0.3rem 0;border:none;border-top:1px solid #e0dbd4;">'+
+    "<div style='font-size:0.73rem;color:#bbb;'>"+kx("W'=W+BA")+'; &thinsp;B&thinsp;init to&thinsp;0</div>';
+};
+function init(){if(!document.getElementById('lora-svg'))return;loraUp();}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(init,50);});}
+})();
+</script>
+
+<h2 id="87-long-range-interactions">8.7 Long-Range Interactions<a class="headerlink" href="#87-long-range-interactions" title="Permanent link">&para;</a></h2>
+<p>GNNs and MLIPs are inherently local: the energy of atom <span class="arithmatex">\(i\)</span> depends only on atoms within a cutoff radius <span class="arithmatex">\(R_\text{cut}\)</span> (typically 5–12 Å). The dominant physical interaction that decays slowly enough to require special treatment is <strong>electrostatics</strong> (<span class="arithmatex">\(E \sim 1/r\)</span>, essentially infinite range). Dispersion (<span class="arithmatex">\(E \sim 1/r^6\)</span>) decays much faster and is often adequately captured within the cutoff or handled with a simple analytic correction (e.g. Grimme D3); it is not the primary motivation for the approaches below.</p>
+<p>The standard framework for local neural network potentials is the <strong>High-Dimensional Neural Network Potential (HDNNP)</strong> introduced by Behler and Parrinello (2007). The field has since organized successive extensions into a generational taxonomy based on how electrostatics are handled.</p>
+<p><strong>3rd generation HDNNPs — explicit Coulomb term.</strong> The core idea is to augment the local short-range NN with an explicit Coulomb sum. The NN predicts atomic partial charges <span class="arithmatex">\(\{q_i\}\)</span> from the local chemical environment, and the total energy is:</p>
+<div class="arithmatex">\[E = E_\text{SR}^\text{NN} + E_\text{Coulomb}, \qquad E_\text{Coulomb} = \sum_{i&lt;j} \frac{q_i q_j}{r_{ij}}\]</div>
+<p>The <span class="arithmatex">\(1/r\)</span> sum runs over all pairs regardless of cutoff, solving the range problem for electrostatics. The limitation is that each <span class="arithmatex">\(q_i\)</span> is predicted from the local environment alone — there is no mechanism for charge transfer between distant atoms.</p>
+<p><strong>PhysNet</strong> (Unke &amp; Meuwly, J. Chem. Theory Comput. 2019) is the prototypical 3rd gen model: a message-passing network that predicts local charges, energies, and dipole moments, with the explicit Coulomb term added on top. <strong>SpookyNet</strong> (Unke et al., Nat. Commun. 2021) goes further: it accepts the total molecular charge and spin state as explicit global inputs, and incorporates non-local effects via self-attention. This lets SpookyNet distinguish molecules in different electronic states that are otherwise locally identical — something PhysNet cannot do — but long-range charge transfer is still not fully captured.</p>
+<p><strong>4th generation HDNNPs — charge equilibration (QEq).</strong> To allow charge transfer, the charge assignment is made a global optimization problem (Ko et al., Nat. Commun. 12, 398, 2021). The NN predicts two atom-specific quantities from the local environment: an electronegativity <span class="arithmatex">\(\chi_i\)</span> and a chemical hardness <span class="arithmatex">\(J_i\)</span>. The atomic charges <span class="arithmatex">\(\{Q_i\}\)</span> are then found by minimizing the total electrostatic energy:</p>
+<div class="arithmatex">\[E_\text{Qeq} = E_\text{elec} + \sum_i \left(\chi_i Q_i + \tfrac{1}{2}J_i Q_i^2\right)\]</div>
+<div class="arithmatex">\[E_\text{elec} = \sum_{i&lt;j}\frac{\operatorname{erf}\!\left(r_{ij}/\sqrt{2}\,\gamma_{ij}\right)}{r_{ij}}Q_iQ_j + \sum_i\frac{Q_i^2}{2\sigma_i\sqrt{\pi}}\]</div>
+<p>subject to charge conservation <span class="arithmatex">\(\sum_i Q_i = Q_\text{tot}\)</span>. This is a quadratic problem solvable by matrix inversion. Because the minimization couples all <span class="arithmatex">\(Q_i\)</span> simultaneously through <span class="arithmatex">\(E_\text{elec}\)</span>, the resulting charges depend on the global arrangement of all atoms — charge transfer is now possible. The <span class="arithmatex">\(\operatorname{erf}\)</span> factor is a Gaussian smearing that regularizes the short-range divergence. A concrete example is 12-cumulene, a fully conjugated carbon chain in which the <span class="arithmatex">\(\pi\)</span>-electron system is delocalized over the whole molecule: a charge perturbation at one end polarizes the other end, which no local model captures.</p>
+<p><strong>MACE-POLAR</strong> (2025) implements a more sophisticated variant of this idea on the MACE backbone. Rather than simple QEq, it uses a polarizable field formalism where atomic charge and spin densities are represented as multipole expansions in a Gaussian-type orbital basis. Global charge and spin constraints are enforced through learnable Fukui equilibration functions, allowing the model to handle arbitrary charge and spin states and respond to external electric fields while remaining computationally efficient.</p>
+<p><strong>MACE-LES — Latent Ewald Summation.</strong> A more recent approach (npj Comp. Mat. 11, 80, 2025) avoids committing to physical charges entirely. The MACE network produces <strong>latent charges</strong> <span class="arithmatex">\(q_i^\text{les} = \text{MLP}(h_i)\)</span> from the learned node embeddings <span class="arithmatex">\(h_i\)</span> — abstract scalars with no constraint to reproduce physical partial charges, optimized end-to-end for accuracy. The long-range energy is computed via Ewald summation in reciprocal space:</p>
+<div class="arithmatex">\[E = E_\text{SR} + E_\text{LR}\]</div>
+<div class="arithmatex">\[E_\text{LR} = \frac{1}{\Omega}\sum_{0&lt;|\mathbf{k}|&lt;k_\text{cut}}\frac{1}{k^2}e^{-\sigma^2k^2/2}\left|\sum_i q_i^\text{les}\,e^{-i\mathbf{k}\cdot\mathbf{r}_i}\right|^2\]</div>
+<p>where <span class="arithmatex">\(\Omega\)</span> is the simulation cell volume, <span class="arithmatex">\(\mathbf{k}\)</span> are reciprocal lattice vectors, and <span class="arithmatex">\(\sigma\)</span> controls the Gaussian damping that separates short-range from long-range contributions. The inner sum <span class="arithmatex">\(\sum_i q_i^\text{les} e^{-i\mathbf{k}\cdot\mathbf{r}_i}\)</span> is the structure factor at wavevector <span class="arithmatex">\(\mathbf{k}\)</span>; it couples all atoms simultaneously in reciprocal space, giving the model global sensitivity.</p>
+<div id="lr-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem;margin:1.8rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.75rem;">Long-Range Interactions &mdash; Generational Progression</div>
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+
+<div style="flex:1;min-width:140px;border:1.5px solid #c8c2ba;border-radius:6px;overflow:hidden;">
+<div style="background:rgba(200,194,186,0.2);padding:0.3rem 0.6rem;font-size:0.7rem;font-weight:700;color:#666;letter-spacing:0.03em;border-bottom:1px solid #c8c2ba;">2nd gen HDNNP</div>
+<div style="padding:0.35rem 0.6rem;">
+<div style="font-size:0.65rem;color:#888;margin-bottom:0.25rem;">Local SR network only</div>
+<span data-eq="E = E_\text{SR}^\text{NN}" data-dm="1" style="display:block;margin:0.2rem 0;"></span>
+<div style="font-size:0.63rem;color:#BA5A5A;margin-top:0.3rem;">&#10007; No long-range<br>&#10007; Fails ionic/polar</div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;color:#aaa;font-size:1rem;">&#8594;</div>
+
+<div style="flex:1;min-width:140px;border:1.5px solid #86BCBD;border-radius:6px;overflow:hidden;">
+<div style="background:rgba(134,188,189,0.12);padding:0.3rem 0.6rem;font-size:0.7rem;font-weight:700;color:#0f3a3c;letter-spacing:0.03em;border-bottom:1px solid #86BCBD;">3rd gen &middot; PhysNet / SpookyNet</div>
+<div style="padding:0.35rem 0.6rem;">
+<div style="font-size:0.65rem;color:#888;margin-bottom:0.25rem;">NN predicts local charges; explicit Coulomb</div>
+<span data-eq="E = E_\text{SR} + \sum_{i<j}\frac{q_i q_j}{r_{ij}}" data-dm="1" style="display:block;margin:0.2rem 0;"></span>
+<div style="font-size:0.63rem;color:#5a9a40;margin-top:0.3rem;">&#10003; 1/r electrostatics<br>&#10007; No charge transfer</div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;color:#aaa;font-size:1rem;">&#8594;</div>
+
+<div style="flex:1;min-width:140px;border:1.5px solid #c8ad3a;border-radius:6px;overflow:hidden;">
+<div style="background:rgba(200,173,58,0.12);padding:0.3rem 0.6rem;font-size:0.7rem;font-weight:700;color:#5a4c00;letter-spacing:0.03em;border-bottom:1px solid #c8ad3a;">4th gen &middot; QEq (Ko et al.)</div>
+<div style="padding:0.35rem 0.6rem;">
+<div style="font-size:0.65rem;color:#888;margin-bottom:0.25rem;">Global charge equilibration; NN predicts &chi;<sub>i</sub>, J<sub>i</sub></div>
+<span data-eq="\min_{\{Q_i\}} E_\text{Qeq} \text{ s.t. } \textstyle\sum_i Q_i = Q_\text{tot}" data-dm="1" style="display:block;margin:0.2rem 0;"></span>
+<div style="font-size:0.63rem;color:#5a9a40;margin-top:0.3rem;">&#10003; Charge transfer<br>&#10007; Physical charge req'd</div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;color:#aaa;font-size:1rem;">&#8594;</div>
+
+<div style="flex:1;min-width:140px;border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;">
+<div style="background:rgba(164,206,139,0.15);padding:0.3rem 0.6rem;font-size:0.7rem;font-weight:700;color:#2a5a1a;letter-spacing:0.03em;border-bottom:1px solid #A4CE8B;">MACE-LES &middot; Latent Ewald</div>
+<div style="padding:0.35rem 0.6rem;">
+<div style="font-size:0.65rem;color:#888;margin-bottom:0.25rem;">Learned latent charges; Ewald in reciprocal space</div>
+<span data-eq="E_\text{LR} = \frac{1}{\Omega}\sum_\mathbf{k}\frac{e^{-\sigma^2 k^2}}{k^2}\bigl|\textstyle\sum_i q_i^\text{les} e^{-i\mathbf{k}\cdot\mathbf{r}_i}\bigr|^2" data-dm="1" style="display:block;margin:0.2rem 0;"></span>
+<div style="font-size:0.63rem;color:#5a9a40;margin-top:0.3rem;">&#10003; No physical charges<br>&#10003; E2E trainable</div>
+</div>
+</div>
+
+</div>
+</div>
+<script>
+(function(){
+function lrInit(){
+  var el=document.getElementById('lr-widget');
+  if(!el||el.dataset.lrInit)return;
+  el.dataset.lrInit='1';
+  el.querySelectorAll('[data-eq]').forEach(function(e){
+    try{var eq=e.getAttribute('data-eq'),dm=e.getAttribute('data-dm')==='1';
+    e.innerHTML=katex.renderToString(eq,{throwOnError:false,displayMode:dm});}catch(err){}
+  });
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',lrInit);}else{lrInit();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(lrInit,80);});}
+})();
+</script>
+
+<h2 id="88-beyond-mlips-electronic-structure-ml">8.8 Beyond MLIPs: Electronic Structure ML<a class="headerlink" href="#88-beyond-mlips-electronic-structure-ml" title="Permanent link">&para;</a></h2>
+<p>Standard MLIPs learn the mapping <span class="arithmatex">\(\{R_I, Z_I\} \to E\)</span>, from which forces follow by differentiation. The next level of ambition is to learn the <strong>quantum mechanical Hamiltonian</strong> directly:</p>
+<div class="arithmatex">\[\{R_I, Z_I\} \to H \xrightarrow{H\Psi=E\Psi} \Psi \to O = \langle\Psi|\hat{O}|\Psi\rangle\]</div>
+<p>If <span class="arithmatex">\(H\)</span> is known, any quantum mechanical observable — density of states, band structure, wavefunctions, non-adiabatic couplings — follows by diagonalization or perturbation theory. This is fundamentally more powerful than learning individual properties one by one.</p>
+<h3 id="the-dft-hamiltonian-in-an-atomic-orbital-basis">The DFT Hamiltonian in an atomic orbital basis<a class="headerlink" href="#the-dft-hamiltonian-in-an-atomic-orbital-basis" title="Permanent link">&para;</a></h3>
+<p>In a DFT calculation using a localized atomic orbital basis <span class="arithmatex">\(\{\chi_\mu\}\)</span>, the Kohn-Sham Hamiltonian is represented as a matrix with elements:</p>
+<div class="arithmatex">\[H_{\mu\nu}(\mathbf{R}) = \int \chi_\mu^*(\mathbf{r}) \left[\frac{1}{2}\nabla^2 + V_\text{eff}(\mathbf{r})\right] \chi_\nu(\mathbf{r}-\mathbf{R})\,d\mathbf{r}\]</div>
+<p>where <span class="arithmatex">\(V_\text{eff}\)</span> is the effective Kohn-Sham potential. The basis functions are centered on atoms, so the matrix naturally decomposes into atom-pair blocks <span class="arithmatex">\(H_{IJ}\)</span>: the block between atoms <span class="arithmatex">\(I\)</span> and <span class="arithmatex">\(J\)</span> collects all matrix elements between orbitals centered on <span class="arithmatex">\(I\)</span> and orbitals centered on <span class="arithmatex">\(J\)</span>. The goal of electronic structure ML is to learn <span class="arithmatex">\(H_{IJ}\)</span> as a function of the local atomic geometry around that pair.</p>
+<h3 id="schnorb">SchNOrb<a class="headerlink" href="#schnorb" title="Permanent link">&para;</a></h3>
+<p>SchNOrb (Schütt et al., Nat. Commun. 10, 5024, 2019) was the first attempt to predict <span class="arithmatex">\(H\)</span> and the overlap matrix <span class="arithmatex">\(S\)</span> using a message-passing network (SchNet). It takes atomic distances <span class="arithmatex">\(|\mathbf{r}_{ij}|\)</span> and displacement vectors <span class="arithmatex">\(\mathbf{r}_{ij}\)</span> as inputs and outputs the Hamiltonian matrix elements in a local orbital basis.</p>
+<p>Three fundamental problems limit SchNOrb. First, it is <strong>not rotationally equivariant</strong>: the Hamiltonian matrix elements transform under rotations via Wigner-D matrices (because they involve orbital angular momentum), but SchNOrb uses scalar features and cannot reproduce this transformation correctly. Second, it is <strong>not transferable</strong>: a separate model must be trained per molecule, making it impractical for general use. Third, it only handles <strong>finite molecules</strong> — no condensed phase or periodic systems.</p>
+<h3 id="mace-h">MACE-H<a class="headerlink" href="#mace-h" title="Permanent link">&para;</a></h3>
+<p>MACE-H (Qian et al., npj Comp. Mater., 2026) addresses all three problems by building on the equivariant MACE architecture. It introduces three types of computational blocks:</p>
+<p><strong>MACE blocks</strong> aggregate the local chemical environment into higher-body-order equivariant messages — the same mechanism as in the standard MACE potential, providing equivariant node features <span class="arithmatex">\(h_i^{(t)}\)</span>.</p>
+<p><strong>Node degree expansion (NDE) blocks</strong> elevate the maximum angular momentum quantum number <span class="arithmatex">\(l\)</span> of the node features. This is necessary because the atomic orbital basis used in DFT (s, p, d, f orbitals) requires features at higher <span class="arithmatex">\(l\)</span> than a typical MLIP needs for energy prediction.</p>
+<p><strong>Edge update blocks</strong> convert the node-wise features into edge-wise features <span class="arithmatex">\(e_{ij}\)</span>. This step is essential because the Hamiltonian block <span class="arithmatex">\(H_{IJ}\)</span> is a property of an atom <em>pair</em>, not an individual atom — the output must live on edges of the graph, not on nodes.</p>
+<p>The resulting model achieves MAE = 0.278 meV per matrix element on Bi₂Te₃ bilayer, reproducing band structure and DOS from DFT, and has been applied to magic-angle bilayer graphene — a system of current interest for correlated electron physics — including spin-orbit coupling effects. Ongoing extensions include analytic derivatives, non-adiabatic couplings, and variational formulations for excited states.</p>
+<div id="maceh-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 0.9rem;margin:1.8rem 0;font-family:inherit;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.75rem;">MACE-H &mdash; Equivariant Hamiltonian Learning</div>
+
+<div style="display:flex;justify-content:center;gap:0.7rem;margin-bottom:0.15rem;flex-wrap:wrap;">
+<div style="background:#f0ece6;border:1.5px solid #c8c2ba;border-radius:5px;padding:0.22rem 0.85rem;font-size:0.8rem;font-weight:600;color:#555;">Geometry <span data-eq="\{R_I, Z_I\}" data-dm="0"></span></div>
+</div>
+<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.1rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
+
+<div style="border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(164,206,139,0.12);color:#2a5a1a;border-bottom:1px solid #A4CE8B;">MACE Blocks <span style="font-weight:400;text-transform:none;color:#888;">&middot; &times;T &mdash; equivariant message passing</span></div>
+<div style="padding:0.4rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;color:#999;margin-bottom:0.1rem;">Output: equivariant node features per atom</div>
+<span data-eq="h_i^{(t)} \in \bigoplus_{l=0}^{L_\text{max}} \mathbb{R}^{K\times(2l+1)}" data-dm="1"></span>
+</div>
+</div>
+<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.1rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
+
+<div style="border:1.5px solid #86BCBD;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(134,188,189,0.12);color:#0f3a3c;border-bottom:1px solid #86BCBD;">Node Degree Expansion (NDE) <span style="font-weight:400;text-transform:none;color:#888;">&middot; elevates l<sub>max</sub> for orbital basis</span></div>
+<div style="padding:0.4rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;color:#999;margin-bottom:0.1rem;">Elevates angular momentum to match AO basis (s, p, d, f &rarr; higher l)</div>
+<span data-eq="h_i \;\xrightarrow{\;\text{NDE}\;}\; \tilde{h}_i \;\text{ with }l_\text{max}\text{ matching AO basis}" data-dm="1"></span>
+</div>
+</div>
+<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.1rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
+
+<div style="border:1.5px solid #C47070;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(186,90,90,0.08);color:#5a1a1a;border-bottom:1px solid #C47070;">Edge Update <span style="font-weight:400;text-transform:none;color:#888;">&middot; node features &rarr; atom-pair features e<sub>ij</sub></span></div>
+<div style="padding:0.4rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;color:#999;margin-bottom:0.1rem;">H<sub>IJ</sub> is a pair property &mdash; must live on graph edges, not nodes</div>
+<span data-eq="e_{ij} = f\!\left(\tilde{h}_i,\;\tilde{h}_j,\;\hat{\mathbf{r}}_{ij}\right)" data-dm="1"></span>
+</div>
+</div>
+<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.1rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
+
+<div style="border:1.5px solid #aaa;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
+<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(170,170,170,0.1);color:#444;border-bottom:1px solid #ccc;">Output <span style="font-weight:400;text-transform:none;color:#888;">&middot; Hamiltonian block &rarr; observables via diagonalisation</span></div>
+<div style="padding:0.4rem 0.45rem;">
+<div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+<div style="flex:1;min-width:160px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Hamiltonian block</div>
+<span data-eq="H_{IJ}(\mathbf{R}) = \mathrm{Linear}(e_{ij})\in\mathbb{R}^{n_I\times n_J}" data-dm="1"></span>
+</div>
+<div style="flex:1;min-width:160px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Observables via diagonalisation</div>
+<span data-eq="H\Psi = E\Psi \;\Rightarrow\; \text{DOS, bands, couplings}" data-dm="1"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+(function(){
+function mhInit(){
+  var el=document.getElementById('maceh-widget');
+  if(!el||el.dataset.mhInit)return;
+  el.dataset.mhInit='1';
+  el.querySelectorAll('[data-eq]').forEach(function(e){
+    try{var eq=e.getAttribute('data-eq'),dm=e.getAttribute('data-dm')==='1';
+    e.innerHTML=katex.renderToString(eq,{throwOnError:false,displayMode:dm});}catch(err){}
+  });
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',mhInit);}else{mhInit();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(mhInit,80);});}
+})();
+</script>
+
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="../javascripts/font-size.js"></script>
+      
+        <script src="../javascripts/collapsible-sidebars.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1880 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Lecture notes for Machine Learning in Computational Physics">
+      
+      
+      
+        <link rel="canonical" href="https://hbarquanta.github.io/MLinCP-Notes/chapter-02-descriptors-featurization/">
+      
+      
+        <link rel="prev" href="../chapter-01-introduction-core-ml-concepts/">
+      
+      
+        <link rel="next" href="../chapter-03-dimensionality-reduction-clustering/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Chapter 2 — Descriptors & Featurization - ML in Computational Physics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-2-descriptors-featurization" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ML in Computational Physics" class="md-header__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ML in Computational Physics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 2 — Descriptors & Featurization
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ML in Computational Physics" class="md-nav__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    ML in Computational Physics
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-01-introduction-core-ml-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1 — Introduction & Core ML Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2 — Descriptors & Featurization
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2 — Descriptors & Featurization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#21-why-descriptors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Why Descriptors?
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.1 Why Descriptors?">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requirements-on-descriptors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements on descriptors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#invariance-equivariance-and-where-to-put-the-symmetry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Invariance, equivariance, and where to put the symmetry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#22-two-dimensional-molecular-representations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Two-Dimensional Molecular Representations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.2 Two-Dimensional Molecular Representations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#smiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SMILES
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extended-connectivity-fingerprints-ecfp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extended Connectivity Fingerprints (ECFP)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#23-coulomb-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Coulomb Matrix
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#24-many-body-tensor-representation-mbtr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Many-Body Tensor Representation (MBTR)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.4 Many-Body Tensor Representation (MBTR)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interactive-explorer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Explorer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#25-atom-centered-symmetry-functions-acsfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Atom-Centered Symmetry Functions (ACSFs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.5 Atom-Centered Symmetry Functions (ACSFs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cutoff-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cutoff Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#radial-symmetry-functions-2-body" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Radial Symmetry Functions (2-body)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#angular-symmetry-functions-3-body" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Angular Symmetry Functions (3-body)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-descriptor-vector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Descriptor Vector
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-explorer_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive Explorer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#26-weighted-atom-centered-symmetry-functions-wacsfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Weighted Atom-Centered Symmetry Functions (wACSFs)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#27-smooth-overlap-of-atomic-positions-soap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 Smooth Overlap of Atomic Positions (SOAP)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#28-atomic-cluster-expansion-ace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.8 Atomic Cluster Expansion (ACE)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2.8 Atomic Cluster Expansion (ACE)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-many-body-cluster-expansion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Many-body cluster expansion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-expand-each-body-order-term-in-a-product-basis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Expand each body-order term in a product basis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-atomic-one-particle-basis-radial-functions-and-spherical-harmonics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Atomic one-particle basis: radial functions and spherical harmonics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-form-body-order-products" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Form body-order products
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-contract-with-clebsch-gordan-coefficients-to-enforce-rotational-invariance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Contract with Clebsch-Gordan coefficients to enforce rotational invariance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#final-linear-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Final linear model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scalar-vectorial-and-tensorial-outputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalar, vectorial, and tensorial outputs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-ace-does-differently" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What ACE does differently
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ace-as-a-unifying-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ACE as a unifying framework
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#29-body-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.9 Body Order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#210-descriptor-properties-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.10 Descriptor Properties Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#211-historical-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.11 Historical Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        References
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-03-dimensionality-reduction-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3 — Dimensionality Reduction & Clustering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-04-regression-uncertainty-quantification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4 — Regression & Uncertainty Quantification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-05-neural-networks-trees-regularization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5 — Neural Networks, Trees & Regularization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-06-graph-neural-networks-gnns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6 — Graph Neural Networks (GNNs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-07-machine-learning-interatomic-potentials-i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 7 — Machine Learning Interatomic Potentials I
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-08-machine-learning-interatomic-potentials-ii/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 8 — Machine Learning Interatomic Potentials II
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-09-generative-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 9 — Generative Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-10-ml-methods-for-rare-events-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 10 — ML Methods for Rare Events Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-2-descriptors-featurization">Chapter 2 — Descriptors &amp; Featurization<a class="headerlink" href="#chapter-2-descriptors-featurization" title="Permanent link">&para;</a></h1>
+<h2 id="21-why-descriptors">2.1 Why Descriptors?<a class="headerlink" href="#21-why-descriptors" title="Permanent link">&para;</a></h2>
+<p>In atomistic machine learning, the inputs <span class="arithmatex">\(x^{(p)}\)</span> describe atomic structures: a set of <span class="arithmatex">\(N\)</span> atoms with nuclear charges <span class="arithmatex">\(\{Z_i\}_{i=1}^N\)</span> and positions <span class="arithmatex">\(\{\mathbf{R}_i\}_{i=1}^N\)</span>. Raw Cartesian coordinates cannot be used directly as ML inputs because the learned function must respect the physical symmetries of the problem. Three terms are worth distinguishing from the outset.</p>
+<p>A <strong>structure</strong> is the full specification of an atomic configuration: nuclear charges <span class="arithmatex">\(\{Z_i\}\)</span>, positions <span class="arithmatex">\(\{\mathbf{R}_i\}\)</span>, and the unit cell for periodic systems. A <strong>descriptor</strong> is the algorithm <span class="arithmatex">\(\phi\)</span> that transforms a structure into a fixed-length numerical vector with the correct symmetry properties. The <strong>feature vector</strong> <span class="arithmatex">\(\mathbf{x} = \phi(\{Z_i, \mathbf{R}_i\})\)</span> is the actual numerical output that lives in feature space and is passed to the ML model. Descriptors can be <strong>global</strong> — encoding the entire molecule or unit cell as one vector (Coulomb matrix, MBTR) — or <strong>atom-wise</strong> — producing one vector per atom encoding the local chemical environment within a cutoff radius (ACSFs, SOAP, ACE).</p>
+<h3 id="requirements-on-descriptors">Requirements on descriptors<a class="headerlink" href="#requirements-on-descriptors" title="Permanent link">&para;</a></h3>
+<p>A valid descriptor <span class="arithmatex">\(\mathbf{x} = \phi(\{Z_i, \mathbf{R}_i\})\)</span> must satisfy:</p>
+<ol>
+<li><strong>Translational invariance</strong>: <span class="arithmatex">\(\phi\)</span> is unchanged when all positions are shifted by a constant vector <span class="arithmatex">\(\mathbf{t}\)</span>, i.e., <span class="arithmatex">\(\phi(\{\mathbf{R}_i + \mathbf{t}\}) = \phi(\{\mathbf{R}_i\})\)</span>.</li>
+<li><strong>Rotational invariance</strong>: <span class="arithmatex">\(\phi\)</span> is unchanged under any rotation <span class="arithmatex">\(\mathbf{R} \in SO(3)\)</span> applied to all positions.</li>
+<li><strong>Permutation invariance</strong>: <span class="arithmatex">\(\phi\)</span> is unchanged when identical atoms are relabeled.</li>
+<li><strong>Completeness and uniqueness</strong>: the mapping must be <strong>surjective</strong> (every structure maps to some feature vector) <em>and</em> <strong>injective</strong> (symmetry-inequivalent structures map to <em>different</em> feature vectors). Only when both hold is <span class="arithmatex">\(\phi\)</span> bijective — a fully invertible encoding. In practice, complete bijective mappings for arbitrary atom configurations are not achievable, so descriptors trade coverage for computational tractability.</li>
+<li><strong>Smoothness</strong>: <span class="arithmatex">\(\phi\)</span> must be smooth and differentiable in atom positions so that forces <span class="arithmatex">\(F_i = -\partial E / \partial \mathbf{R}_i\)</span> can be computed analytically.</li>
+</ol>
+<h3 id="invariance-equivariance-and-where-to-put-the-symmetry">Invariance, equivariance, and where to put the symmetry<a class="headerlink" href="#invariance-equivariance-and-where-to-put-the-symmetry" title="Permanent link">&para;</a></h3>
+<p>For scalar properties (energy, band gap), the model output must be <strong>invariant</strong> — unchanged under any symmetry operation <span class="arithmatex">\(\mathcal{R}\)</span>:</p>
+<div class="arithmatex">\[\hat{f}(\mathcal{R}\,\mathbf{X}) = \hat{f}(\mathbf{X})\]</div>
+<p>For vectorial properties (forces, dipole moments) or tensorial properties (polarizability, stress), the output must be <strong>equivariant</strong> — it must transform predictably with the symmetry operation:</p>
+<div class="arithmatex">\[\hat{f}(\mathcal{R}\,\mathbf{X}) = \mathcal{R}\,[\hat{f}(\mathbf{X})]\]</div>
+<p>A force vector, for example, must rotate exactly as the molecule rotates. Symmetry can be enforced in three ways: building it into the <strong>descriptor</strong> (the traditional approach for ACSFs, CM, MBTR, SOAP), building it into the <strong>model architecture</strong>, or designing <strong>equivariant models</strong> whose outputs transform correctly under all symmetry operations — the approach of equivariant graph neural networks (Chapter 6), which can directly predict vectorial and tensorial quantities. The choice shapes the inductive bias of the entire ML pipeline.</p>
+<hr />
+<h2 id="22-two-dimensional-molecular-representations">2.2 Two-Dimensional Molecular Representations<a class="headerlink" href="#22-two-dimensional-molecular-representations" title="Permanent link">&para;</a></h2>
+<p>Before the 3D geometry-aware descriptors covered below, it is useful to note a class of representations based purely on molecular <em>topology</em> — the 2D graph of atoms and bonds, without 3D conformation. These are standard in cheminformatics and drug discovery, where 3D structure is often unknown or unnecessary.</p>
+<h3 id="smiles">SMILES<a class="headerlink" href="#smiles" title="Permanent link">&para;</a></h3>
+<p><strong>SMILES</strong> (Simplified Molecular Input Line Entry System) encodes a molecule as an ASCII string. Atoms are written by their chemical symbol; bonds are implicit (single) or explicit (<code>-</code>, <code>=</code>, <code>#</code> for single, double, triple); rings are indicated by matching numbers on the opening and closing atoms; branches use parentheses; aromatic atoms are written in lowercase. Example — benzene: <code>c1ccccc1</code>. Example — 4-ethylheptane: <code>CCCC(CC)CCC</code>.</p>
+<p>SMILES is compact and human-readable and defines a composable language for molecules. Its limitations are that it carries no 3D conformation, cannot easily encode radicals or unusual valences, and is not well suited for generative models (small syntax violations produce invalid strings). Variants such as <strong>DeepSMILES</strong> and <strong>SELFIES</strong> (Self-Referencing Embedded Strings) address the validity problem by construction: every string in their grammar decodes to a valid molecule.</p>
+<h3 id="extended-connectivity-fingerprints-ecfp">Extended Connectivity Fingerprints (ECFP)<a class="headerlink" href="#extended-connectivity-fingerprints-ecfp" title="Permanent link">&para;</a></h3>
+<p><strong>ECFP</strong> (also known as Morgan or circular fingerprints) represent local chemical environments of each atom at multiple radii and encode the result as a fixed-length bit vector. The algorithm has four stages:</p>
+<ol>
+<li><strong>Initial assignment</strong>: each atom receives an integer identifier encoding its local environment (atomic number, degree, formal charge, etc.).</li>
+<li><strong>Iterative updating (Morgan algorithm)</strong>: each atom's identifier is updated by combining it with the identifiers of its immediate neighbors, growing the local sphere by one bond per iteration; this is repeated for a fixed number of iterations (the fingerprint radius).</li>
+<li><strong>Duplicate removal</strong>: identifiers that appear multiple times are deduplicated.</li>
+<li><strong>Bit array formation</strong>: all identifiers are hashed into positions in a fixed-size bit vector (typically 1024 or 2048 bits).</li>
+</ol>
+<p>Each active bit in the ECFP vector corresponds to a recognizable chemical substructure, making the fingerprint interpretable. The reference implementation is <strong>RDKit</strong>, an open-source cheminformatics toolkit that also provides hundreds of additional 2D descriptors (logP, TPSA, ring counts, and more).</p>
+<p>A fundamental limitation of all 2D descriptors is the absence of <em>atomic-resolution 3D geometry</em>: two conformers of the same molecule produce the same SMILES string and ECFP fingerprint. They do not satisfy rotational or translational invariance in the 3D sense and cannot be used for force or energy prediction from atomistic positions.</p>
+<hr />
+<h2 id="23-coulomb-matrix">2.3 Coulomb Matrix<a class="headerlink" href="#23-coulomb-matrix" title="Permanent link">&para;</a></h2>
+<p>The Coulomb matrix <span class="arithmatex">\(M \in \mathbb{R}^{N_\text{at}\times N_\text{at}}\)</span> encodes the electrostatic interactions among all <span class="arithmatex">\(N_\text{at}\)</span> atoms in a molecule:</p>
+<div class="arithmatex">\[M_{ij} = \begin{cases} \dfrac{1}{2} Z_i^{2.4} &amp; i = j \\[6pt] \dfrac{Z_i Z_j}{|\mathbf{R}_i - \mathbf{R}_j|} &amp; i \neq j \end{cases}\]</div>
+<p>where <span class="arithmatex">\(Z_i\)</span> is the nuclear charge (atomic number) of atom <span class="arithmatex">\(i\)</span> and <span class="arithmatex">\(|\mathbf{R}_i - \mathbf{R}_j|\)</span> is the Euclidean distance between atoms <span class="arithmatex">\(i\)</span> and <span class="arithmatex">\(j\)</span>. The diagonal element <span class="arithmatex">\(\frac{1}{2}Z_i^{2.4}\)</span> approximates the free-atom potential energy (Thomas-Fermi model). The off-diagonal element is the classical nuclear repulsion energy.</p>
+<p>The Coulomb matrix is a <strong>global</strong> descriptor — it encodes the entire molecule, not the local environment of individual atoms — which makes it size-dependent and inapplicable to periodic systems (it would require padding with zeros). It is not permutation invariant by construction: reordering atoms changes <span class="arithmatex">\(M\)</span>. Common remedies are sorting rows and columns by their <span class="arithmatex">\(\ell^2\)</span> norm, or using the sorted eigenvalue spectrum of <span class="arithmatex">\(M\)</span>, which is permutation invariant but loses some structural information.</p>
+<p>The Coulomb matrix encodes only pairwise distances (2-body) and misses angular information entirely.</p>
+<hr />
+<h2 id="24-many-body-tensor-representation-mbtr">2.4 Many-Body Tensor Representation (MBTR)<a class="headerlink" href="#24-many-body-tensor-representation-mbtr" title="Permanent link">&para;</a></h2>
+<p>The MBTR is a <strong>global</strong> descriptor that encodes the full structure of a molecule by representing many-body interactions as smooth one-dimensional distributions over geometric quantities. Each geometric quantity (e.g. an inverse distance or bond angle) contributes a Gaussian peak weighted by the nuclear charges of the involved atoms, giving a differentiable, continuous fingerprint that is permutation invariant by construction.</p>
+<p>Three interaction levels are defined. For each level <span class="arithmatex">\(k\)</span>, the descriptor is the distribution:</p>
+<div class="arithmatex">\[D(x,\, g_k) = \sum_\text{atom tuples} w_k \cdot \mathcal{N}\!\left(x;\; g_k(i,j,\ldots),\; \sigma^2\right)\]</div>
+<p>where <span class="arithmatex">\(g_k(i,j,\ldots)\)</span> is the geometric function evaluated for the atom tuple, <span class="arithmatex">\(w_k\)</span> is a nuclear-charge weighting factor, <span class="arithmatex">\(\sigma\)</span> is a broadening width (hyperparameter), and <span class="arithmatex">\(\mathcal{N}(x;\mu,\sigma^2)\)</span> denotes a Gaussian with mean <span class="arithmatex">\(\mu\)</span> and variance <span class="arithmatex">\(\sigma^2\)</span>.</p>
+<p><strong><span class="arithmatex">\(k=1\)</span> (1-body)</strong>: <span class="arithmatex">\(g_1(i) = Z_i\)</span> (nuclear charge); encodes composition.</p>
+<p><strong><span class="arithmatex">\(k=2\)</span> (2-body)</strong>: <span class="arithmatex">\(g_2(i,j) = 1/r_{ij}\)</span> (inverse distance), <span class="arithmatex">\(w_k = Z_i Z_j\)</span>; encodes the distribution of bond distances.</p>
+<p><strong><span class="arithmatex">\(k=3\)</span> (3-body)</strong>: <span class="arithmatex">\(g_3(i,j,k) = \cos\theta_{ijk}\)</span> (cosine of the angle at atom <span class="arithmatex">\(j\)</span> between atoms <span class="arithmatex">\(i\)</span> and <span class="arithmatex">\(k\)</span>), <span class="arithmatex">\(w_k = Z_i Z_j Z_k\)</span>; encodes angular structure.</p>
+<p>The full MBTR vector is the concatenation of <span class="arithmatex">\(D(x, g_1)\)</span>, <span class="arithmatex">\(D(x, g_2)\)</span>, <span class="arithmatex">\(D(x, g_3)\)</span> evaluated on fine grids. The 3-body term costs <span class="arithmatex">\(\mathcal{O}(N_\text{at}^3)\)</span> in the number of atoms. Because the descriptor sums over all atoms globally, it is not directly applicable to large periodic systems or for computing atom-wise (local) energies.</p>
+<h3 id="interactive-explorer">Interactive Explorer<a class="headerlink" href="#interactive-explorer" title="Permanent link">&para;</a></h3>
+<div id="mbtr-widget" style="border:1px solid #8884;border-radius:8px;padding:1.2rem;margin:1.4rem 0;background:var(--md-code-bg-color,#f5f5f5);">
+
+<div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;flex-wrap:wrap;">
+  <span style="font-weight:600;font-size:0.95rem;color:var(--md-default-fg-color);">MBTR Explorer</span>
+  <div style="display:flex;gap:5px;">
+    <button id="mbtr-btn-h2o" onclick="mbtrSetMol('h2o')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #86BCBD;background:#86BCBD;color:#fff;font-size:0.8rem;cursor:pointer;font-weight:600;">H₂O</button>
+    <button id="mbtr-btn-co2" onclick="mbtrSetMol('co2')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">CO₂</button>
+  </div>
+</div>
+
+<div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
+
+  <!-- Molecule SVG + controls -->
+  <div style="flex:0 0 auto;min-width:195px;max-width:220px;">
+    <svg id="mbtr-svg" viewBox="0 0 220 185" width="220" height="185" style="display:block;margin:0 auto;">
+      <!-- H–H or end-end dashed distance line -->
+      <line id="mb-b3" stroke="#aaa" stroke-width="0.8" stroke-dasharray="4,3"/>
+      <!-- bonds -->
+      <line id="mb-b1" stroke="#777" stroke-width="3.5" stroke-linecap="round"/>
+      <line id="mb-b2" stroke="#777" stroke-width="3.5" stroke-linecap="round"/>
+      <!-- angle arc -->
+      <path id="mb-arc" fill="none" stroke="#F7E49B" stroke-width="1.5"/>
+      <!-- atoms (drawn last so they're on top) -->
+      <circle id="mb-cn" r="16" stroke-width="1.5"/>
+      <circle id="mb-e1" r="13" stroke-width="1.5"/>
+      <circle id="mb-e2" r="13" stroke-width="1.5"/>
+      <!-- atom labels -->
+      <text id="mb-tcn" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="middle" fill="white"/>
+      <text id="mb-te1" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="middle"/>
+      <text id="mb-te2" font-size="11" font-weight="bold" text-anchor="middle" dominant-baseline="middle"/>
+      <!-- dimension annotations -->
+      <text id="mb-lr"  font-size="9" fill="#aaa" text-anchor="middle" font-style="italic"/>
+      <text id="mb-lth" font-size="9" fill="#F7E49B" text-anchor="middle"/>
+      <text id="mb-lee" font-size="9" fill="#aaa" text-anchor="middle" font-style="italic"/>
+    </svg>
+    <div id="mb-info" style="font-size:0.77rem;color:#888;text-align:center;margin:0.1rem 0 0.7rem;line-height:1.6;"></div>
+    <div id="mbtr-ctrl" style="max-width:220px;"></div>
+  </div>
+
+  <!-- k=2 and k=3 plots -->
+  <div style="flex:1 1 280px;min-width:250px;">
+    <div id="mbtr-k2" style="height:205px;"></div>
+    <div id="mbtr-k3" style="height:205px;margin-top:4px;"></div>
+  </div>
+
+</div>
+</div>
+
+<script>
+var _MB={mol:'h2o',r:0.96,theta:104.5,sigma:0.04};
+
+var _MMOLS={
+  h2o:{r:0.96,theta:104.5,Zc:8,Ze:1,colc:'#C04040',cole:'#D8D8D8',strokec:'#881818',strokee:'#999',
+       lc:'O',le:'H',chk2:['H–H','H–O'],chk3:['H–O–H','O–H–H'],
+       rlabel:'r(O–H)',tlabel:'θ(H–O–H)',eelabel:'r(H···H)'},
+  co2:{r:1.16,theta:180,Zc:6,Ze:8,colc:'#444',cole:'#C04040',strokec:'#222',strokee:'#881818',
+       lc:'C',le:'O',chk2:['C–O','O–O'],chk3:['O–C–O','C–O–O'],
+       rlabel:'r(C=O)',tlabel:'θ(O–C–O)',eelabel:'r(O···O)'}
+};
+
+var _MK2COL=['#86BCBD','#BA5A5A','#A4CE8B'];
+var _MK3COL=['#BA5A5A','#86BCBD','#A4CE8B'];
+
+function _mbDark(){return document.body.getAttribute('data-md-color-scheme')==='slate';}
+function _mbClr(){var d=_mbDark();return{fg:d?'#ddd':'#333',grid:d?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)'}}
+function _mbLs(a,b,n){return Array.from({length:n},function(_,i){return a+(b-a)*i/(n-1);});}
+function _mbG(x,mu,s){return Math.exp(-0.5*Math.pow((x-mu)/s,2));}
+function _mbLayout(xl,yl,title){
+  var c=_mbClr();
+  return{title:{text:title,font:{size:11,color:c.fg},x:0.5,xanchor:'center',pad:{t:2}},
+    xaxis:{title:{text:xl,font:{size:11}},color:c.fg,gridcolor:c.grid,zeroline:false},
+    yaxis:{title:{text:yl,font:{size:11}},color:c.fg,gridcolor:c.grid,zeroline:false},
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{color:c.fg,size:11},
+    showlegend:true,legend:{font:{color:c.fg,size:10},bgcolor:'rgba(0,0,0,0)',x:1,xanchor:'right',y:1,yanchor:'top'},
+    margin:{l:48,r:12,t:30,b:44}};
+}
+
+/* geometry helpers */
+function _mbRee(){return 2*_MB.r*Math.sin(_MB.theta*Math.PI/360);}
+function _mbCosCenter(){return Math.cos(_MB.theta*Math.PI/180);}
+function _mbCosEnd(){return Math.sin(_MB.theta*Math.PI/360);}  /* = sin(θ/2) */
+
+function mbtrPlotK2(){
+  if(!document.getElementById('mbtr-k2')||!window.Plotly) return;
+  var mol=_MMOLS[_MB.mol], s=_MB.sigma, xs=_mbLs(0,1.8,500), traces=[];
+  var inv_r=1/_MB.r, inv_ree=1/_mbRee();
+  /* channel 0: end–end pair (H-H or O-O or H-H) */
+  traces.push({x:xs,y:xs.map(function(x){return _mbG(x,inv_ree,s);}),
+    mode:'lines',name:mol.chk2[0],line:{color:_MK2COL[0],width:2.5}});
+  /* channel 1: center–end pair (2 equivalent pairs → amplitude 2) */
+  traces.push({x:xs,y:xs.map(function(x){return 2*_mbG(x,inv_r,s);}),
+    mode:'lines',name:mol.chk2[1],line:{color:_MK2COL[1],width:2.5}});
+  /* vertical markers at peak positions */
+  var shapes=[
+    {type:'line',x0:inv_ree,x1:inv_ree,y0:0,y1:1,yref:'paper',layer:'below',line:{color:_MK2COL[0],width:1,dash:'dot'}},
+    {type:'line',x0:inv_r,x1:inv_r,y0:0,y1:1,yref:'paper',layer:'below',line:{color:_MK2COL[1],width:1,dash:'dot'}},
+  ];
+  var L=_mbLayout('1/r  (Å⁻¹)','D(x, g₂)  (a.u.)','k = 2  —  pairwise inverse distances');
+  L.xaxis.range=[0,1.8]; L.shapes=shapes;
+  Plotly.react('mbtr-k2',traces,L,{responsive:true,displayModeBar:false});
+}
+
+function mbtrPlotK3(){
+  if(!document.getElementById('mbtr-k3')||!window.Plotly) return;
+  var mol=_MMOLS[_MB.mol], s=_MB.sigma*2.5, xs=_mbLs(-1,1,500), traces=[];
+  var cosC=_mbCosCenter(), cosE=_mbCosEnd();
+  var linearMol=Math.abs(_MB.theta-180)<0.5;
+  /* channel 0: end–center–end (angle at center) */
+  traces.push({x:xs,y:xs.map(function(x){return _mbG(x,cosC,s);}),
+    mode:'lines',name:mol.chk3[0],line:{color:_MK3COL[0],width:2.5}});
+  /* channel 1: center–end–end (2 equivalent triples) */
+  traces.push({x:xs,y:xs.map(function(x){return 2*_mbG(x,cosE,s);}),
+    mode:'lines',name:mol.chk3[1],line:{color:_MK3COL[1],width:2.5,dash:linearMol?'solid':'solid'}});
+  var shapes=[
+    {type:'line',x0:cosC,x1:cosC,y0:0,y1:1,yref:'paper',layer:'below',line:{color:_MK3COL[0],width:1,dash:'dot'}},
+    {type:'line',x0:cosE,x1:cosE,y0:0,y1:1,yref:'paper',layer:'below',line:{color:_MK3COL[1],width:1,dash:'dot'}},
+  ];
+  var L=_mbLayout('cos θ','D(x, g₃)  (a.u.)','k = 3  —  bond angles');
+  L.xaxis.range=[-1,1];
+  L.xaxis.tickvals=[-1,-0.5,0,0.5,1];
+  L.xaxis.ticktext=['-1','−½','0','½','1'];
+  L.shapes=shapes;
+  Plotly.react('mbtr-k3',traces,L,{responsive:true,displayModeBar:false});
+}
+
+function mbtrUpdateSVG(){
+  var mol=_MMOLS[_MB.mol],th=_MB.theta*Math.PI/180,r=_MB.r;
+  var cx=110,cy=118,sc=66; /* scale: 66 px / Å */
+  var x1=cx+sc*r*Math.sin(th/2), y1=cy-sc*r*Math.cos(th/2);
+  var x2=cx-sc*r*Math.sin(th/2), y2=y1;
+  var svg=document.getElementById('mbtr-svg');
+  if(!svg) return;
+  function sa(id,attrs){var e=svg.getElementById(id);if(!e) return;
+    Object.keys(attrs).forEach(function(k){e.setAttribute(k,attrs[k]);});}
+  /* bonds */
+  sa('mb-b1',{x1:cx,y1:cy,x2:x1,y2:y1});
+  sa('mb-b2',{x1:cx,y1:cy,x2:x2,y2:y2});
+  sa('mb-b3',{x1:x1,y1:y1,x2:x2,y2:y2});
+  /* atoms */
+  sa('mb-cn',{cx:cx,cy:cy,fill:mol.colc,stroke:mol.strokec});
+  sa('mb-e1',{cx:x1,cy:y1,fill:mol.cole,stroke:mol.strokee});
+  sa('mb-e2',{cx:x2,cy:y2,fill:mol.cole,stroke:mol.strokee});
+  /* atom labels */
+  var tcn=svg.getElementById('mb-tcn');if(tcn){tcn.setAttribute('x',cx);tcn.setAttribute('y',cy);tcn.textContent=mol.lc;}
+  var te1=svg.getElementById('mb-te1');if(te1){te1.setAttribute('x',x1);te1.setAttribute('y',y1);te1.textContent=mol.le;}
+  var te2=svg.getElementById('mb-te2');if(te2){te2.setAttribute('x',x2);te2.setAttribute('y',y2);te2.textContent=mol.le;}
+  /* r bond label: midpoint of bond 1, offset perpendicular */
+  var mxr=(cx+x1)/2, myr=(cy+y1)/2;
+  var dx=x1-cx,dy=y1-cy,len=Math.sqrt(dx*dx+dy*dy)||1;
+  sa('mb-lr',{x:mxr+8*dy/len,y:myr-8*dx/len});
+  var lr=svg.getElementById('mb-lr');if(lr) lr.textContent='r';
+  /* angle arc */
+  var aR=22;
+  var ax1=cx+aR*Math.sin(th/2),ay1=cy-aR*Math.cos(th/2);
+  var ax2=cx-aR*Math.sin(th/2),ay2=ay1;
+  var showArc=_MB.theta<175;
+  var arc=svg.getElementById('mb-arc');
+  if(arc){
+    if(showArc) arc.setAttribute('d','M '+ax1.toFixed(1)+' '+ay1.toFixed(1)+' A '+aR+' '+aR+' 0 0 0 '+ax2.toFixed(1)+' '+ay2.toFixed(1));
+    else arc.setAttribute('d','');
+  }
+  /* θ label */
+  var lth=svg.getElementById('mb-lth');
+  if(lth){lth.setAttribute('x',cx);lth.setAttribute('y',cy-aR-6);lth.textContent=showArc?'θ':'';}
+  /* end-end dashed label */
+  var midex=(x1+x2)/2, midey=Math.min(y1,y2)-9;
+  var lee=svg.getElementById('mb-lee');
+  if(lee){lee.setAttribute('x',midex);lee.setAttribute('y',midey);
+    lee.textContent=_mbRee().toFixed(2)+' Å';}
+  /* info text */
+  var m=_MMOLS[_MB.mol];
+  var info=document.getElementById('mb-info');
+  if(info) info.innerHTML=m.rlabel+'&nbsp;=&nbsp;<strong>'+_MB.r.toFixed(2)+'</strong>&nbsp;Å&nbsp;&nbsp;·&nbsp;&nbsp;'+
+    m.tlabel+'&nbsp;=&nbsp;<strong>'+_MB.theta.toFixed(1)+'°</strong><br>'+
+    m.eelabel+'&nbsp;=&nbsp;<strong>'+_mbRee().toFixed(2)+'</strong>&nbsp;Å';
+}
+
+function mbtrUpdate(k,v){
+  _MB[k]=+v;
+  var fmts={r:2,theta:1,sigma:3};
+  var el=document.getElementById('mbv-'+k);
+  if(el) el.textContent=(+_MB[k]).toFixed(fmts[k]);
+  mbtrUpdateSVG(); mbtrPlotK2(); mbtrPlotK3();
+}
+
+function mbtrSetMol(mol){
+  _MB.mol=mol;
+  var m=_MMOLS[mol];
+  _MB.r=m.r; _MB.theta=m.theta;
+  ['h2o','co2'].forEach(function(id){
+    var btn=document.getElementById('mbtr-btn-'+id);
+    if(!btn) return;
+    if(id===mol){btn.style.background='#86BCBD';btn.style.color='#fff';
+      btn.style.border='1.5px solid #86BCBD';btn.style.fontWeight='600';}
+    else{btn.style.background='transparent';btn.style.color='var(--md-default-fg-color)';
+      btn.style.border='1.5px solid #8886';btn.style.fontWeight='normal';}
+  });
+  _renderMbtrCtrl(); mbtrUpdateSVG(); mbtrPlotK2(); mbtrPlotK3();
+}
+
+function _mbSlider(k,label,min,max,step,dp){
+  return '<div style="margin-bottom:0.5rem;">'
+    +'<label style="font-size:0.82rem;color:var(--md-default-fg-color);">'+label
+    +' = <span id="mbv-'+k+'">'+(+_MB[k]).toFixed(dp)+'</span></label><br>'
+    +'<input type="range" min="'+min+'" max="'+max+'" step="'+step+'" value="'+_MB[k]
+    +'" style="width:100%;accent-color:#86BCBD;" oninput="mbtrUpdate(\''+k+'\',this.value)">'
+    +'</div>';
+}
+
+function _renderMbtrCtrl(){
+  var h='';
+  h+=_mbSlider('r','r<sub>bond</sub> (Å)',0.80,1.60,0.01,2);
+  h+=_mbSlider('theta','θ (°)',60,180,0.5,1);
+  h+=_mbSlider('sigma','σ (Å⁻¹)',0.01,0.10,0.005,3);
+  var el=document.getElementById('mbtr-ctrl');
+  if(el) el.innerHTML=h;
+}
+
+function _mbtrInit(){
+  if(!document.getElementById('mbtr-k2')) return;
+  function _run(){_renderMbtrCtrl();mbtrUpdateSVG();mbtrPlotK2();mbtrPlotK3();}
+  if(window.Plotly){_run();return;}
+  var s=document.createElement('script');
+  s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+  s.onload=_run; document.head.appendChild(s);
+}
+if(typeof document$!=='undefined'){document$.subscribe(_mbtrInit);}
+else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_mbtrInit);}
+else{_mbtrInit();}
+</script>
+
+<hr />
+<h2 id="25-atom-centered-symmetry-functions-acsfs">2.5 Atom-Centered Symmetry Functions (ACSFs)<a class="headerlink" href="#25-atom-centered-symmetry-functions-acsfs" title="Permanent link">&para;</a></h2>
+<p>ACSFs encode the local chemical environment of atom <span class="arithmatex">\(i\)</span> by summing contributions from all neighbors within a cutoff radius <span class="arithmatex">\(R_c\)</span>. All functions are constructed to be invariant under translation, rotation, and permutation of like atoms.</p>
+<h3 id="cutoff-function">Cutoff Function<a class="headerlink" href="#cutoff-function" title="Permanent link">&para;</a></h3>
+<p>Every ACSF is multiplied by a smooth cutoff that forces all functions and their derivatives to zero at <span class="arithmatex">\(R_c\)</span>:</p>
+<div class="arithmatex">\[f_c(r) = \begin{cases} \dfrac{1}{2}\!\left[\cos\!\left(\dfrac{\pi r}{R_c}\right) + 1\right] &amp; r \le R_c \\ 0 &amp; r &gt; R_c \end{cases}\]</div>
+<p>This ensures the descriptor is smooth and that forces (derivatives of the energy with respect to atomic positions) are continuous.</p>
+<h3 id="radial-symmetry-functions-2-body">Radial Symmetry Functions (2-body)<a class="headerlink" href="#radial-symmetry-functions-2-body" title="Permanent link">&para;</a></h3>
+<p>Three radial functions probe the distribution of neighbor distances <span class="arithmatex">\(r_{ij} = |\mathbf{R}_j - \mathbf{R}_i|\)</span>.</p>
+<p><strong><span class="arithmatex">\(G^{(1)}\)</span> — neighbor count.</strong> The simplest function, with no free parameters beyond the cutoff:</p>
+<div class="arithmatex">\[G_i^{(1)} = \sum_{j \neq i} f_c(r_{ij})\]</div>
+<p>It counts the effective number of neighbors within <span class="arithmatex">\(R_c\)</span>, weighted by their distance. This gives a rough measure of coordination number.</p>
+<p><strong><span class="arithmatex">\(G^{(2)}\)</span> — Gaussian radial.</strong> The most widely used radial function:</p>
+<div class="arithmatex">\[G_i^{(2)} = \sum_{j \neq i} \exp\!\left[-\eta\left(r_{ij} - \mu_s\right)^2\right] f_c(r_{ij})\]</div>
+<p>The parameter <span class="arithmatex">\(\eta &gt; 0\)</span> controls the width of the Gaussian peak and <span class="arithmatex">\(\mu_s \ge 0\)</span> shifts its center along <span class="arithmatex">\(r\)</span>. By using many <span class="arithmatex">\((η, \mu_s)\)</span> pairs, the full radial distribution of neighbors can be probed at different distances and resolutions.</p>
+<p><strong><span class="arithmatex">\(G^{(3)}\)</span> — cosine radial.</strong> An oscillatory alternative to the Gaussian:</p>
+<div class="arithmatex">\[G_i^{(3)} = \sum_{j \neq i} \cos(\kappa\, r_{ij})\, f_c(r_{ij})\]</div>
+<p>The frequency <span class="arithmatex">\(\kappa\)</span> controls how rapidly the function oscillates with distance. Less commonly used than <span class="arithmatex">\(G^{(2)}\)</span> in practice.</p>
+<h3 id="angular-symmetry-functions-3-body">Angular Symmetry Functions (3-body)<a class="headerlink" href="#angular-symmetry-functions-3-body" title="Permanent link">&para;</a></h3>
+<p>Angular functions additionally encode the angle <span class="arithmatex">\(\theta_{ijk}\)</span> at atom <span class="arithmatex">\(i\)</span> subtended by neighbor pair <span class="arithmatex">\((j, k)\)</span>, giving access to 3-body correlations.</p>
+<p><strong><span class="arithmatex">\(G^{(4)}\)</span> — angular with <span class="arithmatex">\(r_{jk}\)</span>.</strong> The full angular function:</p>
+<div class="arithmatex">\[G_i^{(4)} = 2^{1-\zeta}\sum_{\substack{j,k \neq i \\ j &lt; k}}\left(1 + \lambda\cos\theta_{ijk}\right)^\zeta \exp\!\left[-\eta\left(r_{ij}^2 + r_{ik}^2 + r_{jk}^2\right)\right] f_c(r_{ij})\,f_c(r_{ik})\,f_c(r_{jk})\]</div>
+<p>The parameter <span class="arithmatex">\(\zeta &gt; 0\)</span> controls angular resolution (larger <span class="arithmatex">\(\zeta\)</span> gives sharper angular peaks), <span class="arithmatex">\(\lambda \in \{-1, +1\}\)</span> shifts the peak to <span class="arithmatex">\(\theta = 0\)</span> or <span class="arithmatex">\(\theta = \pi\)</span>, and <span class="arithmatex">\(\eta\)</span> controls the radial decay. Including <span class="arithmatex">\(r_{jk}\)</span> makes the function sensitive to the distance between the two neighbors as well.</p>
+<p><strong><span class="arithmatex">\(G^{(5)}\)</span> — angular without <span class="arithmatex">\(r_{jk}\)</span>.</strong> Identical to <span class="arithmatex">\(G^{(4)}\)</span> but drops the <span class="arithmatex">\(j\)</span>–<span class="arithmatex">\(k\)</span> distance term:</p>
+<div class="arithmatex">\[G_i^{(5)} = 2^{1-\zeta}\sum_{\substack{j,k \neq i \\ j &lt; k}}\left(1 + \lambda\cos\theta_{ijk}\right)^\zeta \exp\!\left[-\eta\left(r_{ij}^2 + r_{ik}^2\right)\right] f_c(r_{ij})\,f_c(r_{ik})\]</div>
+<p>Omitting <span class="arithmatex">\(r_{jk}\)</span> and <span class="arithmatex">\(f_c(r_{jk})\)</span> makes the function less sensitive to the separation between the two neighbors and somewhat cheaper to evaluate.</p>
+<h3 id="the-descriptor-vector">The Descriptor Vector<a class="headerlink" href="#the-descriptor-vector" title="Permanent link">&para;</a></h3>
+<p>The full ACSF fingerprint of atom <span class="arithmatex">\(i\)</span> is the concatenation of many symmetry function values evaluated at different parameter combinations — e.g. many <span class="arithmatex">\((\eta, \mu_s)\)</span> pairs for <span class="arithmatex">\(G^{(2)}\)</span> and many <span class="arithmatex">\((\eta, \zeta, \lambda)\)</span> combinations for <span class="arithmatex">\(G^{(4)}\)</span> or <span class="arithmatex">\(G^{(5)}\)</span>. This gives a fixed-length vector that encodes the local chemical environment. One vector is computed per atom and per element species, then fed into an element-specific feedforward neural network whose output is the atomic energy contribution <span class="arithmatex">\(\varepsilon_i\)</span>. The total energy is <span class="arithmatex">\(E = \sum_i \varepsilon_i\)</span>.</p>
+<h3 id="interactive-explorer_1">Interactive Explorer<a class="headerlink" href="#interactive-explorer_1" title="Permanent link">&para;</a></h3>
+<div id="acsf-widget" style="border:1px solid #8884;border-radius:8px;padding:1.2rem;margin:1.4rem 0;background:var(--md-code-bg-color,#f5f5f5);">
+
+<!-- Title + function toggle buttons -->
+<div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;flex-wrap:wrap;">
+  <span style="font-weight:600;font-size:0.95rem;color:var(--md-default-fg-color);">ACSF Explorer</span>
+  <div style="display:flex;gap:5px;flex-wrap:wrap;">
+    <button id="acsf-btn-g1" onclick="acsfToggleFn('g1')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">G¹</button>
+    <button id="acsf-btn-g2" onclick="acsfToggleFn('g2')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #86BCBD;background:#86BCBD;color:#fff;font-size:0.8rem;cursor:pointer;font-weight:600;">G²</button>
+    <button id="acsf-btn-g3" onclick="acsfToggleFn('g3')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">G³</button>
+    <button id="acsf-btn-g4" onclick="acsfToggleFn('g4')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">G⁴</button>
+    <button id="acsf-btn-g5" onclick="acsfToggleFn('g5')" style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">G⁵</button>
+  </div>
+</div>
+
+<!-- Function explorer: parameters + single plot -->
+<div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
+  <div id="acsf-ctrl" style="flex:0 0 auto;min-width:190px;max-width:215px;"></div>
+  <div id="acsf-plot" style="flex:1 1 280px;min-width:250px;height:290px;"></div>
+</div>
+
+<!-- Descriptor basis section -->
+<hr style="margin:1rem 0;border:none;border-top:1px solid #8882;">
+<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.7rem;flex-wrap:wrap;">
+  <span style="font-size:0.85rem;font-weight:600;color:var(--md-default-fg-color);">Descriptor basis</span>
+  <span style="font-size:0.79rem;color:#888;">— N copies of each type tile parameter space; the full descriptor concatenates all these values</span>
+  <div style="display:flex;align-items:center;gap:0.5rem;margin-left:auto;">
+    <label style="font-size:0.82rem;white-space:nowrap;color:var(--md-default-fg-color);">N = <span id="av-nbasis">5</span></label>
+    <input type="range" min="2" max="8" step="1" value="5" style="width:90px;accent-color:#86BCBD;" oninput="acsfUpdate('nbasis',this.value)">
+  </div>
+</div>
+<div id="acsf-plot-b" style="height:260px;"></div>
+
+</div>
+
+<script>
+var _A={Rc:6,eta:0.5,mus:2.0,kappa:1.0,zeta:4,lam:1,theta:60,nbasis:5,
+        fns:{g1:false,g2:true,g3:false,g4:false,g5:false}};
+var _XMAX=8;
+var _FNCOL={g1:'#A4CE8B',g2:'#86BCBD',g3:'#F7E49B',g4:'#BA5A5A',g5:'#C07AB5'};
+var _FNLAB={g1:'G¹',g2:'G²',g3:'G³',g4:'G⁴',g5:'G⁵'};
+var _BPAL=['#0077BB','#33BBEE','#009988','#EE7733','#CC3311','#EE3377','#AA3377','#BBBB22'];
+
+function _fc(r){return r>=_A.Rc?0:0.5*(Math.cos(Math.PI*r/_A.Rc)+1);}
+function _ls(a,b,n){return Array.from({length:n},function(_,i){return a+(b-a)*i/(n-1);});}
+function _dark(){return document.body.getAttribute('data-md-color-scheme')==='slate';}
+function _clr(){var d=_dark();return{fg:d?'#ddd':'#333',grid:d?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)'};}
+
+function _layout(xl,yl){
+  var c=_clr();
+  return{
+    xaxis:{title:{text:xl,font:{size:12}},color:c.fg,gridcolor:c.grid,zeroline:false},
+    yaxis:{title:{text:yl,font:{size:12}},color:c.fg,gridcolor:c.grid,zeroline:true,zerolinecolor:c.grid},
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:c.fg,size:12},showlegend:true,
+    legend:{font:{color:c.fg,size:10},bgcolor:'rgba(0,0,0,0)',x:1,xanchor:'right',y:1,yanchor:'top'},
+    margin:{l:55,r:15,t:10,b:50}
+  };
+}
+
+function _evalFn(fn,r,th_deg){
+  var fc=_fc(r);
+  var th=(th_deg!==undefined?th_deg:_A.theta)*Math.PI/180;
+  var ang=Math.pow(Math.max(0,1+_A.lam*Math.cos(th)),_A.zeta);
+  if(fn==='g1') return fc;
+  if(fn==='g2') return Math.exp(-_A.eta*Math.pow(r-_A.mus,2))*fc;
+  if(fn==='g3') return Math.cos(_A.kappa*r)*fc;
+  var rjk=2*r*Math.abs(Math.sin(th/2));
+  var prefac=Math.pow(2,1-_A.zeta)*ang;
+  if(fn==='g4') return prefac*Math.exp(-_A.eta*(2*r*r+rjk*rjk))*fc*fc*_fc(rjk);
+  if(fn==='g5') return prefac*Math.exp(-_A.eta*2*r*r)*fc*fc;
+  return 0;
+}
+
+function _selFns(){return['g1','g2','g3','g4','g5'].filter(function(f){return _A.fns[f];});}
+
+function acsfPlot(){
+  if(!document.getElementById('acsf-plot')||!window.Plotly) return;
+  var rs=_ls(0,_XMAX,400),sel=_selFns(),traces=[];
+  traces.push({x:rs,y:rs.map(_fc),mode:'lines',name:'f<sub>c</sub>',
+    line:{color:'#888',dash:'dot',width:1.2},opacity:0.5});
+  sel.forEach(function(fn){
+    traces.push({x:rs,y:rs.map(function(r){return _evalFn(fn,r);}),
+      mode:'lines',name:_FNLAB[fn],line:{color:_FNCOL[fn],width:2.5}});
+  });
+  var hasAng=sel.indexOf('g4')!==-1||sel.indexOf('g5')!==-1;
+  var yl=hasAng?'value   (θ = '+_A.theta+'°)':'value';
+  var L=_layout('r (Å)',yl);
+  L.xaxis.range=[0,Math.min(_A.Rc+0.5,_XMAX)];
+  Plotly.react('acsf-plot',traces,L,{responsive:true,displayModeBar:false});
+}
+
+function acsfPlotBasis(){
+  if(!document.getElementById('acsf-plot-b')||!window.Plotly) return;
+  var rs=_ls(0,_XMAX,400),sel=_selFns(),n=_A.nbasis,traces=[];
+  sel.forEach(function(fn){
+    if(fn==='g1'){
+      traces.push({x:rs,y:rs.map(_fc),mode:'lines',name:'G¹',
+        line:{color:_FNCOL.g1,width:2}});
+    } else if(fn==='g2'){
+      _ls(0.5,Math.min(_A.Rc-0.5,_XMAX-0.5),n).forEach(function(mu,i){
+        traces.push({x:rs,y:rs.map(function(r){return Math.exp(-_A.eta*Math.pow(r-mu,2))*_fc(r);}),
+          mode:'lines',name:'G²  μ<sub>s</sub>='+mu.toFixed(1)+' Å',
+          line:{color:_BPAL[i%_BPAL.length],width:2}});
+      });
+    } else if(fn==='g3'){
+      _ls(0.5,3.0,Math.min(n,6)).forEach(function(kap,i){
+        traces.push({x:rs,y:rs.map(function(r){return Math.cos(kap*r)*_fc(r);}),
+          mode:'lines',name:'G³  κ='+kap.toFixed(1)+' Å⁻¹',
+          line:{color:_BPAL[i%_BPAL.length],width:2}});
+      });
+    } else if(fn==='g4'||fn==='g5'){
+      _ls(0,180,n).forEach(function(th,i){
+        traces.push({x:rs,y:rs.map(function(r){return _evalFn(fn,r,th);}),
+          mode:'lines',name:_FNLAB[fn]+'  θ='+th.toFixed(0)+'°',
+          line:{color:_BPAL[i%_BPAL.length],width:2,dash:fn==='g5'?'dash':'solid'}});
+      });
+    }
+  });
+  if(!traces.length){
+    Plotly.react('acsf-plot-b',[],_layout('r (Å)','descriptor components'),{responsive:true,displayModeBar:false});
+    return;
+  }
+  var L=_layout('r (Å)','descriptor components');
+  L.xaxis.range=[0,Math.min(_A.Rc+0.5,_XMAX)];
+  L.legend.font.size=9;
+  Plotly.react('acsf-plot-b',traces,L,{responsive:true,displayModeBar:false});
+}
+
+function acsfUpdate(k,v){
+  _A[k]=k==='nbasis'?Math.round(+v):(+v);
+  var fmts={Rc:1,eta:2,mus:1,kappa:1,zeta:1,theta:0,nbasis:0};
+  var el=document.getElementById('av-'+k);
+  if(el) el.textContent=(+_A[k]).toFixed(fmts[k]!==undefined?fmts[k]:1);
+  acsfPlot(); acsfPlotBasis();
+}
+
+function acsfToggleFn(fn){
+  _A.fns[fn]=!_A.fns[fn];
+  var btn=document.getElementById('acsf-btn-'+fn);
+  if(btn){
+    if(_A.fns[fn]){
+      btn.style.background=_FNCOL[fn];btn.style.color='#fff';
+      btn.style.border='1.5px solid '+_FNCOL[fn];btn.style.fontWeight='600';
+    } else {
+      btn.style.background='transparent';btn.style.color='var(--md-default-fg-color)';
+      btn.style.border='1.5px solid #8886';btn.style.fontWeight='normal';
+    }
+  }
+  _renderCtrl(); acsfPlot(); acsfPlotBasis();
+}
+
+function _sl(k,label,min,max,step,val,dp){
+  return '<div style="margin-bottom:0.5rem;">'
+    +'<label style="font-size:0.82rem;color:var(--md-default-fg-color);">'+label
+    +' = <span id="av-'+k+'">'+(+val).toFixed(dp)+'</span></label><br>'
+    +'<input type="range" min="'+min+'" max="'+max+'" step="'+step+'" value="'+val
+    +'" style="width:100%;accent-color:#86BCBD;" oninput="acsfUpdate(\''+k+'\',this.value)">'
+    +'</div>';
+}
+
+function _renderCtrl(){
+  var sel=_selFns();
+  var hasG2=sel.indexOf('g2')!==-1;
+  var hasG3=sel.indexOf('g3')!==-1;
+  var hasG45=sel.indexOf('g4')!==-1||sel.indexOf('g5')!==-1;
+  var h='';
+  h+=_sl('Rc','R<sub>c</sub> (Å)',2,10,0.5,_A.Rc,1);
+  if(hasG2||hasG45) h+=_sl('eta','η',0.01,2,0.01,_A.eta,2);
+  if(hasG2) h+=_sl('mus','μ<sub>s</sub> (Å)',0,8,0.1,_A.mus,1);
+  if(hasG3) h+=_sl('kappa','κ (Å⁻¹)',0.1,4,0.1,_A.kappa,1);
+  if(hasG45){
+    h+=_sl('theta','θ (°)',0,180,5,_A.theta,0);
+    h+=_sl('zeta','ζ',0.5,16,0.5,_A.zeta,1);
+    h+='<div style="margin-bottom:0.5rem;">'
+      +'<label style="font-size:0.82rem;color:var(--md-default-fg-color);">λ = <span id="av-lam">'+_A.lam+'</span></label><br>'
+      +'<button onclick="_A.lam*=-1;document.getElementById(\'av-lam\').textContent=_A.lam;acsfPlot();acsfPlotBasis();"'
+      +' style="padding:2px 10px;border-radius:4px;border:1px solid #8886;background:var(--md-default-bg-color);'
+      +'color:var(--md-default-fg-color);cursor:pointer;font-size:0.8rem;">Toggle ±1</button>'
+      +'</div>';
+  }
+  if(!sel.length) h='<p style="font-size:0.82rem;color:#999;font-style:italic;">Select a function above.</p>';
+  document.getElementById('acsf-ctrl').innerHTML=h;
+}
+
+function _init(){
+  if(!document.getElementById('acsf-plot')) return;
+  function _run(){ _renderCtrl(); acsfPlot(); acsfPlotBasis(); }
+  if(window.Plotly){ _run(); return; }
+  var s=document.createElement('script');
+  s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+  s.onload=_run; document.head.appendChild(s);
+}
+
+if(typeof document$!=='undefined'){ document$.subscribe(_init); }
+else if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded',_init); }
+else { _init(); }
+</script>
+
+<hr />
+<h2 id="26-weighted-atom-centered-symmetry-functions-wacsfs">2.6 Weighted Atom-Centered Symmetry Functions (wACSFs)<a class="headerlink" href="#26-weighted-atom-centered-symmetry-functions-wacsfs" title="Permanent link">&para;</a></h2>
+<p>Standard ACSFs handle multi-element systems by constructing <em>separate</em> symmetry functions for each element combination: one set of radial functions per element pair <span class="arithmatex">\((Z_i, Z_j)\)</span> and one set of angular functions per triple <span class="arithmatex">\((Z_i, Z_j, Z_k)\)</span>. For a system with <span class="arithmatex">\(S\)</span> distinct elements this requires <span class="arithmatex">\(\mathcal{O}(S)\)</span> radial function sets and <span class="arithmatex">\(\mathcal{O}(S^2)\)</span> angular sets — parameter proliferation that becomes unwieldy for chemically diverse systems.</p>
+<p><strong>Weighted ACSFs (wACSFs)</strong> replace the element-specific function sets with a single unified set, weighting each neighbor's contribution by its nuclear charge <span class="arithmatex">\(Z_j\)</span>. The weighted radial function is:</p>
+<div class="arithmatex">\[wG_i^{(2)} = \sum_{j \neq i} Z_j \exp\!\left[-\eta\left(r_{ij} - \mu_s\right)^2\right] f_c(r_{ij})\]</div>
+<p>and the weighted angular function is:</p>
+<div class="arithmatex">\[wG_i^{(4)} = 2^{1-\zeta}\sum_{\substack{j,k \neq i \\ j &lt; k}} Z_j Z_k \left(1 + \lambda\cos\theta_{ijk}\right)^\zeta \exp\!\left[-\eta\left(r_{ij}^2 + r_{ik}^2 + r_{jk}^2\right)\right] f_c(r_{ij})\,f_c(r_{ik})\,f_c(r_{jk})\]</div>
+<p>The nuclear charge factors <span class="arithmatex">\(Z_j\)</span> (2-body) and <span class="arithmatex">\(Z_j Z_k\)</span> (3-body) act as a continuous chemical weighting: heavier elements contribute more strongly than lighter ones. This implicitly encodes the chemical identity of each neighbor without requiring separate functions per element pair, reducing the total number of descriptor parameters by a factor of order <span class="arithmatex">\(S\)</span>.</p>
+<p>The trade-off is that the <span class="arithmatex">\(Z\)</span>-weighting is fixed and may not optimally distinguish all chemical environments — standard ACSFs with element-specific parameters remain more expressive when the element set is small and fixed. wACSFs generalize better across compositionally diverse systems and are a natural choice for MLIPs designed to span large regions of chemical space.</p>
+<hr />
+<h2 id="27-smooth-overlap-of-atomic-positions-soap">2.7 Smooth Overlap of Atomic Positions (SOAP)<a class="headerlink" href="#27-smooth-overlap-of-atomic-positions-soap" title="Permanent link">&para;</a></h2>
+<p>SOAP constructs a rotationally invariant descriptor by representing the local atomic environment as a smooth density and computing its power spectrum under the rotation group. It is well suited for use with kernel methods.</p>
+<p><strong>Step 1 — Density smearing with Gaussians.</strong> The local environment of atom <span class="arithmatex">\(i\)</span> is represented as a sum of Gaussians centered on each neighbor <span class="arithmatex">\(j\)</span> within the cutoff:</p>
+<div class="arithmatex">\[\rho_i(\mathbf{r}) = \sum_{j \in \mathcal{N}(i)} \exp\!\left(-\alpha\,|\mathbf{r} - \mathbf{r}_{ij}|^2\right) f_c(r_{ij})\]</div>
+<p>where <span class="arithmatex">\(\mathbf{r}_{ij} = \mathbf{R}_j - \mathbf{R}_i\)</span> is the displacement vector from atom <span class="arithmatex">\(i\)</span> to neighbor <span class="arithmatex">\(j\)</span>, <span class="arithmatex">\(\alpha &gt; 0\)</span> controls the Gaussian width, and <span class="arithmatex">\(f_c\)</span> is a smooth cutoff function. Here <span class="arithmatex">\(\mathcal{N}(i)\)</span> denotes the set of atoms within cutoff <span class="arithmatex">\(R_c\)</span>.</p>
+<p><strong>Step 2 — Representation via radial functions and spherical harmonics.</strong> The density <span class="arithmatex">\(\rho_i(\mathbf{r})\)</span> is expanded in a product basis of radial functions <span class="arithmatex">\(g_n(r)\)</span> and real spherical harmonics <span class="arithmatex">\(Y_l^m(\hat{\mathbf{r}})\)</span>:</p>
+<div class="arithmatex">\[\rho_i(\mathbf{r}) = \sum_{n,l,m} c_{nlm}^i\, g_n(r)\, Y_l^m(\hat{\mathbf{r}})\]</div>
+<p>where <span class="arithmatex">\(n = 1,\ldots,N_\text{max}\)</span> indexes the radial basis, <span class="arithmatex">\(l = 0,\ldots,L_\text{max}\)</span> is the angular momentum quantum number, <span class="arithmatex">\(m = -l,\ldots,l\)</span> is the magnetic quantum number, and <span class="arithmatex">\(\hat{\mathbf{r}} = \mathbf{r}/|\mathbf{r}|\)</span> is the unit direction vector. The coefficients <span class="arithmatex">\(c_{nlm}^i\)</span> are obtained by projection onto the basis.</p>
+<p><strong>Step 3 — Distance metric by averaging over rotations.</strong> The power spectrum is obtained by contracting the <span class="arithmatex">\(m\)</span>-components, yielding a descriptor that is invariant to rotations of the local environment:</p>
+<div class="arithmatex">\[p_{nn'l} = \sum_m \left(c_{nlm}\right)^* c_{n'lm}\]</div>
+<p>(atom index <span class="arithmatex">\(i\)</span> suppressed for clarity).</p>
+<p><strong>SOAP kernel</strong>: the similarity between two environments is</p>
+<div class="arithmatex">\[k(\rho, \rho') = \left|\sum_{n,n',l} p_{nn'l}\, p'_{nn'l}\right|^\zeta\]</div>
+<p>where <span class="arithmatex">\(\zeta \ge 1\)</span> controls the nonlinearity. Combined with Gaussian Process Regression (GPR), SOAP forms the basis of the GAP (Gaussian Approximation Potential) framework. As shown in the ACE connection below, SOAP corresponds to ACE at body order 3 (correlation order 2).</p>
+<p><strong>Completeness failure.</strong> Despite satisfying all the symmetry requirements, SOAP is <em>not</em> a complete descriptor. The power spectrum contraction <span class="arithmatex">\(\sum_m c_{nlm}^* c_{n'lm}\)</span> discards phase information, meaning two physically distinct environments can produce identical SOAP descriptors. This was proven rigorously by Pozdnyakov et al. (<em>Phys. Rev. Lett.</em> <strong>125</strong>, 166001, 2020), who constructed explicit pairs of inequivalent environments that are indistinguishable by SOAP. Any model built on SOAP cannot in principle distinguish such environment pairs. In practice these failures are rare for real materials, but they represent a fundamental theoretical limitation that ACE resolves by providing a provably complete basis at arbitrary body order.</p>
+<p>Despite this limitation, SOAP is a powerful structural similarity metric. Mapping 15\,869 distinct ice polymorphs using the SOAP kernel distance reveals the structural diversity and clustering of ice phases — a demonstration of its practical utility for materials-space exploration.</p>
+<hr />
+<h2 id="28-atomic-cluster-expansion-ace">2.8 Atomic Cluster Expansion (ACE)<a class="headerlink" href="#28-atomic-cluster-expansion-ace" title="Permanent link">&para;</a></h2>
+<p>ACE is a complete and systematic framework for constructing many-body descriptors and potentials. Its central achievement is showing that the local atomic energy <span class="arithmatex">\(\varepsilon_i\)</span> can be expressed exactly as a <strong>linear combination of a rotationally invariant basis</strong> <span class="arithmatex">\(\{B_{i,\mathbf{v}}\}\)</span>, where the basis is built from products of one-particle functions summed over neighbors — making computation <span class="arithmatex">\(\mathcal{O}(N_\text{neigh})\)</span> rather than <span class="arithmatex">\(\mathcal{O}(N_\text{neigh}^\nu)\)</span>.</p>
+<h3 id="step-1-many-body-cluster-expansion">Step 1 — Many-body cluster expansion<a class="headerlink" href="#step-1-many-body-cluster-expansion" title="Permanent link">&para;</a></h3>
+<p>By the generalized cluster expansion theorem, any local potential energy <span class="arithmatex">\(\varepsilon_i\)</span> depending only on the chemical environment within a cutoff can be written as a sum over body-order contributions:</p>
+<div class="arithmatex">\[\varepsilon_i = V^{(0)}(Z_i) + \sum_{j_1 \in \mathcal{N}(i)} V^{(1)}(x_{ij_1}) + \sum_{\substack{j_1, j_2 \in \mathcal{N}(i) \\ j_1 &lt; j_2}} V^{(2)}(x_{ij_1}, x_{ij_2}) + \cdots + \sum_{\substack{j_1 &lt; \cdots &lt; j_\nu \\ j_t \in \mathcal{N}(i)}} V^{(\nu)}(x_{ij_1},\ldots,x_{ij_\nu})\]</div>
+<p>where <span class="arithmatex">\(x_{ij} = (\mathbf{r}_{ij}, Z_j)\)</span> collects the displacement vector <span class="arithmatex">\(\mathbf{r}_{ij} = \mathbf{R}_j - \mathbf{R}_i\)</span> and the species <span class="arithmatex">\(Z_j\)</span> of neighbor <span class="arithmatex">\(j\)</span>, and <span class="arithmatex">\(\mathcal{N}(i)\)</span> is the neighbor set of atom <span class="arithmatex">\(i\)</span> within cutoff <span class="arithmatex">\(R_c\)</span>. The term <span class="arithmatex">\(V^{(0)}(Z_i)\)</span> is a species-dependent constant (free-atom energy). Naive evaluation of the <span class="arithmatex">\(\nu\)</span>-body term costs <span class="arithmatex">\(\mathcal{O}(N_\text{neigh}^\nu)\)</span>, which becomes intractable for <span class="arithmatex">\(\nu \ge 4\)</span>.</p>
+<p>Equivalently, by expanding the ordered sum into an unrestricted sum with a combinatorial prefactor:</p>
+<div class="arithmatex">\[\varepsilon_i = V^{(0)}(Z_i) + \sum_{j_1} U^{(1)}(x_{ij_1}) + \frac{1}{2!}\sum_{j_1,j_2} U^{(2)}(x_{ij_1},x_{ij_2}) + \cdots + \frac{1}{\nu!}\sum_{j_1,\ldots,j_\nu} U^{(\nu)}(x_{ij_1},\ldots,x_{ij_\nu})\]</div>
+<h3 id="step-2-expand-each-body-order-term-in-a-product-basis">Step 2 — Expand each body-order term in a product basis<a class="headerlink" href="#step-2-expand-each-body-order-term-in-a-product-basis" title="Permanent link">&para;</a></h3>
+<p>The key structural assumption is that each interaction function <span class="arithmatex">\(U^{(\nu)}\)</span> can be expanded in a <strong>separable product</strong> of one-particle basis functions <span class="arithmatex">\(\phi_k\)</span>:</p>
+<div class="arithmatex">\[U^{(\nu)}(x_{ij_1},\ldots,x_{ij_\nu}) = \sum_{k_1,\ldots,k_\nu} c^{(Z_i)}_{k_1\cdots k_\nu}\, \phi_{k_1}(x_{ij_1})\cdots\phi_{k_\nu}(x_{ij_\nu})\]</div>
+<p>where <span class="arithmatex">\(c^{(Z_i)}_{k_1\cdots k_\nu}\)</span> are coefficients that depend on the species <span class="arithmatex">\(Z_i\)</span> of the central atom, and <span class="arithmatex">\(k_1,\ldots,k_\nu\)</span> are basis indices. This separability is what enables the efficient factorization in Step 4.</p>
+<h3 id="step-3-atomic-one-particle-basis-radial-functions-and-spherical-harmonics">Step 3 — Atomic one-particle basis: radial functions and spherical harmonics<a class="headerlink" href="#step-3-atomic-one-particle-basis-radial-functions-and-spherical-harmonics" title="Permanent link">&para;</a></h3>
+<p>The one-particle basis functions are products of radial functions <span class="arithmatex">\(R_{nl}\)</span> and spherical harmonics <span class="arithmatex">\(Y_l^m\)</span>, with a Kronecker delta selecting the correct species:</p>
+<div class="arithmatex">\[\phi_{znlm}(\mathbf{r}_{ij}, Z_j) = R_{nl}(r_{ij})\, Y_l^m(\hat{\mathbf{r}}_{ij})\, \delta_{z Z_j}\]</div>
+<p>where <span class="arithmatex">\(r_{ij} = |\mathbf{r}_{ij}|\)</span> is the scalar distance, <span class="arithmatex">\(\hat{\mathbf{r}}_{ij} = \mathbf{r}_{ij}/r_{ij}\)</span> is the unit direction vector, <span class="arithmatex">\(n\)</span> is a radial quantum number, <span class="arithmatex">\(l\)</span> is the angular momentum quantum number, <span class="arithmatex">\(m \in \{-l,\ldots,l\}\)</span> is the magnetic quantum number, and <span class="arithmatex">\(z\)</span> is a species label. The Kronecker delta <span class="arithmatex">\(\delta_{z Z_j}\)</span> enforces that only neighbors of species <span class="arithmatex">\(z\)</span> contribute to the <span class="arithmatex">\(z\)</span>-channel.</p>
+<p>Summing over all neighbors gives the <strong>one-particle basis matrix</strong>:</p>
+<div class="arithmatex">\[A^i_{znlm} = \sum_{j \in \mathcal{N}(i)} \phi_{znlm}(\mathbf{r}_{ij}, Z_j)\]</div>
+<p>This sum costs <span class="arithmatex">\(\mathcal{O}(N_\text{neigh})\)</span> and needs to be computed only once, regardless of the desired body order <span class="arithmatex">\(\nu\)</span>.</p>
+<h3 id="step-4-form-body-order-products">Step 4 — Form body-order products<a class="headerlink" href="#step-4-form-body-order-products" title="Permanent link">&para;</a></h3>
+<p>Products of <span class="arithmatex">\(A\)</span> values directly give the <span class="arithmatex">\(\nu\)</span>-body interaction terms. For a multi-index <span class="arithmatex">\(\boldsymbol{v} = (z_1 n_1 l_1 m_1, \ldots, z_\nu n_\nu l_\nu m_\nu)\)</span>, the <span class="arithmatex">\(\nu\)</span>-particle basis element is:</p>
+<div class="arithmatex">\[\tilde{A}^i_{\boldsymbol{v}} = \prod_{t=1}^\nu A^i_{z_t n_t l_t m_t}\]</div>
+<p>This product is formed at negligible cost after the <span class="arithmatex">\(\mathcal{O}(N_\text{neigh})\)</span> neighbor loop. The cost of evaluating body order <span class="arithmatex">\(\nu\)</span> is therefore <span class="arithmatex">\(\mathcal{O}(N_\text{neigh})\)</span>, not <span class="arithmatex">\(\mathcal{O}(N_\text{neigh}^\nu)\)</span> — the central computational advantage of ACE.</p>
+<h3 id="step-5-contract-with-clebsch-gordan-coefficients-to-enforce-rotational-invariance">Step 5 — Contract with Clebsch-Gordan coefficients to enforce rotational invariance<a class="headerlink" href="#step-5-contract-with-clebsch-gordan-coefficients-to-enforce-rotational-invariance" title="Permanent link">&para;</a></h3>
+<p>The products <span class="arithmatex">\(\tilde{A}^i_{\boldsymbol{v}}\)</span> are not rotationally invariant because they carry free magnetic quantum numbers <span class="arithmatex">\(m_1,\ldots,m_\nu\)</span>. To project onto the rotationally invariant subspace, one contracts with generalized Clebsch-Gordan (Wigner 3j) coefficients. The resulting <strong>symmetrized basis functions</strong> <span class="arithmatex">\(B\)</span> are guaranteed to transform as scalars under <span class="arithmatex">\(SO(3)\)</span> rotations:</p>
+<p>At correlation order 1 (2-body):</p>
+<div class="arithmatex">\[B^{(1)}_{in} = A^i_{n00}\]</div>
+<p>(The <span class="arithmatex">\(l=0\)</span>, <span class="arithmatex">\(m=0\)</span> component of <span class="arithmatex">\(A\)</span> is already a scalar.)</p>
+<p>At correlation order 2 (3-body):</p>
+<div class="arithmatex">\[B^{(2)}_{in_1 n_2 l} = \sum_{m=-l}^{l} (-1)^m A^i_{n_1 lm}\, A^i_{n_2 l\text{,}-m}\]</div>
+<p>(Contraction of two <span class="arithmatex">\(l\)</span>-components via the trivial Clebsch-Gordan rule for coupling <span class="arithmatex">\(l \otimes l \to 0\)</span>.)</p>
+<p>At correlation order 3 (4-body):</p>
+<div class="arithmatex">\[B^{(3)}_{in_1 n_2 n_3, l_1 l_2 l_3} = \sum_{m_1,m_2,m_3} \begin{pmatrix} l_1 &amp; l_2 &amp; l_3 \\ m_1 &amp; m_2 &amp; m_3 \end{pmatrix} A^i_{n_1 l_1 m_1}\, A^i_{n_2 l_2 m_2}\, A^i_{n_3 l_3 m_3}\]</div>
+<p>where <span class="arithmatex">\(\left(\begin{smallmatrix} l_1 &amp; l_2 &amp; l_3 \\ m_1 &amp; m_2 &amp; m_3 \end{smallmatrix}\right)\)</span> is the Wigner 3j symbol, which is nonzero only when <span class="arithmatex">\(m_1 + m_2 + m_3 = 0\)</span> and the triangle inequality <span class="arithmatex">\(|l_1 - l_2| \le l_3 \le l_1 + l_2\)</span> is satisfied.</p>
+<h3 id="final-linear-model">Final linear model<a class="headerlink" href="#final-linear-model" title="Permanent link">&para;</a></h3>
+<p>The local atomic energy is expressed as a linear combination of the symmetrized basis:</p>
+<div class="arithmatex">\[\varepsilon_i = \sum_{\boldsymbol{v}} c_{\boldsymbol{v}}\, B^i_{\boldsymbol{v}}\]</div>
+<p>where <span class="arithmatex">\(\boldsymbol{v}\)</span> runs over all valid multi-indices and <span class="arithmatex">\(c_{\boldsymbol{v}}\)</span> are the fitting coefficients. The total energy is <span class="arithmatex">\(E = \sum_i \varepsilon_i\)</span>. Since the energy is <strong>linear in the coefficients</strong> <span class="arithmatex">\(c_{\boldsymbol{v}}\)</span>, fitting reduces to a standard linear least-squares or ridge regression problem, which is fast and avoids local minima. Forces are obtained analytically by differentiating <span class="arithmatex">\(B^i_{\boldsymbol{v}}\)</span> with respect to atomic positions.</p>
+<h3 id="scalar-vectorial-and-tensorial-outputs">Scalar, vectorial, and tensorial outputs<a class="headerlink" href="#scalar-vectorial-and-tensorial-outputs" title="Permanent link">&para;</a></h3>
+<p>The ACE framework is not limited to scalar output. By choosing different coupling schemes in the Clebsch-Gordan contraction step, one can construct basis functions <span class="arithmatex">\(B^i_{\boldsymbol{v}}\)</span> that transform as vectors, rank-2 tensors, or higher under <span class="arithmatex">\(SO(3)\)</span> rotations. This allows ACE to predict force vectors, dipole moments, polarizability tensors, and Born effective charges, with the correct transformation properties guaranteed by construction and without any additional symmetry engineering.</p>
+<h3 id="what-ace-does-differently">What ACE does differently<a class="headerlink" href="#what-ace-does-differently" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Challenge</th>
+<th>Earlier approaches</th>
+<th>ACE solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(\mathcal{O}(N^\nu)\)</span> cost of many-body sum</td>
+<td>Truncate at 3-body (ACSFs angular)</td>
+<td>Factorize into <span class="arithmatex">\(A\)</span> basis: <span class="arithmatex">\(\mathcal{O}(N)\)</span></td>
+</tr>
+<tr>
+<td>Rotational invariance is ad hoc</td>
+<td>Hand-craft functions (ACSFs, SOAP)</td>
+<td>Systematic Clebsch-Gordan coupling</td>
+</tr>
+<tr>
+<td>Nonlinear model needed for accuracy</td>
+<td>GAP: kernel regression</td>
+<td><span class="arithmatex">\(B\)</span> basis is linear → fast, no local minima</td>
+</tr>
+<tr>
+<td>Completeness unclear</td>
+<td>SOAP/ACSFs: heuristic coverage</td>
+<td>ACE is provably complete (bijective)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ace-as-a-unifying-framework">ACE as a unifying framework<a class="headerlink" href="#ace-as-a-unifying-framework" title="Permanent link">&para;</a></h3>
+<p>ACE subsumes all major hand-crafted descriptors as special cases:
+- <strong>ACSFs</strong> (Behler) correspond to specific choices of radial and angular basis functions in the ACE framework.
+- <strong>SOAP</strong> is equivalent to ACE at correlation order 2 (body order 3), using a particular radial basis and the specific Clebsch-Gordan contraction that produces the power spectrum.
+- <strong>Steinhardt bond-order parameters</strong> are also a special case.</p>
+<p>Crucially, ACE at correlation order 3 (body order 4) is <strong>complete (bijective)</strong> for environments with up to 7 neighbors: no two distinct environments map to the same descriptor. For practical systems with more neighbors, higher correlation orders are required.</p>
+<hr />
+<h2 id="29-body-order">2.9 Body Order<a class="headerlink" href="#29-body-order" title="Permanent link">&para;</a></h2>
+<p>A descriptor or potential has <strong>body order</strong> <span class="arithmatex">\(\nu\)</span> if it depends on <span class="arithmatex">\(\nu\)</span>-tuples of atoms — that is, if it cannot be written as a sum of contributions from <span class="arithmatex">\((\nu-1)\)</span>-tuples. 2-body = pairs only; 3-body = triplets (encodes angles); 4-body = quadruplets (encodes dihedral angles). Higher body order captures richer geometric information but increases computational cost.</p>
+<table>
+<thead>
+<tr>
+<th>Descriptor</th>
+<th>Body order</th>
+<th>Locality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Coulomb matrix</td>
+<td>2 (pairs)</td>
+<td>Global</td>
+</tr>
+<tr>
+<td>ACSFs — radial <span class="arithmatex">\(G^{(2)}\)</span></td>
+<td>2</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>ACSFs — angular <span class="arithmatex">\(G^{(4)}\)</span></td>
+<td>3</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>SOAP power spectrum</td>
+<td>3 (via contraction)</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>MBTR <span class="arithmatex">\(k=2\)</span></td>
+<td>2</td>
+<td>Global</td>
+</tr>
+<tr>
+<td>MBTR <span class="arithmatex">\(k=3\)</span></td>
+<td>3</td>
+<td>Global</td>
+</tr>
+<tr>
+<td>ACE (correlation order <span class="arithmatex">\(\nu\)</span>)</td>
+<td><span class="arithmatex">\(\nu + 1\)</span></td>
+<td>Local</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="210-descriptor-properties-summary">2.10 Descriptor Properties Summary<a class="headerlink" href="#210-descriptor-properties-summary" title="Permanent link">&para;</a></h2>
+<p>A useful descriptor must satisfy several formal properties. <strong>Translational invariance</strong> means the descriptor value is unchanged when all atomic positions are shifted by a constant vector; <strong>rotational invariance</strong> means it is unchanged under global rotations; <strong>permutational invariance</strong> means it is unchanged when identical atoms are relabeled. Beyond symmetry, a descriptor should be <strong>unique</strong> (injective): two physically distinct environments must map to distinct descriptor values. A stronger requirement is <strong>completeness</strong>: the descriptor space must form a complete basis for all invariant functions of the environment, so that in principle any property can be represented. Finally, <strong>smoothness</strong> requires that small changes in atomic positions produce small, continuous changes in the descriptor — a prerequisite for differentiable force evaluation.</p>
+<table>
+<thead>
+<tr>
+<th>Descriptor</th>
+<th style="text-align: center;">Trans.</th>
+<th style="text-align: center;">Rot.</th>
+<th style="text-align: center;">Perm.</th>
+<th style="text-align: center;">Unique</th>
+<th style="text-align: center;">Complete</th>
+<th style="text-align: center;">Smooth</th>
+<th>Key failure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Coulomb matrix</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td>Atom-order dependent; eigenspectrum non-unique; sorting introduces discontinuities</td>
+</tr>
+<tr>
+<td>MBTR</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">~</td>
+<td style="text-align: center;">~</td>
+<td style="text-align: center;">✓</td>
+<td>Unique for molecules; not unique for periodic systems (cell-shape dependence); truncated at <span class="arithmatex">\(k \le 3\)</span></td>
+</tr>
+<tr>
+<td>ACSF</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+<td>Formally proven non-injective: distinct environments yield identical descriptors (Pozdnyakov et al., PRL 2020)</td>
+</tr>
+<tr>
+<td>SOAP</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">✓</td>
+<td>Power spectrum fails completeness condition; phase information lost by <span class="arithmatex">\(m\)</span>-contraction</td>
+</tr>
+<tr>
+<td>ACE</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td>Formally complete basis (Drautz 2019); no known failures</td>
+</tr>
+<tr>
+<td>MACE</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">≈</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td>Internal node features are <span class="arithmatex">\(E(3)\)</span>-equivariant (not invariant); energy output is invariant; complete in the limit of high body order</td>
+</tr>
+</tbody>
+</table>
+<p>Here ✓ = satisfied, ✗ = fails, ~ = conditional, ≈ = equivariant (energy is invariant). The central result motivating ACE over its predecessors is the Pozdnyakov et al. (2020) proof that any model using only 3-body or 4-body features — including ACSF and SOAP — will assign identical descriptors to certain pairs of physically distinct environments. ACE resolves this by providing a provably complete basis at arbitrary body order.</p>
+<hr />
+<h2 id="211-historical-overview">2.11 Historical Overview<a class="headerlink" href="#211-historical-overview" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Descriptor</th>
+<th>Authors</th>
+<th>Key Idea</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2007</td>
+<td>ACSFs</td>
+<td>Behler &amp; Parrinello</td>
+<td>Symmetry functions, local, differentiable</td>
+</tr>
+<tr>
+<td>2012</td>
+<td>Coulomb Matrix</td>
+<td>Rupp et al.</td>
+<td>Electrostatic encoding of molecular geometry</td>
+</tr>
+<tr>
+<td>2013</td>
+<td>SOAP</td>
+<td>Bartók et al.</td>
+<td>Smooth density overlap, designed for kernels</td>
+</tr>
+<tr>
+<td>2017</td>
+<td>MBTR</td>
+<td>Huo &amp; Rupp</td>
+<td>Many-body tensor, global, smooth distributions</td>
+</tr>
+<tr>
+<td>2018</td>
+<td>wACSFs</td>
+<td>Gastegger et al.</td>
+<td>Charge-weighted ACSFs for multi-element systems</td>
+</tr>
+<tr>
+<td>2019</td>
+<td>ACE</td>
+<td>Drautz</td>
+<td>Systematic many-body expansion, complete, linear</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<p><a id="ref-bp07"></a>
+(Behler &amp; Parrinello, 2007) Behler, J. &amp; Parrinello, M. <em>Generalized Neural-Network Representation of High-Dimensional Potential-Energy Surfaces.</em> Phys. Rev. Lett. <strong>98</strong>, 146401 (2007). <a href="https://doi.org/10.1103/PhysRevLett.98.146401">DOI</a></p>
+<p><a id="ref-bp11"></a>
+(Behler, 2011) Behler, J. <em>Atom-centered symmetry functions for constructing high-dimensional neural network potentials.</em> J. Chem. Phys. <strong>134</strong>, 074106 (2011). <a href="https://doi.org/10.1063/1.3553717">DOI</a></p>
+<p><a id="ref-rup12"></a>
+(Rupp et al., 2012) Rupp, M. et al. <em>Fast and Accurate Modeling of Molecular Atomization Energies with Machine Learning.</em> Phys. Rev. Lett. <strong>108</strong>, 058301 (2012). <a href="https://doi.org/10.1103/PhysRevLett.108.058301">DOI</a></p>
+<p><a id="ref-bar13"></a>
+(Bartók et al., 2013) Bartók, A. P. et al. <em>On representing chemical environments.</em> Phys. Rev. B <strong>87</strong>, 184115 (2013). <a href="https://doi.org/10.1103/PhysRevB.87.184115">DOI</a></p>
+<p><a id="ref-wacsf18"></a>
+(Gastegger et al., 2018) Gastegger, M. et al. <em>wACSF — Weighted atom-centered symmetry functions as descriptors in machine learning potentials.</em> J. Chem. Phys. <strong>148</strong>, 241709 (2018). <a href="https://doi.org/10.1063/1.5019667">DOI</a></p>
+<p><a id="ref-huo22"></a>
+(Huo &amp; Rupp, 2022) Huo, H. &amp; Rupp, M. <em>Unified Representation of Molecules and Crystals for Machine Learning.</em> Mach. Learn.: Sci. Technol. <strong>3</strong>, 045017 (2022). <a href="https://doi.org/10.1088/2632-2153/aca005">DOI</a></p>
+<p><a id="ref-drautz19"></a>
+(Drautz, 2019) Drautz, R. <em>Atomic cluster expansion for accurate and transferable interatomic potentials.</em> Phys. Rev. B <strong>99</strong>, 014104 (2019). <a href="https://doi.org/10.1103/PhysRevB.99.014104">DOI</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="../javascripts/font-size.js"></script>
+      
+        <script src="../javascripts/collapsible-sidebars.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

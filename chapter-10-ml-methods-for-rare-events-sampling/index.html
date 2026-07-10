@@ -1,0 +1,839 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Lecture notes for Machine Learning in Computational Physics">
+      
+      
+      
+        <link rel="canonical" href="https://hbarquanta.github.io/MLinCP-Notes/chapter-10-ml-methods-for-rare-events-sampling/">
+      
+      
+        <link rel="prev" href="../chapter-09-generative-models/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Chapter 10 — ML Methods for Rare Events Sampling - ML in Computational Physics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-10-ml-methods-for-rare-events-sampling" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ML in Computational Physics" class="md-header__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ML in Computational Physics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 10 — ML Methods for Rare Events Sampling
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ML in Computational Physics" class="md-nav__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    ML in Computational Physics
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-01-introduction-core-ml-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1 — Introduction & Core ML Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-02-descriptors-featurization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2 — Descriptors & Featurization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-03-dimensionality-reduction-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3 — Dimensionality Reduction & Clustering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-04-regression-uncertainty-quantification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4 — Regression & Uncertainty Quantification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-05-neural-networks-trees-regularization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5 — Neural Networks, Trees & Regularization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-06-graph-neural-networks-gnns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6 — Graph Neural Networks (GNNs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-07-machine-learning-interatomic-potentials-i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 7 — Machine Learning Interatomic Potentials I
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-08-machine-learning-interatomic-potentials-ii/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 8 — Machine Learning Interatomic Potentials II
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-09-generative-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 9 — Generative Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 10 — ML Methods for Rare Events Sampling
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 10 — ML Methods for Rare Events Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#101-rare-events-motivation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.1 Rare Events: Motivation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102-bias-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.2 Bias Methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#103-transition-path-sampling-tps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.3 Transition Path Sampling (TPS)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#104-the-committor-and-the-backward-kolmogorov-equation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.4 The Committor and the Backward Kolmogorov Equation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#105-ml-for-the-committor-and-aimmd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10.5 ML for the Committor and AIMMD
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-10-ml-methods-for-rare-events-sampling">Chapter 10 — ML Methods for Rare Events Sampling<a class="headerlink" href="#chapter-10-ml-methods-for-rare-events-sampling" title="Permanent link">&para;</a></h1>
+<h2 id="101-rare-events-motivation">10.1 Rare Events: Motivation<a class="headerlink" href="#101-rare-events-motivation" title="Permanent link">&para;</a></h2>
+<p>Rare events are transitions between long-lived <strong>metastable states</strong> separated by a free energy barrier <span class="arithmatex">\(\Delta F\)</span>. Their rates are exponentially suppressed by the barrier height (Arrhenius/Kramers law):</p>
+<div class="arithmatex">\[k = k_0 \exp\!\left(-\beta \Delta F\right)\]</div>
+<p>where <span class="arithmatex">\(\beta = 1/k_BT\)</span>. Examples include nucleation, chemical reactions, and biomolecular conformational changes. For simulations this is a fundamental problem: the system spends nearly all its time in one metastable state waiting for the event, so direct MD wastes almost all computational effort.</p>
+<hr />
+<h2 id="102-bias-methods">10.2 Bias Methods<a class="headerlink" href="#102-bias-methods" title="Permanent link">&para;</a></h2>
+<p>The central idea is to add a bias to the potential energy to force the system into the transition region:</p>
+<div class="arithmatex">\[U_B(x) = U(x) + U_\text{bias}[\zeta(x)]\]</div>
+<p>where <span class="arithmatex">\(\zeta(x)\)</span> is a <strong>collective variable (CV)</strong> — a function of the Cartesian coordinates that describes the reaction progress (e.g. an interatomic distance or bond angle). Simulating under <span class="arithmatex">\(U_B\)</span> gives a biased distribution <span class="arithmatex">\(\rho_B\)</span>; the original unbiased distribution is recovered by <strong>reweighting</strong>. Reweighting works because the bias is known analytically, so every generated configuration can be assigned its correct statistical weight — this is the principle of importance sampling.</p>
+<p>The <strong>potential of mean force (PMF)</strong> <span class="arithmatex">\(F(\zeta)\)</span> is the effective free energy as a function of the CV, obtained by integrating out all other degrees of freedom at fixed <span class="arithmatex">\(\zeta\)</span>:</p>
+<div class="arithmatex">\[F(\zeta) = -k_BT\log\!\int dx\,e^{-\beta U(x)}\,\delta(\zeta(x) - \zeta) + \text{const}\]</div>
+<p>It acts as an effective potential governing the CV dynamics. The unbiased PMF follows from the biased distribution via:</p>
+<div class="arithmatex">\[F(\hat\zeta) = -k_BT\log\rho(\hat\zeta) = -k_BT\log\!\left[\frac{Z_B}{Z}\right] - U_\text{bias}(\hat\zeta) - k_BT\log\rho_B(\hat\zeta)\]</div>
+<p>A crucial limitation of all bias methods: they distort the dynamics and therefore do not preserve kinetic information. They give thermodynamics (free energies, equilibrium populations) but not rates or transition mechanisms.</p>
+<p><strong>Umbrella sampling</strong> runs multiple independent simulations, each with a harmonic bias centred at a different target <span class="arithmatex">\(\bar\zeta^{(i)}\)</span>:</p>
+<div class="arithmatex">\[U_B^{(i)}(x) = U(x) + \frac{k}{2}\!\left(\zeta(x) - \bar\zeta^{(i)}\right)^2\]</div>
+<p>The windows are chosen to overlap in <span class="arithmatex">\(\zeta\)</span>-space; the PMF fragments from each window are stitched together via <strong>WHAM</strong> (weighted histogram analysis method), which finds the self-consistent set of free energies that best reconciles the overlapping histograms. Advantages: simple, yields the full PMF. Drawback: requires a good CV, dynamics is distorted, windows must be chosen in advance.</p>
+<p><strong>MetaDynamics</strong> (Laio &amp; Parrinello, 2002) builds a time-dependent adaptive bias by depositing Gaussians at the currently visited <span class="arithmatex">\(\zeta\)</span> value:</p>
+<div class="arithmatex">\[U_\text{bias}(\zeta(x), t) = W\sum_{k=0}^{N(t)} \exp\!\left(-\frac{[\zeta(x)-\bar\zeta_k]^2}{2\sigma_\zeta^2}\right)\]</div>
+<p>The system is discouraged from revisiting states it has already explored ("filling the free energy wells with sand"). In the original (conventional) formulation all Gaussians have fixed height <span class="arithmatex">\(W\)</span>, and at long times the accumulated bias converges to the negative PMF:</p>
+<div class="arithmatex">\[U_\text{bias}(\zeta(x),\, t\to\infty) = -F(\zeta) + C\]</div>
+<p>In the modern <strong>well-tempered</strong> variant, Gaussian heights are scaled down as the simulation progresses by a factor that depends on how much bias has already been deposited at that location. The bias then converges to only a fraction of the negative PMF:</p>
+<div class="arithmatex">\[U_\text{bias}(\zeta(x),\, t\to\infty) = -\!\left(1 - \frac{1}{\gamma}\right)F(\zeta) + C\]</div>
+<p>where <span class="arithmatex">\(\gamma &gt; 1\)</span> is a user-chosen bias factor. This prevents the system from being pushed completely out of equilibrium and improves convergence. No predefined windows are needed. Drawback: still requires a CV, and the dynamics during the simulation is distorted.</p>
+<hr />
+<h2 id="103-transition-path-sampling-tps">10.3 Transition Path Sampling (TPS)<a class="headerlink" href="#103-transition-path-sampling-tps" title="Permanent link">&para;</a></h2>
+<p>Bias methods distort the dynamics and require a pre-chosen CV. <strong>Transition path sampling</strong> avoids both by performing MCMC directly in the space of reactive trajectories.</p>
+<p>The <strong>transition path ensemble</strong> is the set of all trajectories connecting stable states <span class="arithmatex">\(A\)</span> and <span class="arithmatex">\(B\)</span>:</p>
+<div class="arithmatex">\[P(x|\text{TP}) \propto P(\text{TP}|x)\,\rho(x)\]</div>
+<p>TPS generates new paths from old ones via the <strong>shooting algorithm</strong>:
+1. Select a shooting point <span class="arithmatex">\(x_k\)</span> from the current path.
+2. Integrate a new trajectory forward and backward from <span class="arithmatex">\(x_k\)</span>.
+3. Accept the new path if it is reactive (<span class="arithmatex">\(A\to B\)</span> or <span class="arithmatex">\(B\to A\)</span>); otherwise reject (detailed balance criterion).</p>
+<p>Advantages: dynamics is unbiased, no reaction coordinate required, and — crucially — kinetic information (transition rates, mechanism) is preserved because the real dynamics is used throughout. Drawback: each move requires a full trajectory integration, and like any MCMC method it suffers from correlations between successive paths.</p>
+<p><strong>Shooting from the Top</strong> is a TPS variant that restricts shooting points to the transition state region (near the top of the barrier) rather than the full path. This eliminates long decorrelation times between accepted moves. The drawback is that it reintroduces a CV to define "the top", making it somewhat a hybrid between TPS and bias methods.</p>
+<p><strong>Normalizing flows for TPS</strong> (Falkner et al. 2023) address a fundamental bottleneck of standard TPS: the shooting algorithm is inherently sequential (each new path depends on the previous one), producing correlated paths and resisting parallelization. The key idea is to decouple shooting point generation from the trajectory integration step.</p>
+<p><strong>Conditioned Boltzmann generators.</strong> A normalizing flow is conditioned on a bias center <span class="arithmatex">\(\bar{r}\)</span> (a value of a collective variable <span class="arithmatex">\(\zeta(x)\)</span>), producing the transformation <span class="arithmatex">\(x = F(z|\bar{r};\theta)\)</span> with the conditioned change-of-variables formula</p>
+<div class="arithmatex">\[q_x(x|\bar{r}) = p_z\!\left(F^{-1}(x|\bar{r};\theta)\right)|\det J_{F^{-1}}(x|\bar{r};\theta)|\]</div>
+<p>Sampling is done by drawing <span class="arithmatex">\(z \sim \mathcal{N}(0,I)\)</span> and mapping <span class="arithmatex">\(x = F(z|\bar{r};\theta)\)</span> for a chosen <span class="arithmatex">\(\bar{r}\)</span>. By varying <span class="arithmatex">\(\bar{r}\)</span>, a single trained network generates configurations in any targeted region of phase space — analogous to umbrella windows, but without running separate simulations for each window.</p>
+<p><strong>Parallel path sampling.</strong> A large batch of shooting points is generated before any trajectory integration begins. From each shooting point, forward and backward trajectory segments are integrated independently until a stable state is reached. This makes path generation embarrassingly parallel — there are no dependencies between trajectories.</p>
+<p><strong>Path reweighting.</strong> Trajectories launched from the shooting point distribution <span class="arithmatex">\(p_\text{SP}(x)\)</span> do not form a properly weighted transition path ensemble, because paths initiated in high-probability regions are overrepresented. The correction factor for a trajectory <span class="arithmatex">\(X(\tau) = \{x_0, x_{\Delta t},\ldots, x_\tau\}\)</span> is</p>
+<div class="arithmatex">\[\Omega[X(\tau)] = \left[\sum_{k=0}^{\tau/\Delta t} \frac{p_\text{SP}(x_{k\Delta t})}{p_\text{eq}(x_{k\Delta t})}\right]^{-1}\]</div>
+<p>where <span class="arithmatex">\(p_\text{eq}(x) \propto e^{-\beta U(x)}\)</span>. Observable averages over the transition path ensemble are then computed as the weighted average <span class="arithmatex">\(\langle A \rangle = \sum_i \Omega[X_i] A[X_i] / \sum_i \Omega[X_i]\)</span>.</p>
+<p><strong>Training.</strong> The conditioned flow is trained using a combined forward/reverse KL loss. Training by example (forward KL) uses configurations from biased simulations at discrete bias centers <span class="arithmatex">\(\bar{r}_j\)</span>:</p>
+<div class="arithmatex">\[\mathcal{L}_\text{fwd} = \mathbb{E}_{\bar{r}}\,\mathbb{E}_{x}\!\left[\frac{1}{\sigma^2}\|F^{-1}(x|\bar{r};\theta)\|^2 - \log|\det J_{F^{-1}}(x|\bar{r};\theta)|\right]\]</div>
+<p>Training by energy (reverse KL) samples from the latent Gaussian and evaluates the biased potential:</p>
+<div class="arithmatex">\[\mathcal{L}_\text{rev} = \mathbb{E}_{\bar{r}}\,\mathbb{E}_{z}\!\left[\beta U(F(z|\bar{r};\theta)) + \frac{\beta k}{2}[\zeta(F(z|\bar{r};\theta)) - \bar{r}]^2 - \log|\det J(z|\bar{r};\theta)|\right]\]</div>
+<p>The final loss is <span class="arithmatex">\(\mathcal{L} = \lambda_\text{fwd}\mathcal{L}_\text{fwd} + \lambda_\text{rev}\mathcal{L}_\text{rev}\)</span>.</p>
+<p><strong>Bonus outputs.</strong> Because the network generates configurations at many bias centers, the PMF <span class="arithmatex">\(F(\zeta)\)</span> can be reconstructed directly via WHAM on the generated samples. The transition path probability <span class="arithmatex">\(p(\text{TP}|\zeta(x))\)</span> is also accessible from the path ensemble, providing a data-driven estimate of the transition state region without additional simulations.</p>
+<hr />
+<h2 id="104-the-committor-and-the-backward-kolmogorov-equation">10.4 The Committor and the Backward Kolmogorov Equation<a class="headerlink" href="#104-the-committor-and-the-backward-kolmogorov-equation" title="Permanent link">&para;</a></h2>
+<p>The <strong>committor</strong> <span class="arithmatex">\(p_B(x)\)</span> is the probability that a trajectory initiated at <span class="arithmatex">\(x\)</span> with random momenta reaches <span class="arithmatex">\(B\)</span> before <span class="arithmatex">\(A\)</span>. It is the theoretically optimal reaction coordinate: it is defined by the physics of the system rather than an arbitrary choice of CV. Transition states are precisely the configurations where <span class="arithmatex">\(p_B(x) = 1/2\)</span>, and the committor is related to the path ensemble by:</p>
+<div class="arithmatex">\[P(\text{TP}|x) = 2p_B(x)(1 - p_B(x))\]</div>
+<p>For overdamped Langevin dynamics <span class="arithmatex">\(dX_t = -D\nabla U\,dt + \sqrt{2D}\,dW_t\)</span>, the committor satisfies the <strong>backward Kolmogorov equation</strong>:</p>
+<div class="arithmatex">\[Lp_B = -D\nabla U\cdot\nabla p_B + D\Delta p_B = 0\]</div>
+<p>with boundary conditions <span class="arithmatex">\(p_B = 0\)</span> on <span class="arithmatex">\(A\)</span> and <span class="arithmatex">\(p_B = 1\)</span> on <span class="arithmatex">\(B\)</span>. In one dimension this has the closed-form solution:</p>
+<div class="arithmatex">\[p_B(x) = \frac{\int_a^x dx'\,e^{\beta U(x')}}{\int_a^b dx'\,e^{\beta U(x')}}\]</div>
+<p>In higher dimensions no closed form exists, motivating a machine learning approach.</p>
+<hr />
+<h2 id="105-ml-for-the-committor-and-aimmd">10.5 ML for the Committor and AIMMD<a class="headerlink" href="#105-ml-for-the-committor-and-aimmd" title="Permanent link">&para;</a></h2>
+<p><strong>Variational approach.</strong> The committor can be learned by representing it as a neural network and minimizing the variational loss (from the stationarity of the Kolmogorov equation):</p>
+<div class="arithmatex">\[\mathcal{I}[p_B] = Z^{-1}\int e^{-\beta U(x)}|\nabla p_B(x)|^2\,dx\]</div>
+<p>The problem is that configurations near the barrier (where <span class="arithmatex">\(p_B \approx 1/2\)</span>) are never spontaneously visited. The solution is to bias the system toward the barrier using:</p>
+<div class="arithmatex">\[U_\text{bias}(x) = -k_BT\log|\nabla p_B(x)|^2\]</div>
+<p>and run a self-consistent cycle: sample with biased potential → update dataset → retrain committor → update bias.</p>
+<p><strong>AIMMD</strong> (AI for Molecular Mechanism Discovery) integrates committor learning with TPS into a self-consistent loop:</p>
+<ol>
+<li>Run <span class="arithmatex">\(N\)</span> TPS steps: select shooting point, shoot forward/backward, record outcomes <span class="arithmatex">\((n_A, n_B)\)</span>.</li>
+<li>Train committor model <span class="arithmatex">\(p_B(x) \approx \sigma(q(x;\theta))\)</span> by maximizing the binomial log-likelihood:</li>
+</ol>
+<div class="arithmatex">\[\mathcal{L}(\theta) = \sum_i\left[n_B^{(i)}\log\sigma(q_i) + n_A^{(i)}\log(1-\sigma(q_i))\right]\]</div>
+<ol>
+<li>Use the learned committor to bias shooting point selection toward <span class="arithmatex">\(p_B \approx 1/2\)</span>.</li>
+</ol>
+<p>This closes the loop: better shooting points give more informative trajectories, which train a better committor, which selects even better shooting points.</p>
+<p><strong>Symbolic regression</strong> can then be applied to extract an interpretable reaction coordinate from the trained committor model. The pipeline has two steps:</p>
+<ol>
+<li>
+<p><strong>Attribution analysis:</strong> evaluate the training loss on the full dataset, then perturb one input coordinate at a time across the entire batch and recompute the loss. The increase in loss measures how much that coordinate contributes to the committor — high sensitivity means high importance. This ranks all input degrees of freedom by their relevance to the reaction.</p>
+</li>
+<li>
+<p><strong>Symbolic regression:</strong> take the subset of most important inputs and run an evolutionary algorithm to distill a simple analytical expression from the trained network. The result is a compact, human-interpretable reaction coordinate, e.g.:</p>
+</li>
+</ol>
+<div class="arithmatex">\[q_\text{sr}(x_1, x_3) = -8.38\,x_1 + 5.62\exp[-0.285\,x_3]\]</div>
+<p>This two-step approach answers both <em>which</em> degrees of freedom matter and <em>how</em> they combine into a reaction coordinate.</p>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="../javascripts/font-size.js"></script>
+      
+        <script src="../javascripts/collapsible-sidebars.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

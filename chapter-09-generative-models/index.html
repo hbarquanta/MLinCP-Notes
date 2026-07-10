@@ -1,0 +1,1269 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Lecture notes for Machine Learning in Computational Physics">
+      
+      
+      
+        <link rel="canonical" href="https://hbarquanta.github.io/MLinCP-Notes/chapter-09-generative-models/">
+      
+      
+        <link rel="prev" href="../chapter-08-machine-learning-interatomic-potentials-ii/">
+      
+      
+        <link rel="next" href="../chapter-10-ml-methods-for-rare-events-sampling/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Chapter 9 — Generative Models - ML in Computational Physics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-9-generative-models" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ML in Computational Physics" class="md-header__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ML in Computational Physics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 9 — Generative Models
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ML in Computational Physics" class="md-nav__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    ML in Computational Physics
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-01-introduction-core-ml-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1 — Introduction & Core ML Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-02-descriptors-featurization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2 — Descriptors & Featurization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-03-dimensionality-reduction-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3 — Dimensionality Reduction & Clustering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-04-regression-uncertainty-quantification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4 — Regression & Uncertainty Quantification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-05-neural-networks-trees-regularization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5 — Neural Networks, Trees & Regularization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-06-graph-neural-networks-gnns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6 — Graph Neural Networks (GNNs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-07-machine-learning-interatomic-potentials-i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 7 — Machine Learning Interatomic Potentials I
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-08-machine-learning-interatomic-potentials-ii/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 8 — Machine Learning Interatomic Potentials II
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 9 — Generative Models
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 9 — Generative Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#91-problem-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.1 Problem Statement
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#92-taxonomy-of-generative-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.2 Taxonomy of Generative Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#93-generative-adversarial-networks-gans" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.3 Generative Adversarial Networks (GANs)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#94-variational-autoencoders-vaes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.4 Variational Autoencoders (VAEs)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.4 Variational Autoencoders (VAEs)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#evidence-lower-bound-elbo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evidence Lower Bound (ELBO)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reparametrization-trick" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reparametrization Trick
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#95-autoregressive-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.5 Autoregressive Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#96-large-language-models-llms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.6 Large Language Models (LLMs)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#97-the-transformer-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.7 The Transformer Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.7 The Transformer Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-token-to-prediction-dimensions-throughout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From Token to Prediction: Dimensions Throughout
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-attention-the-core-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Attention? The Core Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#queries-keys-and-values-single-head" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Queries, Keys, and Values (Single Head)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-head-attention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Head Attention
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#positional-encoding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Positional Encoding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#causal-masking-and-teacher-forcing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Causal Masking and Teacher Forcing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#block-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Block Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#98-the-problem-of-sampling-physical-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.8 The Problem of Sampling Physical Configurations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#99-normalizing-flows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.9 Normalizing Flows
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.9 Normalizing Flows">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#split-coupling-architecture-tractable-jacobian" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Split-Coupling Architecture (Tractable Jacobian)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#training-by-energy-vs-by-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Training: By Energy vs. By Example
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reweighting-observables-and-ress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reweighting Observables and rESS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choice-of-prior" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choice of Prior
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-coupling-architectures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Coupling Architectures
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#continuous-normalizing-flows-cnfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Continuous Normalizing Flows (CNFs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#910-diffusion-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.10 Diffusion Models
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9.10 Diffusion Models">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#denoising-diffusion-probabilistic-models-ddpms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Denoising Diffusion Probabilistic Models (DDPMs)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forward-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forward Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reverse-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reverse Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sampling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#score-based-diffusion-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Score-Based Diffusion Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#911-flow-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9.11 Flow Matching
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-10-ml-methods-for-rare-events-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 10 — ML Methods for Rare Events Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-9-generative-models">Chapter 9 — Generative Models<a class="headerlink" href="#chapter-9-generative-models" title="Permanent link">&para;</a></h1>
+<h2 id="91-problem-statement">9.1 Problem Statement<a class="headerlink" href="#91-problem-statement" title="Permanent link">&para;</a></h2>
+<p>Given data <span class="arithmatex">\(x \in X\)</span> distributed with <span class="arithmatex">\(\mu_X(x)\)</span>, draw new samples <span class="arithmatex">\(x' \sim \mu_X\)</span>.</p>
+<p><strong>Two regimes</strong>:
+- <strong>Learning unknown distributions from data</strong> (molecules, crystals, proteins)
+- <strong>Sampling from known distributions</strong> (Boltzmann: <span class="arithmatex">\(\rho(x) \propto e^{-\beta U(x)}\)</span>)</p>
+<h2 id="92-taxonomy-of-generative-models">9.2 Taxonomy of Generative Models<a class="headerlink" href="#92-taxonomy-of-generative-models" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>Generative Models
+├── Explicit Density
+│   ├── Tractable Density
+│   │   ├── Autoregressive Models (FVBN, NADE, LLMs)
+│   │   └── Normalizing Flows
+│   └── Approximate Density
+│       ├── Variational Autoencoders (VAEs)
+│       └── Diffusion Models (DDPMs)
+├── Implicit Density
+│   └── Generative Adversarial Networks (GANs)
+└── Score-Matching
+    ├── Diffusion Models (Score Matching)
+    └── Flow Matching
+</code></pre></div>
+<h2 id="93-generative-adversarial-networks-gans">9.3 Generative Adversarial Networks (GANs)<a class="headerlink" href="#93-generative-adversarial-networks-gans" title="Permanent link">&para;</a></h2>
+<p>GANs learn to generate realistic samples by training two networks adversarially against each other, with no explicit probability model. The <strong>generator</strong> <span class="arithmatex">\(g(z;\theta^g)\)</span> maps random noise <span class="arithmatex">\(z\sim\mathcal{N}(0,I)\)</span> to data space — it never sees real data directly. The <strong>discriminator</strong> <span class="arithmatex">\(d(x;\theta^d) \in [0,1]\)</span> tries to tell real from fake. They play a minimax game:</p>
+<div class="arithmatex">\[v(\theta^g,\theta^d) = \mathbb{E}_{x\sim p_\text{data}}\log d(x) + \mathbb{E}_{z\sim p_z}\log(1-d(g(z)))\]</div>
+<div class="arithmatex">\[(\theta^g, \theta^d)^* = \arg\min_{\theta^g}\max_{\theta^d}\, v\]</div>
+<p>At Nash equilibrium: generator reproduces <span class="arithmatex">\(p_\text{data}\)</span> exactly and <span class="arithmatex">\(d(x)=\tfrac{1}{2}\)</span> everywhere. Because there is no explicit <span class="arithmatex">\(P(x;\theta)\)</span>, GANs are <strong>implicit density models</strong> — good at generating, cannot evaluate likelihoods. Training is unstable: (1) <strong>oscillations</strong> from non-convex minimax, (2) <strong>vanishing gradients</strong> when discriminator dominates early (JS-divergence saturates), (3) <strong>mode collapse</strong> when the generator fixates on a subset of modes that fools the discriminator.</p>
+<h2 id="94-variational-autoencoders-vaes">9.4 Variational Autoencoders (VAEs)<a class="headerlink" href="#94-variational-autoencoders-vaes" title="Permanent link">&para;</a></h2>
+<p>A standard <strong>autoencoder</strong> compresses <span class="arithmatex">\(x\)</span> into a low-dimensional code <span class="arithmatex">\(z\)</span> (the <strong>latent space</strong>) and reconstructs it. The latent space is irregular — you cannot sample a random <span class="arithmatex">\(z\)</span> and decode something meaningful, so standard AEs cannot generate new data.</p>
+<p>A <strong>VAE</strong> fixes this by making the encoder output a <em>distribution</em> over <span class="arithmatex">\(z\)</span> instead of a single point: a Gaussian <span class="arithmatex">\(\mathcal{N}(\mu_\phi(x), \sigma_\phi(x))\)</span>. Sampling from this distribution and regularizing it toward <span class="arithmatex">\(\mathcal{N}(0,I)\)</span> forces the latent space to be smooth, so any randomly drawn <span class="arithmatex">\(z\)</span> decodes into a realistic sample.</p>
+<p><strong>The generative model</strong>: to generate <span class="arithmatex">\(x\)</span>, first sample a latent code <span class="arithmatex">\(z\)</span> from a simple <strong>prior</strong> <span class="arithmatex">\(\mathcal{N}(0,I)\)</span>, then pass it through the <strong>decoder</strong> <span class="arithmatex">\(P(x|z;\theta)\)</span> (a neural network). The total probability of <span class="arithmatex">\(x\)</span> is obtained by summing (marginalizing) over all possible <span class="arithmatex">\(z\)</span>:</p>
+<div class="arithmatex">\[P(x;\theta) = \int dz\; \underbrace{P(x|z;\theta)}_{\text{likelihood / decoder}} \underbrace{\mathcal{N}(z;0,I)}_{\text{prior}}\]</div>
+<p><strong>Why this integral is intractable</strong>: <span class="arithmatex">\(z\)</span> is typically 100-dimensional. Evaluating the integral requires summing over the entire 100D latent space — the integrand is nearly zero almost everywhere, and numerical integration over such a space is hopeless. So we cannot compute <span class="arithmatex">\(P(x;\theta)\)</span>, and therefore cannot maximize <span class="arithmatex">\(\log P(x;\theta)\)</span> directly.</p>
+<p><strong>Bayes' theorem and the posterior</strong>: applying Bayes gives the distribution over which <span class="arithmatex">\(z\)</span> values explain a given <span class="arithmatex">\(x\)</span>:</p>
+<div class="arithmatex">\[\underbrace{P(z|x;\theta)}_{\text{posterior}} = \frac{\overbrace{P(x|z;\theta)}^{\text{likelihood}}\;\overbrace{\mathcal{N}(z;0,I)}^{\text{prior}}}{\underbrace{P(x;\theta)}_{\text{evidence (intractable)}}}\]</div>
+<p>The posterior tells us: "given I observed <span class="arithmatex">\(x\)</span>, which latent codes <span class="arithmatex">\(z\)</span> most likely produced it?" The numerator is computable (decoder times prior), but the denominator is the same intractable integral. We are stuck in a circle: cannot compute the likelihood, cannot compute the posterior.</p>
+<p><strong>The fix — approximate the posterior with the encoder</strong>: instead of computing <span class="arithmatex">\(P(z|x;\theta)\)</span>, approximate it with a Gaussian parametrized by a neural network — the <strong>encoder</strong> <span class="arithmatex">\(Q(z|x;\phi) = \mathcal{N}(z;\mu_\phi(x),\sigma_\phi(x))\)</span>. Feed <span class="arithmatex">\(x\)</span> in, get a Gaussian, sample <span class="arithmatex">\(z\)</span>. Now optimize a tractable lower bound on <span class="arithmatex">\(\log P(x;\theta)\)</span> — the ELBO.</p>
+<h3 id="evidence-lower-bound-elbo">Evidence Lower Bound (ELBO)<a class="headerlink" href="#evidence-lower-bound-elbo" title="Permanent link">&para;</a></h3>
+<p>Introduce <span class="arithmatex">\(Q(z|x;\phi)\)</span> inside the log by multiplying and dividing, then apply Jensen's inequality (<span class="arithmatex">\(\log\)</span> concave <span class="arithmatex">\(\Rightarrow\)</span> <span class="arithmatex">\(\log\mathbb{E}[Y]\geq\mathbb{E}[\log Y]\)</span>):</p>
+<div class="arithmatex">\[\log P(x;\theta) = \log\,\mathbb{E}_{z\sim Q}\!\left[\frac{P(x|z;\theta)\,\mathcal{N}(z;0,I)}{Q(z|x;\phi)}\right] \geq \mathbb{E}_{z\sim Q}\!\left[\log\frac{P(x|z;\theta)\,\mathcal{N}(z;0,I)}{Q(z|x;\phi)}\right]\]</div>
+<p>Splitting the log fraction gives the ELBO in its standard form:</p>
+<div class="arithmatex">\[\mathcal{L} = \underbrace{\mathbb{E}_{z\sim Q_\phi}[\log P(x|z;\theta)]}_{\text{reconstruction}} - \underbrace{\text{KL}(Q(z|x;\phi)\,\|\,\mathcal{N}(0,I))}_{\text{regularization}} \leq \log P(x;\theta)\]</div>
+<p>The gap to the true log-likelihood is exactly <span class="arithmatex">\(\text{KL}(Q(z|x;\phi)\,\|\,P(z|x;\theta))\geq 0\)</span> — hence "lower bound". Both terms are now fully tractable: the reconstruction term is a decoder forward pass, and the KL between two Gaussians has a closed-form formula. Maximizing <span class="arithmatex">\(\mathcal{L}\)</span> simultaneously improves the decoder (reconstruction) and forces the encoder toward the true posterior (the gap shrinks). The KL term also prevents the encoder from collapsing to a deterministic point map, keeping the latent space smooth.</p>
+<h3 id="reparametrization-trick">Reparametrization Trick<a class="headerlink" href="#reparametrization-trick" title="Permanent link">&para;</a></h3>
+<p>The encoder outputs a Gaussian and we sample <span class="arithmatex">\(z\)</span> from it — but sampling is not differentiable, so backpropagation cannot reach the encoder parameters <span class="arithmatex">\(\phi\)</span>. Fix: push the randomness into a parameter-free noise variable <span class="arithmatex">\(\varepsilon\)</span>:</p>
+<div class="arithmatex">\[z = \mu_\phi(x) + \sigma_\phi(x)\odot\varepsilon, \qquad \varepsilon\sim\mathcal{N}(0,I)\]</div>
+<p>Now <span class="arithmatex">\(z\)</span> is a deterministic function of <span class="arithmatex">\(\phi\)</span>, and gradients flow through <span class="arithmatex">\(\mu_\phi\)</span> and <span class="arithmatex">\(\sigma_\phi\)</span> normally.</p>
+<p><strong>Application</strong>: molecular design (Gómez-Bombarelli et al., ACS Cent. Sci. 2018) — encode SMILES strings into a smooth latent <span class="arithmatex">\(z\)</span>, do gradient ascent on a predicted property, decode back to a molecule.</p>
+<h2 id="95-autoregressive-models">9.5 Autoregressive Models<a class="headerlink" href="#95-autoregressive-models" title="Permanent link">&para;</a></h2>
+<p>An autoregressive model generates data sequentially: each new value is predicted from all previously generated values, so the model only ever needs to learn conditional distributions rather than the full joint distribution at once. Unlike VAEs or GANs, this gives an <strong>exact, tractable likelihood</strong> with no approximations:</p>
+<div class="arithmatex">\[P(x;\theta) = \prod_{i=1}^D P(x_i|x_{&lt;i};\theta), \qquad x_{&lt;i} := \{x_{i-1},\ldots,x_1\}\]</div>
+<p>Each conditional is modelled as a Gaussian: <span class="arithmatex">\(P(x_i|x_{&lt;i};\theta) = \mathcal{N}(x_i;\,\mu_i(x_{&lt;i};\theta),\,\sigma_i(x_{&lt;i};\theta))\)</span>. Training maximizes log-likelihood. The key challenge is <strong>how to parametrize</strong> <span class="arithmatex">\(\mu_i\)</span> and <span class="arithmatex">\(\sigma_i\)</span> efficiently across all <span class="arithmatex">\(D\)</span> conditionals:</p>
+<p><strong>FVBN</strong> (Fully Visible Belief Network): each conditional <span class="arithmatex">\(i\)</span> has its own independent linear weights. Parameters scale as <span class="arithmatex">\(\mathcal{O}(D^2)\)</span> and capacity is poor.</p>
+<p><strong>NAN</strong> (Nonlinear Autoregressive Network): adds a nonlinear hidden layer <span class="arithmatex">\(h_i = \tanh(W_i x_{&lt;i} + b_i)\)</span> per conditional. More expressive, but still <span class="arithmatex">\(\mathcal{O}(D^2)\)</span> parameters — each conditional still has its own weight matrix <span class="arithmatex">\(W_i\)</span>.</p>
+<p><strong>NADE</strong> (Neural Autoregressive Distribution Estimator): the key insight is to <strong>share a single weight matrix</strong> <span class="arithmatex">\(W\)</span> across all conditionals:</p>
+<div class="arithmatex">\[h_i = \tanh\!\left(c + \sum_{j&lt;i} W_{:,j}\, x_j\right)\]</div>
+<p>The same columns of <span class="arithmatex">\(W\)</span> are reused for every <span class="arithmatex">\(h_i\)</span>. This makes NADE both expressive and parameter-efficient — <span class="arithmatex">\(\mathcal{O}(D)\)</span> instead of <span class="arithmatex">\(\mathcal{O}(D^2)\)</span>.</p>
+<p><strong>Application</strong>: <strong>cG-SchNet</strong> applies autoregressive generation to molecules — places atoms one by one, conditioned on target properties (HOMO-LUMO gap, polarizability). Enables inverse molecular design.</p>
+<h2 id="96-large-language-models-llms">9.6 Large Language Models (LLMs)<a class="headerlink" href="#96-large-language-models-llms" title="Permanent link">&para;</a></h2>
+<p>LLMs are autoregressive models over discrete <strong>tokens</strong> (subwords), using a Transformer to compute context-dependent features. They model:</p>
+<div class="arithmatex">\[P(x;\theta) = \prod_{t=1}^T P(x_t|x_{&lt;t};\theta), \qquad h_t = \text{Transformer}(x_{&lt;t}), \qquad P(x_t|x_{&lt;t}) = \text{Softmax}(Wh_t+b)\]</div>
+<p>The Transformer allows each token to attend to all previous tokens in parallel during training (teacher forcing), making LLMs far more scalable than earlier RNNs. In chemistry: protein language models (ESM) predict structure from sequence; other LLMs generate crystal structures and stable inorganic materials.</p>
+<h2 id="97-the-transformer-architecture">9.7 The Transformer Architecture<a class="headerlink" href="#97-the-transformer-architecture" title="Permanent link">&para;</a></h2>
+<h3 id="from-token-to-prediction-dimensions-throughout">From Token to Prediction: Dimensions Throughout<a class="headerlink" href="#from-token-to-prediction-dimensions-throughout" title="Permanent link">&para;</a></h3>
+<p>A sentence is first split into <strong>tokens</strong> (subword pieces). Each token is looked up in an <strong>embedding matrix</strong> <span class="arithmatex">\(W_E \in \mathbb{R}^{|\text{vocab}|\times d_\text{model}}\)</span>, producing a vector <span class="arithmatex">\(e_t \in \mathbb{R}^{d_\text{model}}\)</span>. A <strong>positional encoding</strong> <span class="arithmatex">\(p_t \in \mathbb{R}^{d_\text{model}}\)</span> is added, giving the input matrix:</p>
+<div class="arithmatex">\[X = [e_1+p_1,\;\ldots,\;e_n+p_n] \in \mathbb{R}^{n\times d_\text{model}}\]</div>
+<p>This <span class="arithmatex">\(d_\text{model}\)</span>-dimensional vector per token is the central object that flows through the entire network. Every transformer block takes <span class="arithmatex">\(X\in\mathbb{R}^{n\times d_\text{model}}\)</span> and outputs a refined <span class="arithmatex">\(X'\in\mathbb{R}^{n\times d_\text{model}}\)</span> of the same shape — the embedding dimension never changes between layers. Only at the very end is the final vector for the last token projected back to vocabulary size via an <strong>unembedding matrix</strong> <span class="arithmatex">\(W_U\in\mathbb{R}^{d_\text{model}\times|\text{vocab}|}\)</span>, then softmaxed to give <span class="arithmatex">\(P(x_{t+1}|x_{\leq t})\)</span>.</p>
+<p>Each transformer block consists of two sub-layers: (1) <strong>multi-head self-attention</strong>, then (2) a <strong>feed-forward MLP</strong>, each followed by a residual connection and layer normalization.</p>
+<h3 id="why-attention-the-core-problem">Why Attention? The Core Problem<a class="headerlink" href="#why-attention-the-core-problem" title="Permanent link">&para;</a></h3>
+<p>After the embedding step, each token's vector encodes only what that token is — not its meaning in context. The word <em>mole</em> has the same initial vector regardless of whether the surrounding text is about chemistry, biology, or an animal. The attention mechanism is what allows each token's embedding to absorb information from all other tokens and update its meaning in context.</p>
+<h3 id="queries-keys-and-values-single-head">Queries, Keys, and Values (Single Head)<a class="headerlink" href="#queries-keys-and-values-single-head" title="Permanent link">&para;</a></h3>
+<p>Each token <span class="arithmatex">\(i\)</span> simultaneously broadcasts three things, computed by multiplying the embedding by three learned weight matrices:</p>
+<div class="arithmatex">\[q_i = e_i W^Q \in \mathbb{R}^{d_k}, \quad k_i = e_i W^K \in \mathbb{R}^{d_k}, \quad v_i = e_i W^V \in \mathbb{R}^{d_v}\]</div>
+<p>Intuitively (following 3Blue1Brown): the <strong>query</strong> encodes what token <span class="arithmatex">\(i\)</span> is <em>looking for</em> ("are there any adjectives before me?"), the <strong>key</strong> encodes what token <span class="arithmatex">\(j\)</span> <em>offers</em> ("I am an adjective"), and the <strong>value</strong> encodes <em>what token <span class="arithmatex">\(j\)</span> will send</em> if found relevant ("here is the information to add to your embedding").</p>
+<p>Alignment between token <span class="arithmatex">\(i\)</span>'s query and token <span class="arithmatex">\(j\)</span>'s key is measured by a dot product and normalized:</p>
+<div class="arithmatex">\[a_{ij} = \text{softmax}_j\!\left(\frac{q_i \cdot k_j}{\sqrt{d_k}}\right)\]</div>
+<p>The <span class="arithmatex">\(\sqrt{d_k}\)</span> scaling prevents dot products from becoming too large (which would saturate the softmax). Collecting all pairs into matrix form gives the <strong>attention pattern</strong> <span class="arithmatex">\(A = \text{softmax}(QK^T/\sqrt{d_k}) \in \mathbb{R}^{n\times n}\)</span>, where <span class="arithmatex">\(A_{ij}\)</span> is how much token <span class="arithmatex">\(i\)</span> attends to token <span class="arithmatex">\(j\)</span>.</p>
+<p>The value vectors <span class="arithmatex">\(v_j\)</span> encode "what token <span class="arithmatex">\(j\)</span> will contribute if attended to". The update to token <span class="arithmatex">\(i\)</span>'s embedding is a weighted average of all value vectors, weighted by how much token <span class="arithmatex">\(i\)</span> attends to each token <span class="arithmatex">\(j\)</span>:</p>
+<div class="arithmatex">\[\Delta e_i = \sum_j a_{ij}\,v_j\]</div>
+<p>Concretely: if token <span class="arithmatex">\(i\)</span> is <em>creature</em> and <em>fluffy</em>, <em>blue</em> got high attention weights, then <span class="arithmatex">\(\Delta e_i \approx v_\text{fluffy} + v_\text{blue}\)</span> — the embedding gets updated toward "fluffy blue creature". Stacking all <span class="arithmatex">\(\Delta e_i\)</span> as rows and writing <span class="arithmatex">\(A = \text{softmax}(QK^T/\sqrt{d_k})\)</span>:</p>
+<div class="arithmatex">\[\Delta E = AV = \underbrace{\text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right)}_{A\,\in\,\mathbb{R}^{n\times n}} V \in \mathbb{R}^{n\times d_v}\]</div>
+<p>This is added back via a residual connection: <span class="arithmatex">\(E' = E + \Delta E\)</span>.</p>
+<h3 id="multi-head-attention">Multi-Head Attention<a class="headerlink" href="#multi-head-attention" title="Permanent link">&para;</a></h3>
+<p>A single head can only learn one type of contextual relationship. Running <span class="arithmatex">\(h\)</span> heads in parallel, each with its own <span class="arithmatex">\(W^Q_i, W^K_i, W^V_i\)</span>, lets the model simultaneously capture many different relationships (e.g., adjective–noun, subject–verb, coreference). Each head operates in a lower-dimensional subspace <span class="arithmatex">\(d_k = d_v = d_\text{model}/h\)</span>:</p>
+<div class="arithmatex">\[\text{head}_i = \text{Attention}(XW^Q_i,\; XW^K_i,\; XW^V_i) \in \mathbb{R}^{n\times d_v}\]</div>
+<p>The outputs are concatenated and projected back to <span class="arithmatex">\(d_\text{model}\)</span>:</p>
+<div class="arithmatex">\[\text{MultiHead}(Q,K,V) = \text{Concat}(\text{head}_1,\ldots,\text{head}_h)\,W^O, \quad W^O\in\mathbb{R}^{hd_v\times d_\text{model}}\]</div>
+<p>Two variants:</p>
+<ul>
+<li><strong>Self-attention</strong> — <span class="arithmatex">\(K = Q = V = XW\)</span>, all from the same sequence <span class="arithmatex">\(X \in \mathbb{R}^{n \times d_\text{model}}\)</span>.</li>
+<li><strong>Cross-attention</strong> (encoder-decoder, e.g. translation) — given two sequences <span class="arithmatex">\(X \in \mathbb{R}^{n \times d_\text{model}}\)</span> and <span class="arithmatex">\(Y \in \mathbb{R}^{m \times d_\text{model}}\)</span>, both <span class="arithmatex">\(K\)</span> and <span class="arithmatex">\(Q\)</span> come from <span class="arithmatex">\(X\)</span> while <span class="arithmatex">\(V\)</span> comes from <span class="arithmatex">\(Y\)</span>: <span class="arithmatex">\(K = Q = XW^X \in \mathbb{R}^{n \times d_k}\)</span>, <span class="arithmatex">\(V = YW^Y \in \mathbb{R}^{m \times d_v}\)</span>.</li>
+</ul>
+<h3 id="positional-encoding">Positional Encoding<a class="headerlink" href="#positional-encoding" title="Permanent link">&para;</a></h3>
+<p>Self-attention is <strong>permutation-equivariant</strong>: <span class="arithmatex">\(\text{Attention}(PX) = P\,\text{Attention}(X)\)</span> for any permutation <span class="arithmatex">\(P\)</span>. This means without positional information, "the dog bites the man" and "the man bites the dog" look identical. Positional encodings <span class="arithmatex">\(p_t\)</span> added to the embeddings break this symmetry: after permuting tokens, the position information no longer matches the token, so the model can distinguish order.</p>
+<h3 id="causal-masking-and-teacher-forcing">Causal Masking and Teacher Forcing<a class="headerlink" href="#causal-masking-and-teacher-forcing" title="Permanent link">&para;</a></h3>
+<p>For autoregressive generation, a token must not attend to future tokens (that would reveal the answer). Before softmax, all entries where <span class="arithmatex">\(j &gt; i\)</span> in <span class="arithmatex">\(QK^T\)</span> are set to <span class="arithmatex">\(-\infty\)</span>, which maps to 0 after softmax — the <strong>causal mask</strong>.</p>
+<p><strong>Teacher forcing</strong>: during training, all ground-truth tokens are fed simultaneously as input (rather than feeding the model's own predictions). This allows fully parallel training, since each position's loss <span class="arithmatex">\(\log P(x_i|x_{&lt;i};\theta)\)</span> can be computed in one forward pass. The causal mask enforces that position <span class="arithmatex">\(i\)</span> can only see positions <span class="arithmatex">\(&lt; i\)</span>.</p>
+<h3 id="block-structure">Block Structure<a class="headerlink" href="#block-structure" title="Permanent link">&para;</a></h3>
+<p><strong>Encoder block</strong> (N×): Multi-head attention → Add &amp; Norm → FFN → Add &amp; Norm</p>
+<p><strong>Decoder block</strong> (N×): Masked multi-head attention → Add &amp; Norm → Cross-attention → Add &amp; Norm → FFN → Add &amp; Norm</p>
+<p>LLMs (GPT-style) use decoder-only blocks with causal masking throughout.</p>
+<h2 id="98-the-problem-of-sampling-physical-configurations">9.8 The Problem of Sampling Physical Configurations<a class="headerlink" href="#98-the-problem-of-sampling-physical-configurations" title="Permanent link">&para;</a></h2>
+<p>Standard simulation methods for sampling a target distribution <span class="arithmatex">\(\mu_X(x) \propto e^{-\beta U(x)}\)</span> — Monte Carlo (random moves accepted by Metropolis criterion) and Molecular Dynamics (Langevin integration) — both require many force evaluations per independent sample. Even with MLIPs reducing the cost per evaluation, these methods remain expensive for high-dimensional systems due to the large number of steps needed to generate decorrelated configurations. This motivates <strong>latent generative models</strong> that directly map simple noise to samples, producing decorrelated configurations in one forward pass.</p>
+<h2 id="99-normalizing-flows">9.9 Normalizing Flows<a class="headerlink" href="#99-normalizing-flows" title="Permanent link">&para;</a></h2>
+<p>A normalizing flow is an <strong>invertible</strong> neural network <span class="arithmatex">\(F(\cdot;\theta): \mathbb{R}^n \to \mathbb{R}^n\)</span> that maps samples from a simple <strong>prior</strong> <span class="arithmatex">\(\mu_Z\)</span> (typically a standard Gaussian) to samples that approximate a complex <strong>target</strong> distribution — in physics, the Boltzmann distribution <span class="arithmatex">\(\mu_X(x) \propto e^{-\beta U(x)}\)</span>. Invertibility plus the change-of-variables formula gives exact access to the induced likelihood in both directions:</p>
+<div class="arithmatex">\[p_X(F(z;\theta)) = \mu_Z(z)\,|\det J(z;\theta)|^{-1}\]</div>
+<div class="arithmatex">\[\mu_Z(F^{-1}(x;\theta)) = p_X(x)\,|\det J^{-1}(x;\theta)|^{-1}\]</div>
+<p>where <span class="arithmatex">\(J(z;\theta) = \partial F/\partial z\)</span> is the Jacobian and <span class="arithmatex">\(p_X\)</span> is the distribution the flow actually generates (an approximation of <span class="arithmatex">\(\mu_X\)</span>). This exact likelihood enables both <strong>training</strong> and <strong>reweighting of observables</strong> — two capabilities that approximate generative models (GANs, VAEs) do not provide.</p>
+<h3 id="split-coupling-architecture-tractable-jacobian">Split-Coupling Architecture (Tractable Jacobian)<a class="headerlink" href="#split-coupling-architecture-tractable-jacobian" title="Permanent link">&para;</a></h3>
+<p>A naïve neural network has an <span class="arithmatex">\(n\times n\)</span> Jacobian with <span class="arithmatex">\(\mathcal{O}(n^3)\)</span> determinant cost. Split-coupling flows partition the input into two halves <span class="arithmatex">\(z = (z^I, z^{II})\)</span> and apply:</p>
+<div class="arithmatex">\[F(z;\theta) = \begin{cases} x^I = z^I \\ x^{II} = z^{II} \odot \exp(S(z^I;\theta)) + T(z^I;\theta) \end{cases}\]</div>
+<p>where <span class="arithmatex">\(S\)</span> and <span class="arithmatex">\(T\)</span> are arbitrary (non-invertible) neural networks acting only on <span class="arithmatex">\(z^I\)</span>. The Jacobian is block-lower-triangular, so its determinant is just the product of diagonal entries:</p>
+<div class="arithmatex">\[\log|\det J(z;\theta)| = \sum_i S_i(z^I;\theta)\]</div>
+<p>The inverse is equally cheap:</p>
+<div class="arithmatex">\[F^{-1}(x;\theta) = \begin{cases} z^I = x^I \\ z^{II} = (x^{II} - T(x^I;\theta)) \odot \exp(-S(x^I;\theta)) \end{cases}\]</div>
+<p>Both forward and inverse passes are <span class="arithmatex">\(\mathcal{O}(n)\)</span> in the Jacobian computation. By stacking multiple coupling layers and alternating which half is transformed, the full <span class="arithmatex">\(n\)</span>-dimensional space is mixed.</p>
+<h3 id="training-by-energy-vs-by-example">Training: By Energy vs. By Example<a class="headerlink" href="#training-by-energy-vs-by-example" title="Permanent link">&para;</a></h3>
+<p>Because the flow is invertible, training can proceed in <strong>two directions</strong>:</p>
+<p><strong>Training by example</strong> (requires samples <span class="arithmatex">\(x_B \sim \mu_B\)</span>) — run the flow backwards via the NLL loss:</p>
+<div class="arithmatex">\[\mathcal{L}_\text{NLL} = -\mathbb{E}_{x_B \sim \mu_B}\!\left[\log \mu_A(F^{-1}(x_B;\theta)) + \log|\det J^{-1}(x_B;\theta)|\right]\]</div>
+<p>Minimises <span class="arithmatex">\(\text{KL}(\mu_B \| p_B(\cdot;\theta))\)</span>. Requires target samples but not the analytical form of <span class="arithmatex">\(\mu_B\)</span>.</p>
+<p><strong>Training by energy</strong> (requires only <span class="arithmatex">\(U_B\)</span>, no target samples) — run the flow forwards via the KLD loss:</p>
+<div class="arithmatex">\[\mathcal{L}_\text{KLD} = \mathbb{E}_{x_A \sim \mu_A}\!\left[\beta_B U_B(F(x_A;\theta)) - \log|\det J(x_A;\theta)|\right]\]</div>
+<p>Minimises <span class="arithmatex">\(\text{KL}(p_A(\cdot;\theta) \| \mu_A)\)</span>. Only the energy function <span class="arithmatex">\(U_B\)</span> is needed — the natural choice when target samples are unavailable. Both losses can be <strong>combined simultaneously</strong>:</p>
+<div class="arithmatex">\[\mathcal{L} = \lambda_\text{NLL}\,\mathcal{L}_\text{NLL} + \lambda_\text{KLD}\,\mathcal{L}_\text{KLD}\]</div>
+<p>with tunable weights <span class="arithmatex">\(\lambda\)</span>, allowing bidirectional training when samples from both systems are available.</p>
+<h3 id="reweighting-observables-and-ress">Reweighting Observables and rESS<a class="headerlink" href="#reweighting-observables-and-ress" title="Permanent link">&para;</a></h3>
+<p>Once trained, the flow maps samples <span class="arithmatex">\(x_A \sim \mu_A\)</span> to an approximate distribution <span class="arithmatex">\(p_B\)</span> that may differ from the true target <span class="arithmatex">\(\mu_B\)</span>. Observables are corrected by <strong>importance reweighting</strong>:</p>
+<div class="arithmatex">\[\langle O \rangle_B = \frac{\sum_i \omega(x_B^i)\,O(x_B^i)}{\sum_i \omega(x_B^i)}, \qquad \omega(x_B) = \frac{\mu_B(x_B)}{p_B(x_B)}\]</div>
+<p>For generated samples <span class="arithmatex">\(x_B = F(x_A)\)</span>, substituting the change-of-variables expression for <span class="arithmatex">\(p_B\)</span> gives the fully computable weight:</p>
+<div class="arithmatex">\[\omega_B(F(x_A)) \propto \exp\!\left[-\beta_B U_B(F(x_A)) + \beta_A U_A(x_A) + \log|\det J(x_A;\theta)|\right]\]</div>
+<p>For the Gaussian-prior special case (<span class="arithmatex">\(\beta_A U_A = \tfrac{1}{2}\|x_A\|^2\)</span>) this reduces to <span class="arithmatex">\(e^{-\beta U(F(z)) + \frac{1}{2}\|z\|^2 + \log|\det J|}\)</span>. All three terms are available analytically.</p>
+<p>The quality of training (and the reliability of reweighting) is measured by the <strong>relative effective sample size (rESS)</strong>:</p>
+<div class="arithmatex">\[\text{rESS} = \frac{1}{N}\frac{(\sum_i w_i)^2}{\sum_i w_i^2} \in (0,1]\]</div>
+<p><span class="arithmatex">\(\text{rESS} = 1\)</span> when all weights are equal (perfect match); <span class="arithmatex">\(\text{rESS} \to 0\)</span> when one sample dominates (poor coverage).</p>
+<h3 id="choice-of-prior">Choice of Prior<a class="headerlink" href="#choice-of-prior" title="Permanent link">&para;</a></h3>
+<p>Mapping a standard Gaussian to a complex physical distribution is too difficult in high dimensions. The key design choice is to pick a prior <span class="arithmatex">\(\mu_Z\)</span> that is <strong>close to the target</strong> <span class="arithmatex">\(\mu_X\)</span>:</p>
+<p><strong>For solids</strong>: Use a mixture of Gaussians centred on the target lattice sites. The flow only needs to learn small local displacements. Enables training by energy with no target samples.</p>
+<p><strong>For liquids</strong>: Use a different model potential (e.g., WCA instead of Lennard-Jones). The flow learns the perturbation between models. Enables analysis of the full phase diagram using simulations at one state point, and permits use of cheap models for independent-configuration generation.</p>
+<p>In general, the prior need not be a Gaussian at all — it can be any tractable distribution, including another Boltzmann distribution at a different temperature or with a different potential. This Boltzmann-to-Boltzmann framing (Coretti et al., J. Chem. Phys. 162, 184102 (2025)) unifies many applications: the training losses and reweighting weights carry through unchanged with <span class="arithmatex">\(\mu_A(x_A) \propto e^{-\beta_A U_A(x_A)}\)</span> replacing the Gaussian prior.</p>
+<h3 id="advanced-coupling-architectures">Advanced Coupling Architectures<a class="headerlink" href="#advanced-coupling-architectures" title="Permanent link">&para;</a></h3>
+<p>The affine split-coupling is the simplest invertible coupling. The general framework allows any invertible-in-<span class="arithmatex">\(z^{II}\)</span> function <span class="arithmatex">\(f\)</span>:</p>
+<div class="arithmatex">\[F(z;\theta) = \begin{cases} x^I = z^I \\ x^{II} = f\!\left[z^{II},\, h(z^I;\theta)\right] \end{cases} \qquad F^{-1}(x;\theta) = \begin{cases} z^I = x^I \\ z^{II} = f^{-1}\!\left[x^{II},\, h(x^I;\theta)\right] \end{cases}\]</div>
+<p>The log-Jacobian is still <span class="arithmatex">\(\mathcal{O}(n)\)</span> because the block-triangular structure is preserved regardless of the choice of <span class="arithmatex">\(f\)</span>:</p>
+<div class="arithmatex">\[\log|\det J(z;\theta)| = \sum_\alpha \log\frac{\partial f[z^{II}_\alpha, h(z^I;\theta)]}{\partial z^{II}_\alpha} = \sum_\alpha S_\alpha(z^I;\theta)\]</div>
+<div class="arithmatex">\[\log|\det J^{-1}(x;\theta)| = -\sum_\alpha S_\alpha(x^I;\theta)\]</div>
+<p>The affine coupling <span class="arithmatex">\(f[z^{II}, h] = z^{II} \odot e^S + T\)</span> is the special case where <span class="arithmatex">\(h\)</span> outputs <span class="arithmatex">\((S, T)\)</span> and each <span class="arithmatex">\(S_\alpha = S_\alpha(z^I;\theta)\)</span>.</p>
+<p><strong>Neural Spline Flows (NSF)</strong>: Replace the affine <span class="arithmatex">\(f\)</span> with a <strong>rational-quadratic (RQ) spline</strong>. A neural network <span class="arithmatex">\(h(z^I;\theta)\)</span> outputs the knot positions and derivatives of the spline. The RQ spline is strictly monotonic (hence invertible in <span class="arithmatex">\(z^{II}\)</span>), has a closed-form inverse and analytic derivative (so <span class="arithmatex">\(S_\alpha\)</span> is cheap to compute), and can represent highly non-linear, multi-modal transforms — making it far more expressive than the affine coupling for the same architectural cost. This is the architecture behind the BoltzmannGenerator family of models.</p>
+<h3 id="continuous-normalizing-flows-cnfs">Continuous Normalizing Flows (CNFs)<a class="headerlink" href="#continuous-normalizing-flows-cnfs" title="Permanent link">&para;</a></h3>
+<p>Stacking discrete coupling layers can be extended to the <strong>continuous limit</strong>: instead of <span class="arithmatex">\(K\)</span> discrete layers <span class="arithmatex">\(z_k = F_k(z_{k-1};\theta_k)\)</span>, define a vector field <span class="arithmatex">\(g(z_t, t;\phi)\)</span> and integrate an ODE:</p>
+<div class="arithmatex">\[\frac{dz_t}{dt} = g(z_t, t;\phi)\]</div>
+<div class="arithmatex">\[x = F(z_0;\phi) = z_T = z_0 + \int_{t_0}^T g(z_t, t;\phi)\,dt\]</div>
+<p>The inverse is obtained by integrating backwards over the same ODE (the integral changes sign):</p>
+<div class="arithmatex">\[z_0 = F^{-1}(x;\phi) = z_T - \int_{t_0}^T g(z_t, t;\phi)\,dt\]</div>
+<p>The log-density evolves via the <strong>instantaneous change of variables</strong>:</p>
+<div class="arithmatex">\[\frac{d\log p(z_t)}{dt} = -\text{Tr}\{J(z_t;\phi)\}\]</div>
+<p>Sample and log-probability can be integrated simultaneously in one ODE solve:</p>
+<div class="arithmatex">\[\begin{bmatrix} x \\ \log p_X(x) \end{bmatrix} = \begin{bmatrix} z \\ \log \mu_Z(z) \end{bmatrix} + \int_{t_0}^T dt \begin{bmatrix} g(t, z_t;\phi) \\ -\text{Tr}\{J(z_t;\phi)\} \end{bmatrix}\]</div>
+<p>Computing <span class="arithmatex">\(\text{Tr}\{J\}\)</span> exactly costs <span class="arithmatex">\(\mathcal{O}(n^2)\)</span> (one backward pass per dimension). In practice it is estimated cheaply via the <strong>Hutchinson trace estimator</strong>: <span class="arithmatex">\(\text{Tr}(A) \approx \mathbb{E}_v[v^\top A v]\)</span> with <span class="arithmatex">\(v \sim \mathcal{N}(0,I)\)</span>, which requires only a single Jacobian-vector product.</p>
+<hr />
+<h2 id="910-diffusion-models">9.10 Diffusion Models<a class="headerlink" href="#910-diffusion-models" title="Permanent link">&para;</a></h2>
+<p>The core idea of diffusion models is simple: <strong>gradually destroy structure by adding noise, then learn to reverse this process</strong>. Training is stable and scalable (no adversarial game, no encoder approximations), which is why diffusion models have become the dominant generative framework for images, molecules, and physical configurations.</p>
+<p>There are two main formulations — discrete-time (DDPMs) and continuous-time (score-based SDEs) — which are deeply connected.</p>
+<h3 id="denoising-diffusion-probabilistic-models-ddpms">Denoising Diffusion Probabilistic Models (DDPMs)<a class="headerlink" href="#denoising-diffusion-probabilistic-models-ddpms" title="Permanent link">&para;</a></h3>
+<p>A DDPM is a <strong>latent variable model</strong> with <span class="arithmatex">\(T\)</span> latent variables <span class="arithmatex">\(x_1, \ldots, x_T\)</span>, where each latent is a progressively noisier version of the data <span class="arithmatex">\(x_0\)</span>. The model has two parts: a fixed <strong>encoder</strong> (the forward noising process) and a learned <strong>decoder</strong> (the reverse denoising process). At generation time you start from pure noise <span class="arithmatex">\(x_T \sim \mathcal{N}(0,I)\)</span> and iteratively denoise to produce a sample <span class="arithmatex">\(x_0\)</span>.</p>
+<h3 id="forward-process">Forward Process<a class="headerlink" href="#forward-process" title="Permanent link">&para;</a></h3>
+<p>Starting from a data sample <span class="arithmatex">\(x_0 \sim \mu_X\)</span>, the forward chain adds Gaussian noise at each step with a variance schedule <span class="arithmatex">\(\beta_t \in (0,1)\)</span>:</p>
+<div class="arithmatex">\[q(x_t|x_{t-1}) = \mathcal{N}\!\left(x_t;\,\sqrt{1-\beta_t}\,x_{t-1},\,\beta_t I\right)\]</div>
+<p>Crucially, the marginal at any timestep <span class="arithmatex">\(t\)</span> can be computed in closed form by defining <span class="arithmatex">\(\bar{\alpha}_t = \prod_{s=1}^t (1-\beta_s)\)</span>:</p>
+<div class="arithmatex">\[q(x_t|x_0) = \mathcal{N}\!\left(x_t;\,\sqrt{\bar{\alpha}_t}\,x_0,\,(1-\bar{\alpha}_t)I\right)\]</div>
+<p>which allows direct sampling via the reparametrization trick:</p>
+<div class="arithmatex">\[x_t = \sqrt{\bar{\alpha}_t}\,x_0 + \sqrt{1-\bar{\alpha}_t}\,\varepsilon, \qquad \varepsilon \sim \mathcal{N}(0,I)\]</div>
+<p>For large <span class="arithmatex">\(T\)</span> with a suitable schedule, <span class="arithmatex">\(q(x_T) \approx \mathcal{N}(0,I)\)</span> — the prior is effectively standard Gaussian.</p>
+<h3 id="reverse-process">Reverse Process<a class="headerlink" href="#reverse-process" title="Permanent link">&para;</a></h3>
+<p>The reverse chain is parameterized by learned networks <span class="arithmatex">\(\mu_\theta\)</span> and <span class="arithmatex">\(\Sigma_\theta\)</span>:</p>
+<div class="arithmatex">\[p_\theta(x_{t-1}|x_t) = \mathcal{N}\!\left(x_{t-1};\,\mu_\theta(x_t, t),\,\Sigma_\theta(x_t, t)\right)\]</div>
+<p>Training minimizes the KL divergence between the full joint distributions <span class="arithmatex">\(q(x_0,\ldots,x_T)\)</span> and <span class="arithmatex">\(p_\theta(x_0,\ldots,x_T)\)</span>. Applying the same ELBO decomposition as in VAEs, the loss factorizes into per-timestep terms:</p>
+<div class="arithmatex">\[\mathcal{L} = L_0 + \sum_{t=2}^T L_{t-1} + L_T\]</div>
+<p>where each <span class="arithmatex">\(L_{t-1} = \mathbb{E}_q\!\left[\text{KL}\!\left(q(x_{t-1}|x_t,x_0)\,\big\|\,p_\theta(x_{t-1}|x_t)\right)\right]\)</span> is a KL between two Gaussians (computable analytically), <span class="arithmatex">\(L_0 = -\mathbb{E}_q\log p_\theta(x_0|x_1)\)</span> is the reconstruction term, and <span class="arithmatex">\(L_T\)</span> penalizes the prior mismatch.</p>
+<p>With fixed diagonal variance <span class="arithmatex">\(\Sigma_\theta = \sigma_t^2 I\)</span>, the loss simplifies to a <strong>noise prediction objective</strong>:</p>
+<div class="arithmatex">\[\mathcal{L}_\text{simple} = \mathbb{E}_{x_0,\varepsilon,t}\!\left[\|\varepsilon_\theta(x_t, t) - \varepsilon\|^2\right]\]</div>
+<p>where the network <span class="arithmatex">\(\varepsilon_\theta\)</span> is trained to predict the noise <span class="arithmatex">\(\varepsilon\)</span> added to <span class="arithmatex">\(x_0\)</span> to obtain <span class="arithmatex">\(x_t\)</span> (Ho et al., NeurIPS 2020).</p>
+<h3 id="sampling">Sampling<a class="headerlink" href="#sampling" title="Permanent link">&para;</a></h3>
+<p>Starting from <span class="arithmatex">\(x_T \sim \mathcal{N}(0,I)\)</span>, iterate from <span class="arithmatex">\(t = T\)</span> down to <span class="arithmatex">\(1\)</span>:</p>
+<div class="arithmatex">\[x_{t-1} = \frac{1}{\sqrt{\alpha_t}}\!\left(x_t - \frac{1-\alpha_t}{\sqrt{1-\bar{\alpha}_t}}\,\varepsilon_\theta(x_t, t)\right) + \sigma_t\, z, \qquad z \sim \mathcal{N}(0,I)\ (z=0\ \text{at}\ t=1)\]</div>
+<p>where <span class="arithmatex">\(\alpha_t = 1-\beta_t\)</span>. The network <span class="arithmatex">\(\varepsilon_\theta\)</span> predicts the noise, which is subtracted to get a cleaner estimate of <span class="arithmatex">\(x_0\)</span>, and <span class="arithmatex">\(\sigma_t z\)</span> adds a small controlled amount of noise back to avoid collapse. This is exactly the reverse Gaussian kernel <span class="arithmatex">\(p_\theta(x_{t-1}|x_t)\)</span> applied in sequence.</p>
+<p><strong>Connection to VAEs</strong>: A DDPM is essentially a VAE with <span class="arithmatex">\(T\)</span> latent layers and a non-learnable (fixed) encoder. The latent variables are <span class="arithmatex">\(\{x_1,\ldots,x_T\}\)</span>, the encoder is the fixed forward diffusion process <span class="arithmatex">\(q\)</span>, and only the decoder (reverse chain) is learned.</p>
+<h3 id="score-based-diffusion-models">Score-Based Diffusion Models<a class="headerlink" href="#score-based-diffusion-models" title="Permanent link">&para;</a></h3>
+<p>The reason denoising works can be understood via the <strong>score function</strong> <span class="arithmatex">\(s(x) = \nabla_x \log p(x)\)</span>. For the Boltzmann target <span class="arithmatex">\(\mu_X(x) \propto e^{-\beta U(x)}\)</span>, the score is proportional to the force:</p>
+<div class="arithmatex">\[s(x) = \nabla_x \log \mu_X(x) = -\beta\,\nabla_x U(x) \propto F(x)\]</div>
+<p>This is exactly the drift term in Langevin dynamics: following the score moves toward regions of higher probability density. Denoising a noisy sample is thus equivalent to running a few steps of Langevin dynamics.</p>
+<p>To sample from a target distribution, one can inject noise via a forward SDE:</p>
+<div class="arithmatex">\[dx = f(x,t)\,dt + g(t)\,dW_t\]</div>
+<p>and reverse it by solving the corresponding reverse-time SDE:</p>
+<div class="arithmatex">\[dx = \left[f(x,t) - g(t)^2\,\nabla_x \log p_t(x)\right]dt + g(t)\,d\bar{W}_t\]</div>
+<p>Since the true score <span class="arithmatex">\(\nabla_x \log p_t(x)\)</span> is intractable, it is approximated by a learned network <span class="arithmatex">\(s_\theta(x,t)\)</span> trained via <strong>score matching</strong>. The loss after integration by parts (to eliminate the need for <span class="arithmatex">\(p(x)\)</span> explicitly) becomes:</p>
+<div class="arithmatex">\[\mathcal{L}(\theta) = \mathbb{E}_{p(x)}\!\left[\tfrac{1}{2}\|s_\theta(x)\|^2 + \nabla_x \cdot s_\theta(x)\right]\]</div>
+<p><strong>Probability flow ODE.</strong> For every forward SDE there is a deterministic <strong>probability flow ODE</strong> that shares the same marginal distributions <span class="arithmatex">\(p_t(x)\)</span> but involves no stochastic term:</p>
+<div class="arithmatex">\[dx = \left[f(x,t) - \tfrac{1}{2}\,g(t)^2\,s_t(x)\right]dt\]</div>
+<p>This defines a velocity field <span class="arithmatex">\(v(x,t) = f(x,t) - \frac{1}{2}g(t)^2 s_t(x)\)</span>. Integrating it numerically from <span class="arithmatex">\(x_T \sim \mathcal{N}(0,I)\)</span> back to <span class="arithmatex">\(t=0\)</span> yields samples — exactly as in a CNF, but derived from the diffusion model.</p>
+<h2 id="911-flow-matching">9.11 Flow Matching<a class="headerlink" href="#911-flow-matching" title="Permanent link">&para;</a></h2>
+<p>CNFs (introduced above under Normalizing Flows) are expensive to train because computing the likelihood requires simulating the ODE. <strong>Flow Matching</strong> provides a direct training objective that avoids this. Given a pair <span class="arithmatex">\((z, x)\)</span> from the prior and data respectively, define the linear interpolant:</p>
+<div class="arithmatex">\[x_t = (1-t)z + tx, \qquad \frac{dx_t}{dt} = x - z\]</div>
+<p>A network <span class="arithmatex">\(v_\theta(x_t, t)\)</span> is trained to match this per-pair velocity:</p>
+<div class="arithmatex">\[\mathcal{L}_\text{FM} = \mathbb{E}\!\left[\|v_\theta(x_t, t) - (x-z)\|^2\right], \qquad z \sim \mu_Z,\; x \sim \mu_X,\; t \sim \mathcal{U}(0,1)\]</div>
+<p>At test time, integrating <span class="arithmatex">\(dz/dt = v_\theta(z_t, t)\)</span> numerically from <span class="arithmatex">\(z_0 \sim \mu_Z\)</span> produces samples from (approximately) <span class="arithmatex">\(\mu_X\)</span>. Flow matching bypasses the need to simulate the ODE during training, making it significantly cheaper than maximum-likelihood training of CNFs.</p>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="../javascripts/font-size.js"></script>
+      
+        <script src="../javascripts/collapsible-sidebars.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

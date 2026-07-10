@@ -1,0 +1,1084 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Lecture notes for Machine Learning in Computational Physics">
+      
+      
+      
+        <link rel="canonical" href="https://hbarquanta.github.io/MLinCP-Notes/chapter-06-graph-neural-networks-gnns/">
+      
+      
+        <link rel="prev" href="../chapter-05-neural-networks-trees-regularization/">
+      
+      
+        <link rel="next" href="../chapter-07-machine-learning-interatomic-potentials-i/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Chapter 6 — Graph Neural Networks (GNNs) - ML in Computational Physics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-6-graph-neural-networks-gnns" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ML in Computational Physics" class="md-header__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ML in Computational Physics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 6 — Graph Neural Networks (GNNs)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ML in Computational Physics" class="md-nav__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    ML in Computational Physics
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-01-introduction-core-ml-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1 — Introduction & Core ML Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-02-descriptors-featurization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2 — Descriptors & Featurization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-03-dimensionality-reduction-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3 — Dimensionality Reduction & Clustering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-04-regression-uncertainty-quantification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4 — Regression & Uncertainty Quantification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-05-neural-networks-trees-regularization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5 — Neural Networks, Trees & Regularization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6 — Graph Neural Networks (GNNs)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6 — Graph Neural Networks (GNNs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#61-classical-vs-deep-ml-representation-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1 Classical vs. Deep ML: Representation Learning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#62-graphs-structure-and-notation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2 Graphs: Structure and Notation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#63-types-of-prediction-problems-on-graphs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.3 Types of Prediction Problems on Graphs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#64-why-not-just-use-an-mlp-on-the-adjacency-matrix" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.4 Why Not Just Use an MLP on the Adjacency Matrix?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#65-graph-convolutions-message-pool-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.5 Graph Convolutions: Message, Pool, Update
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#66-receptive-field-and-oversmoothing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.6 Receptive Field and Oversmoothing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#67-graph-convolutional-network-gcn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.7 Graph Convolutional Network (GCN)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#68-including-edge-embeddings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.8 Including Edge Embeddings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#69-crystal-graph-convolutional-neural-networks-cgcnn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.9 Crystal Graph Convolutional Neural Networks (CGCNN)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#610-equivariant-gnns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.10 Equivariant GNNs
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-07-machine-learning-interatomic-potentials-i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 7 — Machine Learning Interatomic Potentials I
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-08-machine-learning-interatomic-potentials-ii/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 8 — Machine Learning Interatomic Potentials II
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-09-generative-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 9 — Generative Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-10-ml-methods-for-rare-events-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 10 — ML Methods for Rare Events Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-6-graph-neural-networks-gnns">Chapter 6: Graph Neural Networks (GNNs)<a class="headerlink" href="#chapter-6-graph-neural-networks-gnns" title="Permanent link">&para;</a></h1>
+<h2 id="61-classical-vs-deep-ml-representation-learning">6.1 Classical vs. Deep ML: Representation Learning<a class="headerlink" href="#61-classical-vs-deep-ml-representation-learning" title="Permanent link">&para;</a></h2>
+<p>Classical ML operates on hand-crafted features: given an input <span class="arithmatex">\(x\)</span> that has already been carefully engineered to encode domain knowledge, a model learns <span class="arithmatex">\(f(x) = y\)</span>. Deep learning is qualitatively different. Instead of requiring a human to specify what the features should be, it learns to construct useful representations from raw or minimally processed data: <span class="arithmatex">\(f(f(\Theta)) = y\)</span>, where the inner <span class="arithmatex">\(f(\Theta)\)</span> is the learned representation. This is called <strong>representation learning</strong>.</p>
+<p>The practical consequence is that deep learning generally requires more data than classical ML: the model must learn both the relevant features and the mapping from features to labels, but it can outperform classical approaches when enough data is available, because the learned representations can capture patterns that hand-crafted features miss. MLPs (also called FFNNs) are composed of stacked <strong>dense layers</strong>, each fully connected to the previous layer. The term "perceptron" refers to a single unit <span class="arithmatex">\(y = g(\mathbf{w}^T\mathbf{x} + b)\)</span>; an MLP is a multilayer stack of such units.</p>
+<h2 id="62-graphs-structure-and-notation">6.2 Graphs: Structure and Notation<a class="headerlink" href="#62-graphs-structure-and-notation" title="Permanent link">&para;</a></h2>
+<p>A <strong>graph</strong> <span class="arithmatex">\(G = (V, E)\)</span> consists of a set of nodes (also called vertices) <span class="arithmatex">\(V\)</span> and a set of edges <span class="arithmatex">\(E\)</span> connecting pairs of nodes. Edges may be undirected or directed. Each node <span class="arithmatex">\(i \in V\)</span> carries a feature vector <span class="arithmatex">\(\mathbf{v}_i\)</span> called a <strong>node embedding</strong>, and each edge <span class="arithmatex">\((i,j) \in E\)</span> carries a feature vector <span class="arithmatex">\(\mathbf{e}_{ij}\)</span> called an <strong>edge embedding</strong>. The neighborhood of node <span class="arithmatex">\(i\)</span> is <span class="arithmatex">\(\mathcal{N}(i) = \{j : (i,j) \in E\}\)</span>.</p>
+<p>Graphs are a remarkably general data structure. Images are graphs with a regular grid structure: each pixel is a node connected to its spatial neighbors. A sentence is a directed graph where each word is a node connected to the next. Social networks, biological signaling networks, and financial networks are all naturally represented as graphs. Most relevantly for computational physics, <strong>molecules and crystals are natural graphs</strong>: atoms are nodes (with element type and other properties as features) and bonds or proximity-based connections are edges (with bond distance and direction as features).</p>
+<p>Graphs vary along several axes worth knowing. An <strong>undirected</strong> graph has symmetric edges (<span class="arithmatex">\((i,j) \in E \Leftrightarrow (j,i) \in E\)</span>); a <strong>directed</strong> graph allows one-way connections. Edges may carry scalar <strong>weights</strong> alongside feature vectors. A <strong>multigraph</strong> permits multiple distinct edges between the same pair of nodes: for periodic crystals, the same atom pair can be connected by edges to several different periodic images. <strong>Heterogeneous</strong> graphs have multiple node or edge types (e.g. different chemical species). Finally, <strong>self-loops</strong> <span class="arithmatex">\((i,i)\)</span> are sometimes added explicitly so that a node's own embedding contributes to its own updated representation, which is done in the GCN formulation below.</p>
+<h2 id="63-types-of-prediction-problems-on-graphs">6.3 Types of Prediction Problems on Graphs<a class="headerlink" href="#63-types-of-prediction-problems-on-graphs" title="Permanent link">&para;</a></h2>
+<p>Three classes of prediction task arise on graphs:</p>
+<p><strong>Graph-level prediction</strong>: a single output for the entire graph, for example, the total energy of a molecule or a material property of a crystal. Requires aggregating information across all nodes into a single global representation.</p>
+<p><strong>Node-level prediction</strong>: an output per node, for example, the oxidation state of each atom, or the charge on each residue in a protein. AlphaFold, which predicts protein 3D structure, uses a node-level GNN where amino acids are nodes linked by sequence and spatial edges.</p>
+<p><strong>Edge-level prediction</strong>: an output per edge, for example, the strength of a bond between two atoms, or whether an interaction exists between two proteins.</p>
+<h2 id="64-why-not-just-use-an-mlp-on-the-adjacency-matrix">6.4 Why Not Just Use an MLP on the Adjacency Matrix?<a class="headerlink" href="#64-why-not-just-use-an-mlp-on-the-adjacency-matrix" title="Permanent link">&para;</a></h2>
+<p>A naive approach to deep learning with graphs is to flatten the adjacency matrix and node features into a vector and feed it to a standard MLP. This fails for two reasons. First, the adjacency matrix has a <strong>fixed size</strong>: a network trained on 5-node graphs cannot accept a 10-node graph without retraining. Second, the result is <strong>sensitive to node ordering</strong>: permuting the node labels produces a different input vector, even though the graph is the same. Any valid model for graphs must be invariant to these relabellings.</p>
+<h2 id="65-graph-convolutions-message-pool-update">6.5 Graph Convolutions: Message, Pool, Update<a class="headerlink" href="#65-graph-convolutions-message-pool-update" title="Permanent link">&para;</a></h2>
+<p>The key insight is to generalize convolutions from regular grids to arbitrary graphs. In a convolutional neural network (CNN) for images, each layer applies a learned filter that combines information from spatially neighboring pixels. On a graph, the analogue is to have each node gather information from its graph neighbors. A single <strong>graph convolution</strong> proceeds in three steps:</p>
+<p><strong>1. Prepare messages.</strong> For each neighbor <span class="arithmatex">\(j \in \mathcal{N}(i)\)</span>, compute a message <span class="arithmatex">\(M_t(\mathbf{v}_i, \mathbf{v}_j, \mathbf{e}_{ij})\)</span> that encodes the information node <span class="arithmatex">\(j\)</span> sends to node <span class="arithmatex">\(i\)</span> at layer <span class="arithmatex">\(t\)</span>. The message function can use the embeddings of both endpoint nodes and the edge between them.</p>
+<p><strong>2. Pool messages.</strong> Aggregate all incoming messages into a single summary vector for node <span class="arithmatex">\(i\)</span>:</p>
+<div class="arithmatex">\[\mathbf{m}_i = \bigoplus_{j \in \mathcal{N}(i)} M_t(\mathbf{v}_i, \mathbf{v}_j, \mathbf{e}_{ij}).\]</div>
+<p>The pooling operator <span class="arithmatex">\(\bigoplus\)</span> must be <strong>permutation invariant</strong> (the result must not depend on the order in which neighbors are processed) and must handle a variable number of inputs. The three standard choices are Max, Mean, and Sum, and all satisfy both requirements.</p>
+<p><strong>3. Update embedding.</strong> Produce the new node embedding by combining the pooled message with the current embedding:</p>
+<div class="arithmatex">\[\mathbf{v}_i' = U_t(\mathbf{v}_i, \mathbf{m}_i).\]</div>
+<p>Applying this procedure simultaneously to all nodes, then stacking <span class="arithmatex">\(T\)</span> such layers, constitutes a <strong>graph neural network (GNN)</strong>.</p>
+<p>For <strong>graph-level prediction</strong>, a <em>readout</em> (or <em>global pooling</em>) step collapses all node embeddings into a single fixed-size vector after the final message-passing layer:</p>
+<div class="arithmatex">\[\mathbf{u} = \text{POOL}\bigl(\{\mathbf{v}_i^{(T)} : i \in V\}\bigr),\]</div>
+<p>and a final MLP maps <span class="arithmatex">\(\mathbf{u}\)</span> to the predicted property. The three standard choices are sum, mean, and max pooling. Sum pooling is sensitive to graph size (larger graphs produce larger sums), making it appropriate when the property scales with the number of atoms (e.g. total energy). Mean pooling is size-invariant and works well for intensive properties. Max pooling captures the presence of the most extreme feature but discards count information.</p>
+<p><strong>Weight sharing</strong> is the defining property of convolutional architectures, and it is worth contrasting with a plain FFNN. In an FFNN, every connection between two units has its own individual weight: if layer <span class="arithmatex">\(k-1\)</span> has <span class="arithmatex">\(n\)</span> units and layer <span class="arithmatex">\(k\)</span> has <span class="arithmatex">\(m\)</span> units, there are <span class="arithmatex">\(n \times m\)</span> independent weights. In a GCN, the matrices <span class="arithmatex">\(\mathbf{W}\)</span> and <span class="arithmatex">\(\mathbf{B}\)</span> do not belong to any specific node; they define the operation of aggregating neighbours, and the exact same <span class="arithmatex">\(\mathbf{W}\)</span> and <span class="arithmatex">\(\mathbf{B}\)</span> are applied at every node. Node 3 and node 47 both use the same weights; their updated embeddings differ only because their neighbourhoods differ. This is directly analogous to image CNNs, where the same <span class="arithmatex">\(3 \times 3\)</span> filter is slid across every pixel location rather than assigning a separate filter to each pixel.</p>
+<p>Weight sharing has two important consequences. First, the number of parameters does not grow with the number of nodes: a GCN on a 5-node graph and a 500-node graph has exactly the same number of trainable parameters. Second, a model trained on small graphs can be evaluated on larger graphs, because the weights encode a local operation rather than anything specific to a particular node's index or position. This is called <strong>inductive</strong> generalization.</p>
+<div id="mp-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem 0.9rem;margin:1.8rem 0;">
+  <div style="display:flex;align-items:center;justify-content:center;gap:0.9rem;margin-bottom:0.65rem;flex-wrap:wrap;">
+    <span style="font-size:0.83rem;font-weight:600;color:#555;">Message Passing &mdash; click any node to trace one step</span>
+    <span style="display:inline-flex;border:1px solid #ccc;border-radius:5px;overflow:hidden;font-size:0.76rem;">
+      <button id="mp-m-gen" onclick="mpMode('general')" style="padding:2px 11px;border:none;background:#f5f3f0;color:#555;cursor:pointer;">General</button>
+      <button id="mp-m-ex"  onclick="mpMode('example')"  style="padding:2px 11px;border:none;background:#86BCBD;color:#fff;cursor:pointer;">Example</button>
+    </span>
+  </div>
+  <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+    <svg id="mp-svg" viewBox="0 0 330 255" width="330" height="255" style="flex-shrink:0;"></svg>
+    <div id="mp-panel" style="flex:1;min-width:210px;background:#fff;border:1px solid #e8e2da;border-radius:6px;padding:0.85rem;min-height:185px;font-size:0.81rem;line-height:1.68;color:#333;"></div>
+  </div>
+  <div style="text-align:center;margin-top:0.65rem;font-size:0.79rem;color:#555;">
+    Pooling:&nbsp;
+    <button id="mp-b-sum"  onclick="mpPool('sum')"  style="margin:0 3px;padding:3px 11px;border-radius:4px;border:1px solid #b5d4a0;background:#A4CE8B;cursor:pointer;font-size:0.79rem;">Sum</button>
+    <button id="mp-b-mean" onclick="mpPool('mean')" style="margin:0 3px;padding:3px 11px;border-radius:4px;border:1px solid #ccc;background:#f5f3f0;cursor:pointer;font-size:0.79rem;">Mean</button>
+    <button id="mp-b-max"  onclick="mpPool('max')"  style="margin:0 3px;padding:3px 11px;border-radius:4px;border:1px solid #ccc;background:#f5f3f0;cursor:pointer;font-size:0.79rem;">Max</button>
+  </div>
+</div>
+<script>
+(function(){
+var NS='http://www.w3.org/2000/svg';
+var ND=[{id:0,lbl:'A',x:165,y:32,v:3.0},{id:1,lbl:'B',x:52,y:108,v:1.5},
+        {id:2,lbl:'C',x:278,y:108,v:2.8},{id:3,lbl:'D',x:52,y:202,v:4.0},
+        {id:4,lbl:'E',x:278,y:202,v:0.5},{id:5,lbl:'F',x:165,y:218,v:2.2}];
+var ED=[[0,1],[0,2],[1,2],[1,3],[2,4],[3,5],[4,5],[1,5]];
+var ADJ={};ND.forEach(function(n){ADJ[n.id]=[];});
+ED.forEach(function(e){ADJ[e[0]].push(e[1]);ADJ[e[1]].push(e[0]);});
+var _pool='sum',_sel=null,_mode='example';
+
+function ktx(s){try{return katex.renderToString(s,{throwOnError:false});}catch(e){return '<i style="font-size:0.88em;">'+s+'</i>';}}
+function ktxd(s){try{return '<div style="margin:0.3rem 0 0.2rem;text-align:center;">'+katex.renderToString(s,{throwOnError:false,displayMode:true})+'</div>';}catch(e){return '<div style="text-align:center;font-style:italic;">'+s+'</div>';}}
+
+function mk(tag,at,tx){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(tx!==undefined)e.textContent=tx;return e;}
+function draw(){
+  var svg=document.getElementById('mp-svg');if(!svg)return;svg.innerHTML='';
+  ED.forEach(function(e,i){var a=ND[e[0]],b=ND[e[1]];svg.appendChild(mk('line',{id:'mp-e'+i,x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:'#d0cbc4','stroke-width':'2'}));});
+  ND.forEach(function(n){
+    var g=document.createElementNS(NS,'g');g.setAttribute('style','cursor:pointer;');
+    g.addEventListener('click',function(){mpSel(n.id);});
+    g.appendChild(mk('circle',{id:'mp-c'+n.id,cx:n.x,cy:n.y,r:'22',fill:'#A4CE8B',stroke:'#fff','stroke-width':'2.5'}));
+    var ly=_mode==='example'?n.y-5:n.y+4;
+    g.appendChild(mk('text',{x:n.x,y:ly,'text-anchor':'middle','font-size':'11','font-weight':'bold',fill:'#333'},n.lbl));
+    if(_mode==='example')g.appendChild(mk('text',{x:n.x,y:n.y+8,'text-anchor':'middle','font-size':'10',fill:'#555'},n.v.toFixed(1)));
+    svg.appendChild(g);
+  });
+  setDefaultPanel();
+}
+function setDefaultPanel(){
+  var p=document.getElementById('mp-panel');if(!p)return;
+  if(_mode==='general'){
+    p.innerHTML='<div style="color:#888;font-size:0.79rem;font-style:italic;margin-bottom:0.2rem;">Click any node <i>i</i> to see the update equations for that neighbourhood.</div>'+
+    '<div style="font-size:0.79rem;color:#666;">Full layer update:</div>'+
+    ktxd('v^{\\prime}_i = U_t\\!\\left(v_i,\\;\\bigoplus_{j\\in\\mathcal{N}(i)} M_t(v_i,\\,v_j,\\,e_{ij})\\right)')+
+    '<div style="font-size:0.78rem;color:#666;line-height:1.7;margin-top:0.1rem;">'+
+    ktx('M_t')+': message function &mdash; what each neighbour sends<br>'+
+    ktx('\\bigoplus')+': pooling (Sum / Mean / Max), permutation-invariant<br>'+
+    ktx('U_t')+': update &mdash; e.g. '+ktx('\\sigma(\\mathbf{W}\\,m_i + \\mathbf{B}\\,v_i)')+'</div>';
+  } else {
+    p.innerHTML='<div style="color:#bbb;font-style:italic;font-size:0.8rem;">Click any node to trace the numerical computation.</div>';
+  }
+}
+
+function mpSel(id){
+  _sel=id;
+  var nb=ADJ[id],ns=ND[id],lbl=ns.lbl;
+  ND.forEach(function(n){var c=document.getElementById('mp-c'+n.id);c.setAttribute('fill','#A4CE8B');c.setAttribute('r','22');});
+  ED.forEach(function(e,i){var l=document.getElementById('mp-e'+i);l.setAttribute('stroke','#d0cbc4');l.setAttribute('stroke-width','2');});
+  document.getElementById('mp-c'+id).setAttribute('fill','#86BCBD');
+  document.getElementById('mp-c'+id).setAttribute('r','25');
+  nb.forEach(function(b){var c=document.getElementById('mp-c'+b);c.setAttribute('fill','#F7E49B');c.setAttribute('r','24');});
+  ED.forEach(function(e,i){if(e[0]===id||e[1]===id){var l=document.getElementById('mp-e'+i);l.setAttribute('stroke','#86BCBD');l.setAttribute('stroke-width','3');}});
+
+  var nbLbls=nb.map(function(b){return ND[b].lbl;});
+  var hr='<hr style="margin:0.45rem 0;border:none;border-top:1px solid #eee;">';
+  function hdr(bg,tc,txt){return '<div style="margin-bottom:0.3rem;"><span style="background:'+bg+';color:'+tc+';border-radius:3px;padding:1px 7px;font-size:0.78rem;font-weight:600;">'+txt+'</span></div>';}
+
+  if(_mode==='general'){
+    var nbSet = nb.length ? '\\{'+nbLbls.join(',\\,')+'\\}' : '\\emptyset';
+    var s1f = ktxd('M_t(v_{'+lbl+'},\\,v_j,\\,e_{'+lbl+'j})\\quad \\text{for each } j \\in \\mathcal{N}('+lbl+')');
+    var s2f;
+    if(_pool==='sum')
+      s2f=ktxd('m_{'+lbl+'} = \\sum_{j\\in '+nbSet+'} M_t(v_{'+lbl+'},\\,v_j,\\,e_{'+lbl+'j})');
+    else if(_pool==='mean')
+      s2f=ktxd('m_{'+lbl+'} = \\frac{1}{|\\mathcal{N}('+lbl+')|} \\sum_{j\\in '+nbSet+'} M_t(v_{'+lbl+'},\\,v_j,\\,e_{'+lbl+'j})');
+    else
+      s2f=ktxd('m_{'+lbl+'} = \\max_{j\\in '+nbSet+'} M_t(v_{'+lbl+'},\\,v_j,\\,e_{'+lbl+'j})');
+    var s3f=ktxd('v^{\\prime}_{'+lbl+'} = U_t(v_{'+lbl+'},\\,m_{'+lbl+'}) = \\sigma(\\mathbf{W}\\,m_{'+lbl+'} + \\mathbf{B}\\,v_{'+lbl+'})');
+    document.getElementById('mp-panel').innerHTML=
+      hdr('#A4CE8B','#333','Step 1 — Message')+
+      'Node '+ktx('\\mathbf{'+lbl+'}')+'&ensp;has '+ktx('|\\mathcal{N}('+lbl+')|')+' = '+nb.length+' neighbour'+(nb.length!==1?'s':'')+': '+ktx(nbSet.replace(/\\\\/g,'\\'))+
+      s1f+hr+
+      hdr('#F7E49B','#555','Step 2 — Pool ('+_pool+')')+s2f+hr+
+      hdr('#86BCBD','#fff','Step 3 — Update')+s3f+
+      '<div style="font-size:0.77rem;color:#aaa;margin-top:0.1rem;text-align:center;">'+ktx('\\mathbf{W}')+'&thinsp;and&thinsp;'+ktx('\\mathbf{B}')+'&ensp;are shared learned weight matrices</div>';
+  } else {
+    var vals=nb.map(function(b){return ND[b].v;}),msg=0;
+    if(_pool==='sum')msg=vals.reduce(function(a,b){return a+b;},0);
+    else if(_pool==='mean')msg=vals.length?vals.reduce(function(a,b){return a+b;},0)/vals.length:0;
+    else msg=vals.length?Math.max.apply(null,vals):0;
+    var upd=msg*0.6+ns.v*0.4;
+    var vStr=vals.map(function(v){return v.toFixed(1);}).join(', ');
+    var nbStr=nb.map(function(b){return '\\mathbf{'+ND[b].lbl+'}\\!=\\!'+ND[b].v.toFixed(1);}).join(',\\;')||'\\emptyset';
+    var s2f2;
+    if(_pool==='sum') s2f2=ktxd('m_{'+lbl+'} = '+vals.map(function(v){return v.toFixed(1);}).join(' + ')+' = \\mathbf{'+msg.toFixed(3)+'}');
+    else if(_pool==='mean') s2f2=ktxd('m_{'+lbl+'} = \\tfrac{1}{'+nb.length+'}('+vals.map(function(v){return v.toFixed(1);}).join('+')+') = \\mathbf{'+msg.toFixed(3)+'}');
+    else s2f2=ktxd('m_{'+lbl+'} = \\max('+vals.map(function(v){return v.toFixed(1);}).join(',\\,')+') = \\mathbf{'+msg.toFixed(3)+'}');
+    document.getElementById('mp-panel').innerHTML=
+      hdr('#A4CE8B','#333','Step 1 — Message')+
+      'Node '+ktx('\\mathbf{'+lbl+'}')+'&ensp;('+ktx('v_{'+lbl+'}')+'&nbsp;=&nbsp;'+ns.v.toFixed(1)+') receives from: '+ktx(nbStr)+
+      hr+hdr('#F7E49B','#555','Step 2 — Pool ('+_pool+')')+s2f2+
+      hr+hdr('#86BCBD','#fff','Step 3 — Update')+
+      ktxd('v^{\\prime}_{'+lbl+'} = \\sigma(\\mathbf{W}\\,m_{'+lbl+'} + \\mathbf{B}\\,v_{'+lbl+'}) \\approx 0.6 \\cdot '+msg.toFixed(2)+' + 0.4 \\cdot '+ns.v.toFixed(1)+' = \\mathbf{'+upd.toFixed(3)+'}')+
+      '<div style="font-size:0.77rem;color:#aaa;text-align:center;">W=0.6, B=0.4 for illustration; real weights are learned</div>';
+  }
+}
+window.mpPool=function(p){_pool=p;['sum','mean','max'].forEach(function(pp){var b=document.getElementById('mp-b-'+pp);if(b){b.style.background=pp===p?'#A4CE8B':'#f5f3f0';b.style.borderColor=pp===p?'#b5d4a0':'#ccc';}});if(_sel!==null)mpSel(_sel);};
+window.mpMode=function(m){
+  _mode=m;
+  var gb=document.getElementById('mp-m-gen'),eb=document.getElementById('mp-m-ex');
+  if(gb){gb.style.background=m==='general'?'#86BCBD':'#f5f3f0';gb.style.color=m==='general'?'#fff':'#555';}
+  if(eb){eb.style.background=m==='example'?'#86BCBD':'#f5f3f0';eb.style.color=m==='example'?'#fff':'#555';}
+  draw();if(_sel!==null)mpSel(_sel);
+};
+window.mpSel=mpSel;
+function init(){if(!document.getElementById('mp-svg'))return;_sel=null;draw();}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(init,50);});}
+})();
+</script>
+
+<h2 id="66-receptive-field-and-oversmoothing">6.6 Receptive Field and Oversmoothing<a class="headerlink" href="#66-receptive-field-and-oversmoothing" title="Permanent link">&para;</a></h2>
+<p>After <span class="arithmatex">\(t\)</span> message-passing layers, node <span class="arithmatex">\(i\)</span> has received information from all nodes within <span class="arithmatex">\(t\)</span> hops. This is called the <strong>receptive field</strong> of node <span class="arithmatex">\(i\)</span> after <span class="arithmatex">\(t\)</span> layers. A single layer sees only immediate neighbors; two layers see neighbors-of-neighbors, and so on. Stacking more layers increases the receptive field, allowing the network to capture longer-range structural patterns.</p>
+<p>However, using too many layers causes <strong>oversmoothing</strong>: repeated averaging pushes all node embeddings toward the same value, erasing the local structural distinctions the network needs to make useful predictions. In practice, 2–4 message-passing layers are used for most molecular and materials applications.</p>
+<h2 id="67-graph-convolutional-network-gcn">6.7 Graph Convolutional Network (GCN)<a class="headerlink" href="#67-graph-convolutional-network-gcn" title="Permanent link">&para;</a></h2>
+<p>The first widely adopted GNN architecture, the Graph Convolutional Network (GCN) (Kipf &amp; Welling, <em>ICLR</em>, 2017), uses the simplest possible choices for each component:</p>
+<ul>
+<li><strong>Message function</strong>: pass the neighbor embedding unchanged, <span class="arithmatex">\(M_t(\mathbf{v}_i, \mathbf{v}_j) = \mathbf{v}_j\)</span> (no processing).</li>
+<li><strong>Pooling function</strong>: normalized mean, <span class="arithmatex">\(\mathbf{m}_i = \sum_{j \in \mathcal{N}(i)} \mathbf{v}_j / |\mathcal{N}(i)|\)</span>.</li>
+<li><strong>Update function</strong>: a single affine transformation followed by a nonlinearity, <span class="arithmatex">\(\mathbf{v}_i' = \sigma(\mathbf{W}\mathbf{m}_i + \mathbf{B}\mathbf{v}_i)\)</span>, where <span class="arithmatex">\(\mathbf{W}\)</span> and <span class="arithmatex">\(\mathbf{B}\)</span> are weight matrices shared across all nodes.</li>
+</ul>
+<p>Stacking <span class="arithmatex">\(T\)</span> such layers gives the full GCN update rule at layer <span class="arithmatex">\(t\)</span>:</p>
+<div class="arithmatex">\[\mathbf{v}_i^{(t+1)} = \sigma\!\left(\mathbf{W}^{(t)} \sum_{j \in \mathcal{N}(i)} \frac{\mathbf{v}_j^{(t)}}{|\mathcal{N}(i)|} + \mathbf{B}^{(t)} \mathbf{v}_i^{(t)}\right),\]</div>
+<p>where the weight matrices <span class="arithmatex">\(\mathbf{W}^{(t)}\)</span> and <span class="arithmatex">\(\mathbf{B}^{(t)}\)</span> are unique to each layer. The final node embeddings are fed to a loss function and an optimizer (e.g. Adam) trains all weight matrices end-to-end via backpropagation.</p>
+<p>In the original paper, Kipf &amp; Welling write the GCN update in compact matrix form. Let <span class="arithmatex">\(\mathbf{H}^{(t)} \in \mathbb{R}^{|V| \times d}\)</span> collect all node embeddings as rows. Adding self-loops defines <span class="arithmatex">\(\hat{\mathbf{A}} = \mathbf{A} + \mathbf{I}\)</span>, and the diagonal degree matrix <span class="arithmatex">\(\hat{\mathbf{D}}_{ii} = \sum_j \hat{A}_{ij}\)</span> normalizes by node degree. The symmetrically normalized adjacency is</p>
+<div class="arithmatex">\[\tilde{\mathbf{A}} = \hat{\mathbf{D}}^{-1/2}\,\hat{\mathbf{A}}\,\hat{\mathbf{D}}^{-1/2},\]</div>
+<p>and the full-layer update becomes</p>
+<div class="arithmatex">\[\mathbf{H}^{(t+1)} = \sigma\!\left(\tilde{\mathbf{A}}\,\mathbf{H}^{(t)}\,\mathbf{W}^{(t)}\right).\]</div>
+<p>The self-loop in <span class="arithmatex">\(\hat{\mathbf{A}}\)</span> means node <span class="arithmatex">\(i\)</span> also aggregates its own embedding, equivalent to including <span class="arithmatex">\(i \in \mathcal{N}(i)\)</span>. The symmetric normalization <span class="arithmatex">\(\hat{D}_i^{-1/2}\hat{A}_{ij}\hat{D}_j^{-1/2}\)</span> weights the contribution from node <span class="arithmatex">\(j\)</span> to node <span class="arithmatex">\(i\)</span> by <span class="arithmatex">\(1/\sqrt{d_i d_j}\)</span> (where <span class="arithmatex">\(d_i, d_j\)</span> are their degrees), preventing high-degree hub nodes from dominating aggregation. This matrix form makes the connection to spectral graph convolutions explicit and is efficient to compute via sparse matrix multiplication.</p>
+<h2 id="68-including-edge-embeddings">6.8 Including Edge Embeddings<a class="headerlink" href="#68-including-edge-embeddings" title="Permanent link">&para;</a></h2>
+<p>The GCN ignores edge features. For physical systems where bond distances, bond types, and directions matter, the message function is extended to include the edge embedding <span class="arithmatex">\(\mathbf{e}_{ij}\)</span>:</p>
+<div class="arithmatex">\[\mathbf{m}_i = \bigoplus_{j \in \mathcal{N}(i)} M_t(\mathbf{v}_i, \mathbf{v}_j, \mathbf{e}_{ij}).\]</div>
+<p>The update function <span class="arithmatex">\(U_t(\mathbf{v}_i, \mathbf{m}_i)\)</span> stays the same. Message-passing networks offer considerable design flexibility: the update order (nodes before edges, or interleaved in a "weave" pattern that passes messages back and forth), the pooling strategy, and the dimensionality of node and edge embeddings are all choices. The message, pool, and update functions themselves are typically parameterized as MLPs.</p>
+<h2 id="69-crystal-graph-convolutional-neural-networks-cgcnn">6.9 Crystal Graph Convolutional Neural Networks (CGCNN)<a class="headerlink" href="#69-crystal-graph-convolutional-neural-networks-cgcnn" title="Permanent link">&para;</a></h2>
+<p>CGCNN (Xie &amp; Grossman, <em>Phys. Rev. Lett.</em> <strong>120</strong>, 145301, 2018) was the first application of graph convolutions to crystalline materials.</p>
+<p><strong>Graph construction.</strong> Each atom in the unit cell is a node. Two atoms are connected by an edge if their distance is below a cutoff radius <span class="arithmatex">\(r_\text{cut}\)</span>. Periodic boundary conditions (PBCs) are respected: the procedure is applied for each atom in the unit cell, and the same pair of atoms may share multiple edges (corresponding to different periodic images of the neighbor), forming a multigraph.</p>
+<p><strong>Initialization.</strong> Node embeddings are initialized by one-hot encoding the element type (dimension 119, one entry per element in the periodic table) and passing through an MLP. Edge embeddings are initialized by expanding the bond distance onto 40 Gaussian basis functions.</p>
+<p><strong>Message function.</strong> The message for edge <span class="arithmatex">\((i,j)\)</span> at layer <span class="arithmatex">\(t\)</span> is the concatenation of both node embeddings and the edge embedding:</p>
+<div class="arithmatex">\[\mathbf{m}_i^{(t)} = \mathbf{v}_i^{(t)} \oplus \mathbf{v}_j^{(t)} \oplus \mathbf{e}_{ij},\]</div>
+<p>where <span class="arithmatex">\(\oplus\)</span> denotes concatenation.</p>
+<p><strong>Update function.</strong> CGCNN uses a gated, additive update. The message <span class="arithmatex">\(\mathbf{m}_{ij}^{(t)}\)</span> is passed through two independent linear transforms in parallel:</p>
+<div class="arithmatex">\[\mathbf{v}_i^{(t+1)} = \underbrace{\mathbf{v}_i^{(t)}}_{\text{skip}} + \sum_{j \in \mathcal{N}(i)} \underbrace{\sigma\!\left(\mathbf{W}_f^{(t)} \mathbf{m}_{ij}^{(t)} + \mathbf{b}_f^{(t)}\right)}_{\text{gate} \in (0,1)} \odot \underbrace{g\!\left(\mathbf{W}_s^{(t)} \mathbf{m}_{ij}^{(t)} + \mathbf{b}_s^{(t)}\right)}_{\text{value}},\]</div>
+<p>where <span class="arithmatex">\(\sigma\)</span> is the sigmoid (gate branch, output in <span class="arithmatex">\((0,1)\)</span>), <span class="arithmatex">\(g\)</span> is the softplus (value branch), and <span class="arithmatex">\(\odot\)</span> is elementwise multiplication. The gate learns per-channel which parts of each neighbor's message are informative and suppresses the rest, analogous to attention or LSTM gating. The additive form <span class="arithmatex">\(\mathbf{v}_i^{(t)} + [\cdots]\)</span> means the update is incremental: the node accumulates information from neighbors on top of what it already knows, rather than replacing its embedding entirely. The CGCNN paper refers to this as a residual connection, though the primary motivation is simply to prevent nodes from forgetting their own state across message-passing layers.</p>
+<p><strong>Global pooling.</strong> After <span class="arithmatex">\(T\)</span> message-passing layers, the atom embeddings are collapsed to a single graph-level vector by mean pooling:</p>
+<div class="arithmatex">\[\mathbf{u}_c = \frac{1}{|G|}\sum_{i \in G} \mathbf{v}_i^{(T)}.\]</div>
+<p><strong>Readout.</strong> A final MLP maps the pooled representation to the predicted property:</p>
+<div class="arithmatex">\[E = \sigma(\mathbf{W}_r \mathbf{u}_c + \mathbf{b}_r).\]</div>
+<p>CGCNN demonstrated good accuracy for crystal property prediction (formation energy MAE <span class="arithmatex">\(\approx 0.039\)</span> eV/atom) but errors remain too large for reliable quantitative science, motivating more sophisticated architectures such as MEGNet (Chen et al., <em>Chem. Mater.</em> <strong>31</strong>, 3564, 2019; adds skip connections and set2set pooling) and M3GNet (Chen &amp; Ong, <em>Nat. Comput. Sci.</em> <strong>2</strong>, 718, 2022; includes bond angles and dihedral angles in the message function).</p>
+<div id="cgcnn-widget" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 1rem 0.9rem;margin:1.8rem 0;">
+  <div style="text-align:center;font-size:0.83rem;font-weight:600;color:#555;margin-bottom:0.3rem;">CGCNN: Bond Distance &rarr; Gaussian Basis Features</div>
+  <div style="text-align:center;font-size:0.78rem;color:#888;margin-bottom:0.75rem;">Each edge encodes its distance as a 16-dimensional vector. Move the slider to change the bond distance.</div>
+  <div style="display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+    <div style="text-align:center;">
+      <div style="font-size:0.75rem;color:#999;margin-bottom:3px;">g<sub>k</sub>(d) = exp(&minus;(d&minus;&mu;<sub>k</sub>)&sup2;&thinsp;/&thinsp;2&sigma;&sup2;)&ensp;&nbsp;&sigma;=0.5&#8239;&Aring;</div>
+      <svg id="cgcnn-plot" viewBox="0 0 320 165" width="320" height="165"></svg>
+      <div style="margin-top:0.45rem;font-size:0.8rem;color:#555;">
+        d&nbsp;=&nbsp;<input type="range" id="cgcnn-sl" min="10" max="79" value="28" oninput="cgcnnUp()" style="width:170px;vertical-align:middle;">&ensp;<span id="cgcnn-dv" style="font-weight:600;color:#86BCBD;min-width:3.5em;display:inline-block;"></span>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:0.75rem;color:#999;margin-bottom:3px;">Feature vector&ensp;<span style="color:#bbb;">(activations at d)</span></div>
+      <svg id="cgcnn-bars" viewBox="0 0 210 165" width="210" height="165"></svg>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+var NS='http://www.w3.org/2000/svg';
+var NK=16,SIG=0.5;
+var MU=[];for(var k=0;k<NK;k++)MU.push(0.5+(k*0.5));
+function gk(mu,d){return Math.exp(-(d-mu)*(d-mu)/(2*SIG*SIG));}
+function mk(tag,at,tx){var e=document.createElementNS(NS,tag);for(var k in at)e.setAttribute(k,at[k]);if(tx!==undefined)e.textContent=tx;return e;}
+
+function drawPlot(d){
+  var svg=document.getElementById('cgcnn-plot');if(!svg)return;svg.innerHTML='';
+  var W=320,H=165,PL=28,PR=8,PT=10,PB=26,pw=W-PL-PR,ph=H-PT-PB,dmax=8.5;
+  svg.appendChild(mk('rect',{x:PL,y:PT,width:pw,height:ph,fill:'#fff',stroke:'#e0dbd4','stroke-width':'0.8'}));
+  for(var xi=1;xi<=8;xi++){var px=PL+pw*xi/dmax;svg.appendChild(mk('line',{x1:px,y1:PT+ph,x2:px,y2:PT+ph+4,stroke:'#ddd','stroke-width':'0.8'}));svg.appendChild(mk('text',{x:px,y:PT+ph+13,'text-anchor':'middle','font-size':'8',fill:'#aaa'},xi.toString()));}
+  svg.appendChild(mk('text',{x:PL+pw/2,y:H,'text-anchor':'middle','font-size':'8',fill:'#aaa'},'distance (Å)'));
+  svg.appendChild(mk('text',{x:5,y:PT+ph/2+3,'text-anchor':'middle','font-size':'8',fill:'#aaa','transform':'rotate(-90,5,'+(PT+ph/2)+')'},'g(d)'));
+  for(var ki=0;ki<NK;ki++){
+    var pts=[];
+    for(var xi2=0;xi2<=200;xi2++){var di=0.0+xi2*(dmax/200);var gi=gk(MU[ki],di);pts.push((PL+pw*di/dmax)+','+(PT+ph*(1-gi)));}
+    var act=gk(MU[ki],d);var col=act>0.05?'rgba(134,188,189,'+Math.min(1,act*2).toFixed(2)+')':'rgba(208,203,196,0.35)';
+    svg.appendChild(mk('polyline',{points:pts.join(' '),fill:'none',stroke:col,'stroke-width':act>0.05?'1.8':'0.9'}));
+  }
+  var lx=PL+pw*d/dmax;
+  svg.appendChild(mk('line',{x1:lx,y1:PT,x2:lx,y2:PT+ph,stroke:'#BA5A5A','stroke-width':'1.5','stroke-dasharray':'4,3'}));
+  svg.appendChild(mk('text',{x:Math.min(lx+3,W-30),y:PT+9,'font-size':'8',fill:'#BA5A5A'},d.toFixed(1)+'Å'));
+}
+
+function drawBars(d){
+  var svg=document.getElementById('cgcnn-bars');if(!svg)return;svg.innerHTML='';
+  var W=210,H=165,PL=8,PR=8,PT=10,PB=26,pw=W-PL-PR,ph=H-PT-PB;
+  svg.appendChild(mk('rect',{x:PL,y:PT,width:pw,height:ph,fill:'#fff',stroke:'#e0dbd4','stroke-width':'0.8'}));
+  var bw=Math.floor(pw/NK)-2;
+  for(var ki=0;ki<NK;ki++){
+    var v=gk(MU[ki],d);
+    var bh=Math.max(1,v*ph);
+    var bx=PL+ki*(pw/NK)+1;
+    var by=PT+ph-bh;
+    var col=v>0.05?'#86BCBD':'#d5eaeb';
+    svg.appendChild(mk('rect',{x:bx,y:by,width:bw,height:bh,fill:col,rx:'1.5'}));
+    if(ki%4===0)svg.appendChild(mk('text',{x:bx+bw/2,y:PT+ph+10,'text-anchor':'middle','font-size':'7.5',fill:'#bbb'},(ki+1).toString()));
+  }
+  svg.appendChild(mk('text',{x:PL+pw/2,y:H,'text-anchor':'middle','font-size':'8',fill:'#aaa'},'basis index'));
+}
+
+window.cgcnnUp=function(){
+  var sl=document.getElementById('cgcnn-sl');if(!sl)return;
+  var d=parseFloat(sl.value)/10;
+  document.getElementById('cgcnn-dv').textContent=d.toFixed(1)+'Å';
+  drawPlot(d);drawBars(d);
+};
+function init(){if(!document.getElementById('cgcnn-plot'))return;cgcnnUp();}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(init,50);});}
+})();
+</script>
+
+<h2 id="610-equivariant-gnns">6.10 Equivariant GNNs<a class="headerlink" href="#610-equivariant-gnns" title="Permanent link">&para;</a></h2>
+<p>Scalar properties like total energy must be <strong>invariant</strong> under rotation, reflection, and permutation of equivalent atoms: the energy of a molecule does not change if you rotate the coordinate frame. Standard GNNs using scalar node and edge features satisfy this automatically, as long as edge embeddings encode distances (invariants) rather than displacement vectors.</p>
+<p>Vector and tensor properties such as atomic forces and stress tensors must instead be <strong>equivariant</strong>: if the atomic positions are rotated by <span class="arithmatex">\(R\)</span>, the forces must rotate by <span class="arithmatex">\(R\)</span> as well. Formally, for a group element <span class="arithmatex">\(g\)</span> with representation <span class="arithmatex">\(D(g)\)</span>:</p>
+<div class="arithmatex">\[f(D(g)\mathbf{x},\, \omega) = D(g)\, f(\mathbf{x},\, \omega).\]</div>
+<p>Building equivariance into the architecture (rather than approximating it via data augmentation) is dramatically more data-efficient: a single training example in one orientation teaches the model about all orientations simultaneously.</p>
+<p>Equivariant GNNs use <strong>spherical harmonic</strong> basis functions <span class="arithmatex">\(Y_l^m(\hat{\mathbf{r}}_{ij})\)</span>, where <span class="arithmatex">\(\hat{\mathbf{r}}_{ij}\)</span> is the unit vector along edge <span class="arithmatex">\((i,j)\)</span> and <span class="arithmatex">\(l = 0, 1, 2, \ldots\)</span> is the angular momentum order. Scalar (<span class="arithmatex">\(l=0\)</span>), vector (<span class="arithmatex">\(l=1\)</span>), and higher-order tensor (<span class="arithmatex">\(l \geq 2\)</span>) channels are maintained and mixed via tensor products that preserve the equivariance. The <strong>e3nn</strong> library implements this algebra. Key equivariant GNN models include NequIP (Batzner et al., <em>Nat. Commun.</em> <strong>13</strong>, 2453, 2022; equivariant interatomic potential) and MACE (Batatia et al., <em>NeurIPS</em>, 2022; many-body equivariant features, currently among the most accurate and efficient MLIPs available).</p>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="../javascripts/font-size.js"></script>
+      
+        <script src="../javascripts/collapsible-sidebars.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

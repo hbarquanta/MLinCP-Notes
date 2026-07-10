@@ -1,0 +1,1313 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Lecture notes for Machine Learning in Computational Physics">
+      
+      
+      
+        <link rel="canonical" href="https://hbarquanta.github.io/MLinCP-Notes/chapter-01-introduction-core-ml-concepts/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../chapter-02-descriptors-featurization/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Chapter 1 — Introduction & Core ML Concepts - ML in Computational Physics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-1-introduction-core-ml-concepts" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ML in Computational Physics" class="md-header__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ML in Computational Physics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 1 — Introduction & Core ML Concepts
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ML in Computational Physics" class="md-nav__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    ML in Computational Physics
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1 — Introduction & Core ML Concepts
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1 — Introduction & Core ML Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#11-learning-paradigms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Learning Paradigms
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-risk-minimization-and-loss-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Risk Minimization and Loss Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#13-gradient-based-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Gradient-Based Optimization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#14-overfitting-regularization-and-model-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Overfitting, Regularization, and Model Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#15-data-splitting-and-cross-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Data Splitting and Cross-Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#16-historical-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 Historical Context
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#17-evaluation-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.7 Evaluation Metrics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#18-aleatoric-and-epistemic-uncertainty" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.8 Aleatoric and Epistemic Uncertainty
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#19-inductive-bias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.9 Inductive Bias
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#110-scientific-machine-learning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.10 Scientific Machine Learning
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#111-a-typical-ml-workflow-in-computational-physics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.11 A Typical ML Workflow in Computational Physics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#112-data-quality-and-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.12 Data Quality and Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#113-software-and-hardware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.13 Software and Hardware
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-02-descriptors-featurization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2 — Descriptors & Featurization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-03-dimensionality-reduction-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3 — Dimensionality Reduction & Clustering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-04-regression-uncertainty-quantification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4 — Regression & Uncertainty Quantification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-05-neural-networks-trees-regularization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5 — Neural Networks, Trees & Regularization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-06-graph-neural-networks-gnns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6 — Graph Neural Networks (GNNs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-07-machine-learning-interatomic-potentials-i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 7 — Machine Learning Interatomic Potentials I
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-08-machine-learning-interatomic-potentials-ii/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 8 — Machine Learning Interatomic Potentials II
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-09-generative-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 9 — Generative Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-10-ml-methods-for-rare-events-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 10 — ML Methods for Rare Events Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-1-introduction-core-ml-concepts">Chapter 1 — Introduction &amp; Core ML Concepts<a class="headerlink" href="#chapter-1-introduction-core-ml-concepts" title="Permanent link">&para;</a></h1>
+<p>Machine learning (ML) is the discipline of constructing algorithms that learn patterns from data, rather than relying on explicitly programmed rules. Science has evolved through four broad paradigms: empirical observation (experiments, 1600s), theoretical science (physical laws and equations), computational science (numerical simulation, 1950s), and the current <strong>fourth paradigm</strong> of data-driven, AI-accelerated discovery (2000s onwards). In each transition, the new paradigm complemented rather than replaced its predecessors. In 2024, the Nobel Prize in Physics was awarded to John Hopfield and Geoffrey Hinton for foundational discoveries enabling machine learning with artificial neural networks — recognition of how central ML has become to science. In computational physics and chemistry, ML provides a route to building fast, accurate surrogate models for expensive quantum-mechanical calculations.</p>
+<h2 id="11-learning-paradigms">1.1 Learning Paradigms<a class="headerlink" href="#11-learning-paradigms" title="Permanent link">&para;</a></h2>
+<p>Consider an unseen process (the data-generating process) that connects an input space <span class="arithmatex">\(\mathcal{X}\)</span> to a target space <span class="arithmatex">\(\mathcal{Y}\)</span>, described by some function <span class="arithmatex">\(f: \mathcal{X} \to \mathcal{Y}\)</span>.</p>
+<p>Statistical samples of <span class="arithmatex">\(\mathcal{X}\)</span> are called <strong>features</strong> (also: attributes, input variables): <span class="arithmatex">\(x_i \in \mathcal{X}\)</span> are vectors of dimension <span class="arithmatex">\(D\)</span> containing reals, integers, or other values. Samples of <span class="arithmatex">\(\mathcal{Y}\)</span> are called <strong>labels</strong> (also: classes, targets): <span class="arithmatex">\(y_i \in \mathcal{Y}\)</span> can be scalars, vectors, or tensors. The index <span class="arithmatex">\(i\)</span> runs over individual examples.</p>
+<p>A <strong>dataset</strong> <span class="arithmatex">\(T\)</span> can be <strong>labeled</strong>, <span class="arithmatex">\(T = \{(x_i, y_i)\}\)</span>, or <strong>unlabeled</strong>, <span class="arithmatex">\(T = \{x_i\}\)</span>.</p>
+<p><strong>Supervised learning</strong> requires a labeled dataset <span class="arithmatex">\(T = \{(x_i, y_i)\}_{i=1}^n\)</span> of <span class="arithmatex">\(n\)</span> examples. The goal is to find a model <span class="arithmatex">\(\hat{f}: \mathcal{X} \to \mathcal{Y}\)</span> that approximates <span class="arithmatex">\(f\)</span>, i.e. <span class="arithmatex">\(\hat{f}(x_i) = \hat{y}_i \approx y_i\)</span>, and generalizes well to new, unseen inputs.</p>
+<p><strong>Unsupervised learning</strong> works on unlabeled data <span class="arithmatex">\(T = \{x_i\}_{i=1}^n\)</span>. The goal is to describe or understand the structure of the data — typical tasks include dimensionality reduction, clustering, outlier detection, and generative modelling (covered in Chapter 3 and Chapter 9).</p>
+<p><strong>Semi-supervised learning</strong> combines a small labeled set <span class="arithmatex">\(T_L = \{(x_i, y_i)\}\)</span> with a much larger unlabeled pool <span class="arithmatex">\(T_U = \{x_j\}\)</span>. It is used when labeling is expensive (requiring expert annotation of medical images, MRI scans, or costly quantum-mechanical simulation) but unlabeled data is abundant. The unlabeled examples constrain the model by revealing structure in the input distribution, reducing the labeling burden. Applications include generative models trained on unlabeled data (see Chapter 9) and self-supervised pre-training followed by supervised fine-tuning.</p>
+<p><strong>Reinforcement learning (RL)</strong> operates without a static dataset. An <em>agent</em> performs actions in an <em>environment</em> at each time step in a sequential decision-making framework. Actions change the <em>state</em> and can provide positive or negative <em>feedback</em>; the goal is to learn a <em>policy</em> that maximizes cumulative <em>reward</em>. Unlike supervised learning, RL uses rewards instead of labels to learn. Two defining challenges are the <strong>temporal credit assignment problem</strong> (associating a delayed reward with the action that produced it) and the <strong>exploitation vs. exploration</strong> trade-off (acting on current best knowledge versus trying untested actions to gain information).</p>
+<p>The standard mathematical framework is the <strong>Markov decision process (MDP)</strong>. A <strong>Markov process</strong> is a sequence of states <span class="arithmatex">\(s_0, s_1, s_2, \ldots\)</span> governed by a <strong>transition probability</strong> <span class="arithmatex">\(P_r(s_{t+1}|s_t)\)</span>. Adding scalar rewards <span class="arithmatex">\(r_t\)</span> gives a <strong>Markov reward process</strong>, in which the <em>return</em> is the total discounted sum of future rewards:</p>
+<div class="arithmatex">\[G_t = \sum_{k=0}^{\infty} \gamma^k r_{t+k},\]</div>
+<p>where <span class="arithmatex">\(\gamma \in (0,1]\)</span> discounts future rewards. A <strong>Markov decision process</strong> extends the reward process with actions <span class="arithmatex">\(a_t\)</span>: the agent selects an action that influences both the transition probability and the reward. The <strong>policy</strong> <span class="arithmatex">\(\pi[a|s]\)</span> determines which action to take in each state and can be stochastic or deterministic, stationary or time-dependent.</p>
+<p>Given policy <span class="arithmatex">\(\pi\)</span>, two value functions capture expected return. The <strong>state value function</strong> <span class="arithmatex">\(v[s_t|\pi]\)</span> is the expected return starting from state <span class="arithmatex">\(s_t\)</span>:</p>
+<div class="arithmatex">\[v[s_t|\pi] = \mathbb{E}_\pi[G_t \mid s_t]\]</div>
+<p>The <strong>action value function</strong> <span class="arithmatex">\(q[s_t, a_t|\pi]\)</span> is the expected return for taking action <span class="arithmatex">\(a_t\)</span> in state <span class="arithmatex">\(s_t\)</span>:</p>
+<div class="arithmatex">\[q[s_t, a_t|\pi] = \mathbb{E}_\pi[G_t \mid s_t, a_t]\]</div>
+<p><strong>Bellman equations</strong> define optimal value functions recursively and are the basis for deriving optimal policies. Three practical algorithm families are commonly used: <strong>tabular RL</strong> (exact value-function computation on discrete, enumerable spaces), <strong>fitted Q-learning</strong> (approximates <span class="arithmatex">\(q[s,a|\pi]\)</span> with a neural network — used in Deep Q-Networks), and <strong>policy gradient methods</strong> (optimize <span class="arithmatex">\(\pi\)</span> directly by gradient ascent on expected return — used in PPO and the RLHF fine-tuning step of AlphaFold 2). Applications in computational science include adaptive sampling, molecular generation, and active learning of potential energy surfaces.</p>
+<p>When <span class="arithmatex">\(f\)</span> is unknown, the ML process of finding the optimal <span class="arithmatex">\(\hat{f}\)</span> from a set <span class="arithmatex">\(F\)</span> is called <strong>inductive learning</strong>. The term reflects a philosophical point: inductions from finite data are never logically certain — they can at best be <em>useful</em>. When <span class="arithmatex">\(f\)</span> is already known but computationally expensive to evaluate, one instead seeks a model <span class="arithmatex">\(\hat{f}\)</span> that reproduces <span class="arithmatex">\(f\)</span> much more cheaply; this is called <strong>speed-up learning</strong>, and <span class="arithmatex">\(\hat{f}\)</span> is called a <strong>surrogate model</strong>. Surrogate models for expensive quantum-mechanical calculations (DFT, CCSD) are the central application throughout this course. An ML model is a <strong>universal approximator</strong> if its accuracy improves with increasing amounts of training data under some performance measure — the model class is rich enough to approach any target <span class="arithmatex">\(f\)</span> given sufficient data.</p>
+<p>The fundamental requirement in every paradigm is <strong>generalization</strong>: the model must perform well on data it has not seen during training, not merely memorize the training set. A model that achieves this is said to generalize.</p>
+<h2 id="12-risk-minimization-and-loss-functions">1.2 Risk Minimization and Loss Functions<a class="headerlink" href="#12-risk-minimization-and-loss-functions" title="Permanent link">&para;</a></h2>
+<p>The quality of a model <span class="arithmatex">\(\hat{f}\)</span> is measured by a <strong>loss function</strong> <span class="arithmatex">\(\ell(\hat{f}(x), y)\)</span> that quantifies the discrepancy between the prediction <span class="arithmatex">\(\hat{f}(x)\)</span> and the true label <span class="arithmatex">\(y\)</span>.</p>
+<p>The <strong>expected risk</strong> is the expectation of the loss over the true (unknown) data distribution <span class="arithmatex">\(\mathcal{P}(\mathcal{X}, \mathcal{Y})\)</span>:</p>
+<div class="arithmatex">\[R(\hat{f}) = \langle \ell(\hat{f}(\mathcal{X}), \mathcal{Y}) \rangle = \int \ell\!\left(\hat{f}(\mathcal{X}), \mathcal{Y}\right) \mathrm{d}\mathcal{P}(\mathcal{X}, \mathcal{Y})\]</div>
+<p>Since <span class="arithmatex">\(\mathcal{P}\)</span> is unknown, the expected risk is approximated by the <strong>empirical risk</strong> — the mean loss over the finite training set <span class="arithmatex">\(T\)</span>:</p>
+<div class="arithmatex">\[R_\mathrm{emp}(\hat{f}) = \frac{1}{n} \sum_{i=1}^{n} \ell\!\left(\hat{f}(x_i),\, y_i\right)\]</div>
+<p>where <span class="arithmatex">\(n = |T|\)</span> is the number of training examples. The ML training process is the process of minimizing <span class="arithmatex">\(R_\mathrm{emp}\)</span>.</p>
+<p><strong>Common loss functions for regression</strong> (continuous <span class="arithmatex">\(y_i\)</span>):</p>
+<p>L1 loss (least absolute deviations, more robust to outliers):</p>
+<div class="arithmatex">\[\ell(\hat{f}(x_i), y_i) = \sum_i \left|\hat{f}(x_i) - y_i\right|\]</div>
+<p>L2 loss (least squares, standard for regression):</p>
+<div class="arithmatex">\[\ell(\hat{f}(x_i), y_i) = \sum_i \left(\hat{f}(x_i) - y_i\right)^2\]</div>
+<p>The L2 loss is easier to optimize (smooth gradient) but more sensitive to outliers than L1.</p>
+<h2 id="13-gradient-based-optimization">1.3 Gradient-Based Optimization<a class="headerlink" href="#13-gradient-based-optimization" title="Permanent link">&para;</a></h2>
+<p>Model parameters are optimized iteratively via gradient descent. For a linear model <span class="arithmatex">\(z = w \cdot x + b\)</span> with weight vector <span class="arithmatex">\(w\)</span> and scalar bias <span class="arithmatex">\(b\)</span>, the parameter update at step <span class="arithmatex">\(t\)</span> is:</p>
+<div class="arithmatex">\[w_t \leftarrow w_{t-1} - \alpha \cdot \nabla_{w_{t-1}} \ell(w, y, z)\]</div>
+<p>where <span class="arithmatex">\(\alpha &gt; 0\)</span> is the <strong>learning rate</strong>. The gradient <span class="arithmatex">\(\nabla_w \ell\)</span> is propagated backwards through the computational graph using automatic differentiation.</p>
+<p><strong>Stochastic Gradient Descent (SGD)</strong> approximates the full gradient using a random <strong>mini-batch</strong> <span class="arithmatex">\(B \ll M\)</span> of training examples, where <span class="arithmatex">\(M\)</span> is the total training set size. The full dataset is divided into <span class="arithmatex">\(N = M / n_\text{batch}\)</span> mini-batches; one pass over all mini-batches is called an <strong>epoch</strong>.</p>
+<p><strong>Adam</strong> (Adaptive Moment Estimation, Kingma &amp; Ba, 2015) maintains per-parameter adaptive learning rates by tracking the first moment (mean) and second moment (uncentered variance) of the gradients. At step <span class="arithmatex">\(t\)</span>, with gradient <span class="arithmatex">\(g_t = \nabla_{w_{t-1}} \ell\)</span>:</p>
+<div class="arithmatex">\[m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t \qquad \text{(first moment)}\]</div>
+<div class="arithmatex">\[v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2 \qquad \text{(second moment)}\]</div>
+<p>Bias-corrected estimates:</p>
+<div class="arithmatex">\[\hat{m}_t = \frac{m_t}{1 - \beta_1^t}, \qquad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}\]</div>
+<p>Parameter update:</p>
+<div class="arithmatex">\[w_{n+1} \leftarrow w_n - \alpha \cdot \hat{m}_t / (\sqrt{\hat{v}_t} + \varepsilon)\]</div>
+<p>Defaults: <span class="arithmatex">\(\beta_1 = 0.9\)</span>, <span class="arithmatex">\(\beta_2 = 0.999\)</span>, <span class="arithmatex">\(\varepsilon = 10^{-8}\)</span>.</p>
+<h2 id="14-overfitting-regularization-and-model-validation">1.4 Overfitting, Regularization, and Model Validation<a class="headerlink" href="#14-overfitting-regularization-and-model-validation" title="Permanent link">&para;</a></h2>
+<p><strong>Underfitting (high bias)</strong> occurs when the model is too simple to capture the structure of the data — it achieves high loss on both training and test data.</p>
+<p><strong>Overfitting (high variance)</strong> occurs when the model is too complex and fits noise in the training data, achieving low training loss but high test loss. Overfitting yields an increased error on unseen data by approximating a simple functional relationship with an overly complex function.</p>
+<p><strong>Regularization</strong> discourages overfitting by adding a complexity penalty to the loss:</p>
+<div class="arithmatex">\[\ell_\text{reg}(\hat{f}) = \ell(\hat{f}) + \lambda\, R(\hat{f})\]</div>
+<p>where <span class="arithmatex">\(\lambda &gt; 0\)</span> controls the regularization strength. Common choices: <span class="arithmatex">\(R = \|w\|_2^2\)</span> (L2/Ridge, penalizes large weights) and <span class="arithmatex">\(R = \|w\|_1\)</span> (L1/Lasso, promotes sparsity).</p>
+<p>The widget below fits a degree-<span class="arithmatex">\(d\)</span> polynomial to noisy samples of <span class="arithmatex">\(f(x) = \sin(2\pi x)\)</span> and predicts <span class="arithmatex">\(\hat{f}(x)\)</span> at all <span class="arithmatex">\(x \in [0,1]\)</span> (the red curve). The right panel tracks train and test MSE across all degrees up to 20. Use the sliders to see how dataset size and the train/test split shift the overfitting profile, and resample to draw a fresh noise realization.</p>
+<div id="overfit-widget" style="margin:1.5rem 0 3.5rem 0;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:0.45rem 1.1rem;align-items:center;margin-bottom:0.85rem;font-size:0.91rem;">
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <span style="font-weight:600;white-space:nowrap;">Degree</span>
+      <input type="range" id="ov-deg" min="1" max="20" value="3" step="1"
+             oninput="ovUpdate()" style="width:110px;accent-color:#BA5A5A;">
+      <span id="ov-deg-val" style="font-weight:700;min-width:1.6em;color:#BA5A5A;">3</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <span style="font-weight:600;white-space:nowrap;">Data points</span>
+      <input type="range" id="ov-n" min="10" max="80" value="20" step="5"
+             oninput="ovUpdate()" style="width:110px;accent-color:#86BCBD;">
+      <span id="ov-n-val" style="font-weight:700;min-width:1.6em;color:#86BCBD;">20</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <span style="font-weight:600;white-space:nowrap;">Train %</span>
+      <input type="range" id="ov-frac" min="50" max="90" value="75" step="5"
+             oninput="ovUpdate()" style="width:110px;accent-color:#A4CE8B;">
+      <span id="ov-frac-val" style="font-weight:700;min-width:2.8em;color:#A4CE8B;">75 %</span>
+    </div>
+    <button onclick="ovResample()" style="padding:0.3rem 0.9rem;border:1.5px solid #F7E49B;border-radius:6px;background:rgba(247,228,155,0.15);color:inherit;cursor:pointer;font-size:0.88rem;font-weight:600;">&#x27F3; Resample</button>
+  </div>
+  <div id="ov-plot" style="width:100%;height:460px;"></div>
+</div>
+
+<script>
+(function(){
+  var _seed=42, _deg=3, _N=20, _trainPct=75;
+
+  function _lcgNext(s){return(Math.imul(1664525,s)+1013904223)>>>0;}
+  function _lcgFloat(s){return _lcgNext(s)/4294967296;}
+
+  function _genData(){
+    var step=Math.max(2,Math.round(100/(100-_trainPct)));
+    var xTr=[],yTr=[],xTe=[],yTe=[],s=_seed;
+    for(var i=0;i<_N;i++){
+      s=_lcgNext(s);
+      var x=i/Math.max(_N-1,1);
+      var y=Math.sin(2*Math.PI*x)+(_lcgFloat(s)-0.5)*0.6;
+      if(i%step===0){xTe.push(x);yTe.push(y);}else{xTr.push(x);yTr.push(y);}
+    }
+    return{xTr:xTr,yTr:yTr,xTe:xTe,yTe:yTe};
+  }
+
+  function _vand(xs,deg){
+    return xs.map(function(x){
+      var row=[],xn=2*x-1,xp=1;
+      for(var j=0;j<=deg;j++){row.push(xp);xp*=xn;}
+      return row;
+    });
+  }
+  function _solve(M,b){
+    var n=b.length,a=M.map(function(r,i){return r.slice().concat([b[i]]);});
+    for(var col=0;col<n;col++){
+      var mx=col;
+      for(var row=col+1;row<n;row++)if(Math.abs(a[row][col])>Math.abs(a[mx][col]))mx=row;
+      var tmp=a[col];a[col]=a[mx];a[mx]=tmp;
+      if(Math.abs(a[col][col])<1e-14)continue;
+      for(var row=col+1;row<n;row++){
+        var f=a[row][col]/a[col][col];
+        for(var j=col;j<=n;j++)a[row][j]-=f*a[col][j];
+      }
+    }
+    var x=new Array(n);
+    for(var i=n-1;i>=0;i--){
+      x[i]=a[i][n];
+      for(var j=i+1;j<n;j++)x[i]-=a[i][j]*x[j];
+      x[i]/=a[i][i];
+    }
+    return x;
+  }
+  function _fit(xs,ys,deg){
+    var V=_vand(xs,deg);
+    var Vt=V[0].map(function(_,c){return V.map(function(r){return r[c];});});
+    var AtA=Vt.map(function(r){return Vt.map(function(c){return r.reduce(function(s,v,i){return s+v*c[i];},0);});});
+    var Atb=Vt.map(function(r){return r.reduce(function(s,v,i){return s+v*ys[i];},0);});
+    return _solve(AtA,Atb);
+  }
+  function _eval(c,x){
+    var xn=2*x-1,val=0,xp=1;
+    c.forEach(function(ci){val+=ci*xp;xp*=xn;});
+    return val;
+  }
+  function _mse(c,xs,ys){
+    return xs.reduce(function(s,x,i){var d=_eval(c,x)-ys[i];return s+d*d;},0)/xs.length;
+  }
+  function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
+
+  function _draw(){
+    var el=document.getElementById('ov-plot');
+    if(!el||!window.Plotly)return;
+    var data=_genData();
+    var xTr=data.xTr,yTr=data.yTr,xTe=data.xTe,yTe=data.yTe;
+    if(!xTr.length)return;
+    var maxDeg=Math.min(_deg,xTr.length-1);
+
+    var coef=null;
+    try{coef=_fit(xTr,yTr,maxDeg);}catch(e){return;}
+
+    var xL=Array.from({length:200},function(_,i){return i/199;});
+    var yL=xL.map(function(x){return _eval(coef,x);});
+    var yTrue=xL.map(function(x){return Math.sin(2*Math.PI*x);});
+
+    var maxPlotDeg=Math.min(20,xTr.length-1);
+    var degs=[],errTr=[],errTe=[];
+    for(var d=1;d<=maxPlotDeg;d++){
+      try{
+        var c=_fit(xTr,yTr,d);
+        var mTr=_mse(c,xTr,yTr),mTe=_mse(c,xTe,yTe);
+        if(isFinite(mTr)&&isFinite(mTe)){degs.push(d);errTr.push(mTr);errTe.push(mTe);}
+      }catch(e){}
+    }
+    var eMax=(errTe.length?Math.max.apply(null,errTe):1)*1.3;
+    eMax=Math.max(eMax,0.05);
+
+    var dk=_dark(),bg=dk?'#1e2228':'#ffffff',fg=dk?'#e0e0e0':'#333333';
+    var gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+    var label=_deg<=2?'underfitting':_deg>=7?'overfitting':'good fit';
+    var fs=14;
+
+    Plotly.react('ov-plot',[
+      {x:xL,y:yTrue,mode:'lines',name:'true f(x)',
+       line:{color:'#86BCBD',width:1.5,dash:'dash'},xaxis:'x',yaxis:'y'},
+      {x:xL,y:yL,mode:'lines',name:'degree '+maxDeg+' fit',
+       line:{color:'#BA5A5A',width:2.5},xaxis:'x',yaxis:'y'},
+      {x:xTr,y:yTr,mode:'markers',name:'train ('+xTr.length+')',
+       marker:{color:'#A4CE8B',size:7,line:{color:'rgba(0,0,0,0.25)',width:1}},xaxis:'x',yaxis:'y'},
+      {x:xTe,y:yTe,mode:'markers',name:'test ('+xTe.length+')',
+       marker:{symbol:'diamond',color:'#F7E49B',size:8,line:{color:'rgba(0,0,0,0.4)',width:1}},xaxis:'x',yaxis:'y'},
+      {x:degs,y:errTr,mode:'lines+markers',name:'train MSE',
+       line:{color:'#A4CE8B',width:2},marker:{color:'#A4CE8B',size:5},xaxis:'x2',yaxis:'y2'},
+      {x:degs,y:errTe,mode:'lines+markers',name:'test MSE',
+       line:{color:'#BA5A5A',width:2},marker:{color:'#BA5A5A',size:5},xaxis:'x2',yaxis:'y2'},
+      {x:[maxDeg,maxDeg],y:[0,eMax],mode:'lines',showlegend:false,
+       line:{color:'#86BCBD',width:1.5,dash:'dot'},xaxis:'x2',yaxis:'y2'},
+    ],{
+      paper_bgcolor:bg,plot_bgcolor:bg,
+      font:{color:fg,family:'inherit',size:fs},
+      margin:{t:50,b:58,l:62,r:68},
+      annotations:[
+        {text:'Polynomial fit to sin(2π<i>x</i>) + noise — <b>'+label+'</b>',
+         xref:'paper',yref:'paper',x:0.21,y:1.06,showarrow:false,font:{size:13,color:fg}},
+        {text:'Train vs. test MSE by degree',
+         xref:'paper',yref:'paper',x:0.79,y:1.06,showarrow:false,font:{size:13,color:fg}},
+      ],
+      xaxis:{title:{text:'<i>x</i>',font:{size:fs+1}},range:[-0.02,1.02],domain:[0,0.43],
+             gridcolor:gc,zerolinecolor:gc,tickfont:{size:fs-1}},
+      yaxis:{title:{text:'<i>y</i>',font:{size:fs+1}},range:[-2.5,2.5],
+             gridcolor:gc,zerolinecolor:gc,tickfont:{size:fs-1}},
+      xaxis2:{title:{text:'Polynomial degree',font:{size:fs+1}},
+              range:[0.5,maxPlotDeg+0.5],dtick:Math.max(1,Math.floor(maxPlotDeg/10)),
+              domain:[0.57,1],gridcolor:gc,zerolinecolor:gc,tickfont:{size:fs-1}},
+      yaxis2:{title:{text:'MSE',font:{size:fs+1}},range:[0,eMax],
+              anchor:'x2',side:'right',gridcolor:gc,zerolinecolor:gc,tickfont:{size:fs-1}},
+      legend:{x:0.01,y:0.02,bgcolor:'rgba(0,0,0,0)',font:{size:fs-2}},
+    },{displayModeBar:false,responsive:true});
+  }
+
+  window.ovUpdate=function(){
+    _deg=+document.getElementById('ov-deg').value||3;
+    _N=+document.getElementById('ov-n').value||20;
+    _trainPct=+document.getElementById('ov-frac').value||75;
+    document.getElementById('ov-deg-val').textContent=_deg;
+    document.getElementById('ov-n-val').textContent=_N;
+    document.getElementById('ov-frac-val').textContent=_trainPct+' %';
+    _draw();
+  };
+  window.ovResample=function(){
+    _seed=_lcgNext(_seed^1013904223);
+    ovUpdate();
+  };
+
+  function _init(){
+    if(!document.getElementById('ov-plot'))return;
+    if(!window.Plotly){
+      if(!document.getElementById('plotly-cdn')){
+        var s=document.createElement('script');
+        s.id='plotly-cdn';
+        s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+        s.onload=function(){_draw();};
+        document.head.appendChild(s);
+      }
+    }else{_draw();}
+  }
+
+  if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
+  else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
+  else{_init();}
+})();
+</script>
+
+<h2 id="15-data-splitting-and-cross-validation">1.5 Data Splitting and Cross-Validation<a class="headerlink" href="#15-data-splitting-and-cross-validation" title="Permanent link">&para;</a></h2>
+<p>The dataset is partitioned into three strictly non-overlapping subsets:</p>
+<ul>
+<li><strong>Training set</strong> (typically 60–80%): the model sees this data directly; parameters are updated by gradient descent on training batches.</li>
+<li><strong>Validation set</strong> (typically 10–20%): used for hyperparameter tuning and early stopping; the model is indirectly influenced — do not over-optimize on it.</li>
+<li><strong>Test set</strong> (typically 10–20%): touched exactly once at the very end; provides an honest estimate of generalization to unseen data.</li>
+</ul>
+<p><strong><span class="arithmatex">\(K\)</span>-fold cross-validation</strong> is used when data is scarce. The training data is divided into <span class="arithmatex">\(K\)</span> equal folds; the model is trained <span class="arithmatex">\(K\)</span> times, each time holding out a different fold for validation. The <span class="arithmatex">\(K\)</span> validation losses are averaged for a more reliable estimate of generalization. Leave-one-out CV (LOO-CV) is the special case <span class="arithmatex">\(K = n\)</span>.</p>
+<p><strong>Data augmentation</strong> artificially expands the training set by applying label-preserving transformations. For atomistic data: 3D rotations and reflections, noise on atomic positions, permutation of equivalent atoms.</p>
+<h2 id="16-historical-context">1.6 Historical Context<a class="headerlink" href="#16-historical-context" title="Permanent link">&para;</a></h2>
+<p>Two converging trajectories explain why ML and computational physics now overlap: the century-long refinement of <em>ab initio</em> electronic-structure methods (left) and the rise of machine learning from statistical theory to large-scale AI (right). Both timelines share the same axis — milestones that belong to both fields appear in the same row.</p>
+<div style="position:relative;margin:1.4rem 0 2rem 0;padding:0.5rem 0;">
+<div style="position:absolute;left:50%;top:0;bottom:0;width:2px;transform:translateX(-50%);background:linear-gradient(to bottom,#86BCBD 0%,#86BCBD 45%,#BA5A5A 60%,#BA5A5A 100%);opacity:0.4;z-index:0;"></div>
+<div style="display:flex;gap:1.4rem;justify-content:center;margin-bottom:0.9rem;font-size:0.78rem;"><span style="display:flex;align-items:center;gap:0.35rem;"><span style="width:12px;height:12px;border-radius:50%;background:#86BCBD;display:inline-block;"></span><em>Ab initio</em> (left)</span><span style="display:flex;align-items:center;gap:0.35rem;"><span style="width:12px;height:12px;border-radius:50%;background:#BA5A5A;display:inline-block;"></span>Machine learning (right)</span></div><div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1812</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Bayesian inference (Laplace)</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Schrödinger equation</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1926</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Thomas-Fermi model; Hartree SCF</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1927</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Hartree-Fock method</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1930</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1943</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">McCulloch-Pitts neuron</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Slater X&#945; exchange</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1951</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Hohenberg-Kohn theorems — DFT foundation</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1964</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Kohn-Sham equations; LDA</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1965</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Generalized gradient approximation (GGA)</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1980</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1986</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Backpropagation (Rumelhart, Hinton, Williams)</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1988</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Universal approximation theorem (Cybenko)</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1989</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Q-learning (Watkins); MNIST dataset</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Hybrid functionals (B3LYP)</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1993</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">1997</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Deep Blue defeats world chess champion; LSTM (Hochreiter &amp; Schmidhuber)</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Nobel Prize in Chemistry (Kohn, Pople)</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">1998</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Meta-GGA, dispersion corrections, range-separated hybrids</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#86BCBD;white-space:nowrap;">2001+</div><div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2006</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">&#8220;Deep Learning&#8221; coined (Hinton)</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2009</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">ImageNet released; ILSVRC competition (2010)</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2012</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">AlexNet — deep learning breakthrough on ImageNet</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2016</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">AlphaGo defeats Lee Sedol</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2017</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Transformers — &#8220;Attention Is All You Need&#8221;</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div style="text-align:right;padding-right:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #86BCBD;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(134,188,189,0.10);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">ML exchange-correlation functionals; neural XC</div></div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#888;white-space:nowrap;">2018</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">AlphaFold 1; BERT; GPT-1</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2021</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">AlphaFold 2 — protein structure revolution</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2022</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">ChatGPT; DALL-E 2; Stable Diffusion</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2024</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Nobel Prize in Physics (Hopfield, Hinton); EU AI Act; GPT-4o</div></div></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 5.2rem minmax(0,1fr);align-items:center;margin-bottom:0.5rem;position:relative;"><div></div><div style="text-align:center;z-index:2;position:relative;background:var(--md-default-bg-color,#fff);border-radius:4px;padding:0.05rem 0.15rem;font-weight:600;font-size:0.76rem;color:#BA5A5A;white-space:nowrap;">2025</div><div style="padding-left:0.8rem;"><div style="display:inline-block;max-width:100%;border:1.5px solid #BA5A5A;border-radius:7px;padding:0.3rem 0.6rem;background:rgba(186,90,90,0.08);"><div style="font-size:0.77rem;line-height:1.35;word-break:break-word;">Agentic AI systems; frontier model race</div></div></div></div>
+</div>
+<h2 id="17-evaluation-metrics">1.7 Evaluation Metrics<a class="headerlink" href="#17-evaluation-metrics" title="Permanent link">&para;</a></h2>
+<p>Beyond the training loss, three scalar metrics are standard for reporting regression performance on a held-out test set.</p>
+<p><strong>Mean absolute error (MAE)</strong> is the average absolute residual:</p>
+<div class="arithmatex">\[\text{MAE} = \frac{1}{n}\sum_{i=1}^{n} \left|y_i - \hat{y}_i\right|\]</div>
+<p><strong>Root mean square error (RMSE)</strong> penalizes large errors more heavily:</p>
+<div class="arithmatex">\[\text{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}\]</div>
+<p><strong>Coefficient of determination</strong> (<span class="arithmatex">\(R^2\)</span>) measures the fraction of target variance explained by the model:</p>
+<div class="arithmatex">\[R^2 = 1 - \frac{\sum_i (y_i - \hat{y}_i)^2}{\sum_i (y_i - \bar{y})^2}, \qquad \bar{y} = \frac{1}{n}\sum_i y_i\]</div>
+<p>A perfect model gives <span class="arithmatex">\(R^2 = 1\)</span>; a model that always predicts <span class="arithmatex">\(\bar{y}\)</span> gives <span class="arithmatex">\(R^2 = 0\)</span>; a model worse than the mean gives <span class="arithmatex">\(R^2 &lt; 0\)</span>.</p>
+<h2 id="18-aleatoric-and-epistemic-uncertainty">1.8 Aleatoric and Epistemic Uncertainty<a class="headerlink" href="#18-aleatoric-and-epistemic-uncertainty" title="Permanent link">&para;</a></h2>
+<p>Not all prediction errors have the same origin. Distinguishing them guides how to reduce them.</p>
+<p><strong>Aleatoric uncertainty</strong> (also: data or irreducible uncertainty) arises from inherent noise in the data-generating process — measurement error, thermal fluctuations, quantum uncertainty in atomic positions. It cannot be reduced by collecting more data; it sets a floor on achievable accuracy.</p>
+<p><strong>Epistemic uncertainty</strong> (also: model or reducible uncertainty) arises from limited training data and the resulting uncertainty about model parameters. It can be reduced by adding more training examples or choosing a more expressive model class. It is large in data-sparse regions of input space and vanishes in the infinite-data limit.</p>
+<p>Bayesian models (Gaussian processes, Bayesian neural networks) or ensemble methods quantify both types: the predictive variance decomposes into a data-noise term (aleatoric) and a parameter-uncertainty term (epistemic). Reliable uncertainty estimates are critical for active learning and safety-critical physics applications.</p>
+<h2 id="19-inductive-bias">1.9 Inductive Bias<a class="headerlink" href="#19-inductive-bias" title="Permanent link">&para;</a></h2>
+<p><strong>Bias</strong> is the <em>a priori</em> choice of the set of functions <span class="arithmatex">\(F\)</span> from which the learning process selects the optimal <span class="arithmatex">\(\hat{f}\)</span>. A learner that makes no such choice — placing no restrictions on <span class="arithmatex">\(F\)</span> — cannot generalize: with unconstrained hypotheses, any function consistent with the training data is equally valid, and there is no basis for preferring one prediction over another on unseen inputs.</p>
+<p>A concrete illustration: there are <span class="arithmatex">\(2^{2^N}\)</span> possible Boolean functions on <span class="arithmatex">\(N\)</span> binary inputs. After observing one labeled example, exactly half of all remaining consistent functions assign value 1 to any unseen pattern and half assign value 0 — no generalization is possible. The learner can only memorize. Restricting to a much smaller set <span class="arithmatex">\(F' \subset F\)</span> (with <span class="arithmatex">\(\log |F'| \ll \log |F|\)</span>) can leave only a single consistent function after training, enabling meaningful predictions.</p>
+<p>Two mechanisms achieve this restriction.</p>
+<p><strong>Absolute bias</strong> restricts <span class="arithmatex">\(F\)</span> to a defined subset determined by the model architecture — a linear model can only represent affine functions; a convolutional network has built-in translation equivariance. Anything outside the restricted <span class="arithmatex">\(F\)</span> is structurally inaccessible to the learner.</p>
+<p><strong>Preference bias</strong> does not hard-restrict <span class="arithmatex">\(F\)</span> but selects among hypotheses within <span class="arithmatex">\(F\)</span> according to an ordering scheme or domain requirements — for example, preferring smoother functions (L2 regularization), sparser weight vectors (L1), or models that satisfy known symmetry requirements of the physical system.</p>
+<p>The <strong>no free lunch</strong> theorem formalizes the unavoidability of bias: no single algorithm outperforms random guessing across <em>all</em> possible problem distributions simultaneously. Choosing a good bias — a hypothesis class matched to the structure of the target <span class="arithmatex">\(f\)</span> — is therefore the central design decision in ML.</p>
+<h2 id="110-scientific-machine-learning">1.10 Scientific Machine Learning<a class="headerlink" href="#110-scientific-machine-learning" title="Permanent link">&para;</a></h2>
+<p><strong>Scientific machine learning (SciML)</strong> combines the data-efficiency of physical laws with the flexibility of data-driven models. Physical constraints — conservation laws, symmetries, PDEs — can be enforced directly in the model or loss, reducing the effective problem dimensionality and improving generalization far from training data.</p>
+<p><strong>Physics-informed neural networks (PINNs)</strong> minimize a composite loss</p>
+<div class="arithmatex">\[\mathcal{L} = \mathcal{L}_\text{data} + \lambda\,\mathcal{L}_\text{PDE},\]</div>
+<p>where <span class="arithmatex">\(\mathcal{L}_\text{data}\)</span> fits labeled observations and <span class="arithmatex">\(\mathcal{L}_\text{PDE}\)</span> penalizes violation of a known governing equation (Navier-Stokes, Schrödinger, etc.) at collocation points. The PDE residual acts as a strong physics-based regularizer.</p>
+<p><strong>Symmetry-adapted architectures</strong> build physical symmetries into the network by construction rather than learning them from data. Equivariant graph neural networks (Chapter 6) produce outputs that transform predictably under 3D rotations and reflections, automatically satisfying conservation of angular momentum — a property that a generic MLP must learn from augmented data.</p>
+<h2 id="111-a-typical-ml-workflow-in-computational-physics">1.11 A Typical ML Workflow in Computational Physics<a class="headerlink" href="#111-a-typical-ml-workflow-in-computational-physics" title="Permanent link">&para;</a></h2>
+<p>A structured workflow prevents common pitfalls: data leakage, metric shopping, and irreproducible results.</p>
+<div style="margin:1.6rem 0 2rem 0;">
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #86BCBD;border-radius:10px;padding:0.6rem 1rem;background:rgba(186,90,90,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#86BCBD;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 1</span>
+    <span style="font-weight:700;font-size:0.9rem;">Define the task</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Identify the target property, acceptable error tolerance, and how reference data will be generated.</div>
+</div>
+<div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
+<div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #86BCBD;border-radius:10px;padding:0.6rem 1rem;background:rgba(134,188,189,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#86BCBD;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 2</span>
+    <span style="font-weight:700;font-size:0.9rem;">Generate and clean the data</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Run reference calculations (DFT, CCSD) or use an existing database. Check units, convergence, and data provenance.</div>
+</div>
+<div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
+<div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #86BCBD;border-radius:10px;padding:0.6rem 1rem;background:rgba(134,188,189,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#86BCBD;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 3</span>
+    <span style="font-weight:700;font-size:0.9rem;">Visualize and explore</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Inspect feature distributions and correlations to catch systematic errors before modelling.</div>
+</div>
+<div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
+<div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #A4CE8B;border-radius:10px;padding:0.6rem 1rem;background:rgba(164,206,139,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#A4CE8B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 4</span>
+    <span style="font-weight:700;font-size:0.9rem;">Prepare the data</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Split by structure into train / validation / test. Fit preprocessing (scaling, normalization) on the training set only.</div>
+</div>
+<div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
+<div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #A4CE8B;border-radius:10px;padding:0.6rem 1rem;background:rgba(164,206,139,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#A4CE8B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 5</span>
+    <span style="font-weight:700;font-size:0.9rem;">Featurize the inputs</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Encode atomic structures as symmetry-invariant descriptors (Chapter 2) or graphs (Chapter 6).</div>
+</div>
+<div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
+<div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #F7E49B;border-radius:10px;padding:0.6rem 1rem;background:rgba(247,228,155,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#F7E49B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 6</span>
+    <span style="font-weight:700;font-size:0.9rem;">Select, train, and evaluate</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Choose a model class suited to the data regime and output type. Fit on the training set; monitor generalization on the validation set.</div>
+</div>
+<div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
+<div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #F7E49B;border-radius:10px;padding:0.6rem 1rem;background:rgba(247,228,155,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#F7E49B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 7</span>
+    <span style="font-weight:700;font-size:0.9rem;">Optimise and fine-tune</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Tune hyperparameters (architecture, learning rate, regularization) on the validation set.</div>
+</div>
+<div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
+<div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #F7E49B;border-radius:10px;padding:0.6rem 1rem;background:rgba(247,228,155,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#F7E49B;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 8</span>
+    <span style="font-weight:700;font-size:0.9rem;">Assess accuracy and uncertainty</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Evaluate on the held-out test set: MAE, RMSE, R². Quantify aleatoric and epistemic uncertainty (Chapter 4).</div>
+</div>
+<div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
+<div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #BA5A5A;border-radius:10px;padding:0.6rem 1rem;background:rgba(186,90,90,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#BA5A5A;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 9</span>
+    <span style="font-weight:700;font-size:0.9rem;">Generate more data if needed</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Use active learning to target new calculations where model uncertainty is highest.</div>
+</div>
+<div style="display:flex;justify-content:center;margin:0.05rem 0;"><div style="width:2px;height:1.4rem;background:#999;opacity:0.5;"></div></div>
+<div style="display:flex;justify-content:center;margin:-0.05rem 0 0.05rem 0;"><div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #999;opacity:0.5;"></div></div>
+<div style="width:min(520px,100%);margin:0 auto;border:2px solid #BA5A5A;border-radius:10px;padding:0.6rem 1rem;background:rgba(186,90,90,0.12);text-align:left;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;">
+    <span style="font-weight:700;font-size:0.72rem;color:#BA5A5A;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;">Step 10</span>
+    <span style="font-weight:700;font-size:0.9rem;">Deploy</span>
+  </div>
+  <div style="font-size:0.79rem;line-height:1.45;margin-top:0.25rem;opacity:0.9;">Version the model; record training provenance: functional, basis set, code version, dataset composition.</div>
+</div>
+</div>
+
+<h2 id="112-data-quality-and-pipeline">1.12 Data Quality and Pipeline<a class="headerlink" href="#112-data-quality-and-pipeline" title="Permanent link">&para;</a></h2>
+<p>Model performance is bounded by data quality. Three issues are especially common in physics ML workflows.</p>
+<p><strong>Data leakage</strong> occurs when information from the test set influences model training — most often through normalization statistics computed over the full dataset before splitting, or through feature selection that uses test labels. The result is optimistic test metrics that do not reflect true generalization. Prevention: always fit preprocessing transforms on the training split only, then apply them to validation and test.</p>
+<p><strong>Data provenance</strong> tracks the origin and processing history of each data point: which code version, which DFT functional, which basis set, which convergence threshold. Without provenance, combining datasets from different sources silently introduces systematic offsets. In practice, store metadata alongside each calculation in a structured format (ASE database, JSON sidecar files).</p>
+<p><strong>Public datasets</strong> widely used in ML for chemistry and materials include QM9 (134k small organic molecules, DFT/B3LYP properties), the Materials Project (hundreds of thousands of inorganic compounds), ANI-1 (organic molecule energies), MD17 (molecular dynamics trajectories), and OC20/OC22 (open catalyst datasets for heterogeneous catalysis).</p>
+<h2 id="113-software-and-hardware">1.13 Software and Hardware<a class="headerlink" href="#113-software-and-hardware" title="Permanent link">&para;</a></h2>
+<p><strong>ML frameworks.</strong> PyTorch (Meta) is the dominant research framework; its dynamic computation graph and <code>autograd</code> engine make custom architectures easy to prototype. JAX (Google) offers composable function transforms (<code>jit</code>, <code>grad</code>, <code>vmap</code>) suited for scientific computing with hardware-agnostic acceleration. TensorFlow (Google) remains common in production deployments.</p>
+<p><strong>GPU accelerators.</strong> GPUs accelerate the matrix multiplications at the core of neural network training by 100–1000× over a CPU, via thousands of parallel cores and extremely high memory bandwidth. The table below compares current data-centre accelerators used in ML for physics:</p>
+<div style="display:flex;justify-content:center;overflow-x:auto;margin:1rem 0 1.4rem;">
+<table style="margin:0 auto;border-collapse:collapse;font-size:0.84rem;">
+<thead><tr style="border-bottom:2px solid var(--md-default-fg-color--light,#999);">
+<th style="padding:0.45rem 0.85rem;text-align:left;">Chip</th>
+<th style="padding:0.45rem 0.85rem;text-align:left;">Vendor</th>
+<th style="padding:0.45rem 0.85rem;text-align:center;">Year</th>
+<th style="padding:0.45rem 0.85rem;text-align:left;">Memory</th>
+<th style="padding:0.45rem 0.85rem;text-align:left;">Bandwidth</th>
+<th style="padding:0.45rem 0.85rem;text-align:left;">Generation</th>
+</tr></thead>
+<tbody>
+<tr style="border-bottom:1px solid var(--md-default-fg-color--lightest,#ddd);"><td style="padding:0.4rem 0.85rem;text-align:left;">A100 SXM4</td><td style="padding:0.4rem 0.85rem;text-align:left;">NVIDIA</td><td style="padding:0.4rem 0.85rem;text-align:center;">2020</td><td style="padding:0.4rem 0.85rem;text-align:left;">80 GB HBM2e</td><td style="padding:0.4rem 0.85rem;text-align:left;">2.0 TB/s</td><td style="padding:0.4rem 0.85rem;text-align:left;">Ampere</td></tr>
+<tr style="border-bottom:1px solid var(--md-default-fg-color--lightest,#ddd);"><td style="padding:0.4rem 0.85rem;text-align:left;">H100 SXM</td><td style="padding:0.4rem 0.85rem;text-align:left;">NVIDIA</td><td style="padding:0.4rem 0.85rem;text-align:center;">2022</td><td style="padding:0.4rem 0.85rem;text-align:left;">80 GB HBM3</td><td style="padding:0.4rem 0.85rem;text-align:left;">3.35 TB/s</td><td style="padding:0.4rem 0.85rem;text-align:left;">Hopper</td></tr>
+<tr style="border-bottom:1px solid var(--md-default-fg-color--lightest,#ddd);"><td style="padding:0.4rem 0.85rem;text-align:left;">L40S</td><td style="padding:0.4rem 0.85rem;text-align:left;">NVIDIA</td><td style="padding:0.4rem 0.85rem;text-align:center;">2023</td><td style="padding:0.4rem 0.85rem;text-align:left;">48 GB GDDR6</td><td style="padding:0.4rem 0.85rem;text-align:left;">864 GB/s</td><td style="padding:0.4rem 0.85rem;text-align:left;">Ada Lovelace</td></tr>
+<tr style="border-bottom:1px solid var(--md-default-fg-color--lightest,#ddd);"><td style="padding:0.4rem 0.85rem;text-align:left;">H200 SXM</td><td style="padding:0.4rem 0.85rem;text-align:left;">NVIDIA</td><td style="padding:0.4rem 0.85rem;text-align:center;">2024</td><td style="padding:0.4rem 0.85rem;text-align:left;">141 GB HBM3e</td><td style="padding:0.4rem 0.85rem;text-align:left;">4.8 TB/s</td><td style="padding:0.4rem 0.85rem;text-align:left;">Hopper</td></tr>
+<tr style="border-bottom:1px solid var(--md-default-fg-color--lightest,#ddd);"><td style="padding:0.4rem 0.85rem;text-align:left;">B200</td><td style="padding:0.4rem 0.85rem;text-align:left;">NVIDIA</td><td style="padding:0.4rem 0.85rem;text-align:center;">2025</td><td style="padding:0.4rem 0.85rem;text-align:left;">180 GB HBM3e</td><td style="padding:0.4rem 0.85rem;text-align:left;">8.0 TB/s</td><td style="padding:0.4rem 0.85rem;text-align:left;">Blackwell</td></tr>
+<tr style="border-bottom:1px solid var(--md-default-fg-color--lightest,#ddd);"><td style="padding:0.4rem 0.85rem;text-align:left;">GB200</td><td style="padding:0.4rem 0.85rem;text-align:left;">NVIDIA</td><td style="padding:0.4rem 0.85rem;text-align:center;">2025</td><td style="padding:0.4rem 0.85rem;text-align:left;">2×B200 + Grace ARM CPU</td><td style="padding:0.4rem 0.85rem;text-align:left;">900 GB/s NVLink-C2C</td><td style="padding:0.4rem 0.85rem;text-align:left;">Blackwell</td></tr>
+<tr style="border-bottom:1px solid var(--md-default-fg-color--lightest,#ddd);"><td style="padding:0.4rem 0.85rem;text-align:left;">MI300X</td><td style="padding:0.4rem 0.85rem;text-align:left;">AMD</td><td style="padding:0.4rem 0.85rem;text-align:center;">2023</td><td style="padding:0.4rem 0.85rem;text-align:left;">192 GB HBM3</td><td style="padding:0.4rem 0.85rem;text-align:left;">5.3 TB/s</td><td style="padding:0.4rem 0.85rem;text-align:left;">CDNA 3</td></tr>
+<tr style=""><td style="padding:0.4rem 0.85rem;text-align:left;">MI350X</td><td style="padding:0.4rem 0.85rem;text-align:left;">AMD</td><td style="padding:0.4rem 0.85rem;text-align:center;">2025</td><td style="padding:0.4rem 0.85rem;text-align:left;">288 GB HBM3e</td><td style="padding:0.4rem 0.85rem;text-align:left;">8.0 TB/s</td><td style="padding:0.4rem 0.85rem;text-align:left;">CDNA 4</td></tr>
+</tbody></table></div>
+
+<p>The H200 carries the same compute die as the H100 but nearly doubles the memory capacity, relieving the bandwidth bottleneck for large models. The B200 (Blackwell) is a dual-die chip with fifth-generation Tensor Cores and NVLink 5.0; a GB200 NVL72 rack integrates 72 B200 chips over NVLink. AMD's MI300X powers El Capitan (#2 globally) thanks to its record memory capacity; the MI350X (CDNA 4, released mid-2025) raises this to 288 GB.</p>
+<p><strong>HPC hierarchy.</strong> Supercomputing resources span several tiers. Named examples from the <a href="https://top500.org/lists/top500/2026/06/">June 2026 TOP500</a> and major facility lists are shown below:</p>
+<div style="margin:1.8rem 0 2.5rem;max-width:660px;margin-left:auto;margin-right:auto;font-size:0.75rem;line-height:1.5;">
+
+<!-- Tier 0: Exascale — narrowest trapezoid (top 22%–78%, bottom 14%–86%) -->
+<div style="clip-path:polygon(35% 0%,65% 0%,72% 100%,28% 100%);background:rgba(186,90,90,0.30);padding:0.75rem 36%;text-align:center;min-height:5.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;">
+<span style="font-weight:700;font-size:0.6rem;color:#8B2020;text-transform:uppercase;letter-spacing:0.09em;">Tier 0 &nbsp;·&nbsp; Exascale (&gt;1 EF/s)</span>
+<span>LineShine (China) · El Capitan (USA)</span>
+<span>Frontier (USA) · Aurora (USA) · JUPITER (Germany)</span>
+</div>
+
+<!-- Tier 1: Pre-exascale (top 14%–86%, bottom 7%–93%) -->
+<div style="clip-path:polygon(28% 0%,72% 0%,79% 100%,21% 100%);background:rgba(186,90,90,0.18);padding:0.75rem 29%;text-align:center;min-height:5.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
+<span style="font-weight:700;font-size:0.6rem;color:#8B2020;text-transform:uppercase;letter-spacing:0.09em;">Tier 1 &nbsp;·&nbsp; Pre-exascale Flagship</span>
+<span>MareNostrum 5 (Spain) · LUMI (Finland) · Leonardo (Italy)</span>
+<span>JUWELS Booster (Germany) · Perlmutter (USA)</span>
+</div>
+
+<!-- Tier 2: National (top 7%–93%, bottom 0%–100%) -->
+<div style="clip-path:polygon(21% 0%,79% 0%,86% 100%,14% 100%);background:rgba(247,228,155,0.38);padding:0.75rem 22%;text-align:center;min-height:5.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
+<span style="font-weight:700;font-size:0.6rem;color:#6A5000;text-transform:uppercase;letter-spacing:0.09em;">Tier 2 &nbsp;·&nbsp; National HPC Facilities</span>
+<span>MUSICA (Austria) · VSC-5 (Austria) · ARCHER2 (UK)<br>Hawk (Germany) · SuperMUC-NG (Germany) · Gadi (Australia)<br>Cedar (Canada) · Shaheen III (Saudi Arabia) · Mahti (Finland)</span>
+</div>
+
+<!-- Tier 3: Institutional — full-width rectangle (base of pyramid) -->
+<div style="clip-path:polygon(14% 0%,86% 0%,93% 100%,7% 100%);background:rgba(164,206,139,0.35);padding:0.75rem 15%;text-align:center;min-height:4.8rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
+<span style="font-weight:700;font-size:0.6rem;color:#2A5A1A;text-transform:uppercase;letter-spacing:0.09em;">Tier 3 &nbsp;·&nbsp; University / Institutional Clusters</span>
+<span>bwUniCluster 2.0 (Germany) · CSD3 (UK, Cambridge) · Narval (Canada) · ALICE (Netherlands, Leiden)</span>
+</div>
+
+<!-- Tier 4: Local — base -->
+<div style="clip-path:polygon(7% 0%,93% 0%,100% 100%,0% 100%);background:rgba(134,188,189,0.35);padding:0.75rem 8%;text-align:center;min-height:4rem;display:flex;flex-direction:column;justify-content:center;gap:0.18rem;margin-top:-1px;">
+<span style="font-weight:700;font-size:0.6rem;color:#1A5A5C;text-transform:uppercase;letter-spacing:0.09em;">Tier 4 &nbsp;·&nbsp; Local Workstation / Lab Server</span>
+<span>NVIDIA DGX H100 · single/multi-GPU servers · laptop or desktop CPU</span>
+</div>
+
+</div>
+
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="../javascripts/font-size.js"></script>
+      
+        <script src="../javascripts/collapsible-sidebars.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

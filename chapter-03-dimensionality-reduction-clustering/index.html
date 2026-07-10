@@ -1,0 +1,1363 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Lecture notes for Machine Learning in Computational Physics">
+      
+      
+      
+        <link rel="canonical" href="https://hbarquanta.github.io/MLinCP-Notes/chapter-03-dimensionality-reduction-clustering/">
+      
+      
+        <link rel="prev" href="../chapter-02-descriptors-featurization/">
+      
+      
+        <link rel="next" href="../chapter-04-regression-uncertainty-quantification/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Chapter 3 — Dimensionality Reduction & Clustering - ML in Computational Physics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-3-dimensionality-reduction-clustering" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ML in Computational Physics" class="md-header__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ML in Computational Physics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 3 — Dimensionality Reduction & Clustering
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ML in Computational Physics" class="md-nav__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    ML in Computational Physics
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-01-introduction-core-ml-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1 — Introduction & Core ML Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-02-descriptors-featurization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2 — Descriptors & Featurization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3 — Dimensionality Reduction & Clustering
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3 — Dimensionality Reduction & Clustering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#31-distance-measures-and-the-curse-of-dimensionality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Distance Measures and the Curse of Dimensionality
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-principal-component-analysis-pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Principal Component Analysis (PCA)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-kernel-pca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Kernel PCA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#34-autoencoders-nonlinear-dimensionality-reduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Autoencoders (Nonlinear Dimensionality Reduction)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#35-t-sne-t-distributed-stochastic-neighbor-embedding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 t-SNE (t-distributed Stochastic Neighbor Embedding)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#36-umap-uniform-manifold-approximation-and-projection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.6 UMAP (Uniform Manifold Approximation and Projection)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.6 UMAP (Uniform Manifold Approximation and Projection)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#comparison-of-dimensionality-reduction-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison of dimensionality reduction methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#37-partition-based-and-density-based-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.7 Partition-Based and Density-Based Methods
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#38-k-means-clustering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.8 K-Means Clustering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#39-gaussian-mixture-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.9 Gaussian Mixture Models
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#310-hierarchical-clustering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.10 Hierarchical Clustering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#311-density-based-clustering-dbscan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.11 Density-Based Clustering: DBSCAN
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#312-hdbscan-hierarchical-dbscan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.12 HDBSCAN (Hierarchical DBSCAN)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#313-cluster-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.13 Cluster Sampling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#314-notes-on-clustering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.14 Notes on Clustering
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#315-clustering-method-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.15 Clustering Method Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-04-regression-uncertainty-quantification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4 — Regression & Uncertainty Quantification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-05-neural-networks-trees-regularization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5 — Neural Networks, Trees & Regularization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-06-graph-neural-networks-gnns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6 — Graph Neural Networks (GNNs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-07-machine-learning-interatomic-potentials-i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 7 — Machine Learning Interatomic Potentials I
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-08-machine-learning-interatomic-potentials-ii/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 8 — Machine Learning Interatomic Potentials II
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-09-generative-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 9 — Generative Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-10-ml-methods-for-rare-events-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 10 — ML Methods for Rare Events Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-3-dimensionality-reduction-clustering">Chapter 3: Dimensionality Reduction &amp; Clustering<a class="headerlink" href="#chapter-3-dimensionality-reduction-clustering" title="Permanent link">&para;</a></h1>
+<p>Unsupervised learning extracts structure from unlabeled data <span class="arithmatex">\(\{x^{(p)}\}_{p=1}^P\)</span>, where <span class="arithmatex">\(x^{(p)} \in \mathbb{R}^D\)</span>. The two central tasks are <strong>dimensionality reduction</strong>, which finds a compact low-dimensional representation <span class="arithmatex">\(z^{(p)} \in \mathbb{R}^d\)</span> with <span class="arithmatex">\(d \ll D\)</span>, and <strong>clustering</strong>, which partitions the data into groups of similar points.</p>
+<div style="margin:2rem 0 2.5rem;">
+  <div style="background:linear-gradient(135deg,#BA5A5A 0%,#a04848 100%);border-radius:10px;padding:1.6rem 2rem;box-shadow:0 4px 16px rgba(186,90,90,0.3);">
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.75);margin-bottom:0.35rem;">Part I</div>
+    <div style="font-size:1.9rem;font-weight:700;color:#fff;line-height:1.15;margin-bottom:0.4rem;">Dimensionality Reduction</div>
+    <div style="font-size:0.9rem;color:rgba(255,255,255,0.88);font-style:italic;">Finding compact low-dimensional representations of high-dimensional data</div>
+  </div>
+</div>
+
+<h2 id="31-distance-measures-and-the-curse-of-dimensionality">3.1 Distance Measures and the Curse of Dimensionality<a class="headerlink" href="#31-distance-measures-and-the-curse-of-dimensionality" title="Permanent link">&para;</a></h2>
+<p>Before choosing a dimensionality reduction method, it is worth understanding how to measure distances in feature space and why high-dimensional spaces are geometrically strange.</p>
+<p><strong>Distance measures.</strong> Given two data points <span class="arithmatex">\(x, y \in \mathbb{R}^D\)</span>, the three most common pairwise distances are:</p>
+<p><strong>Euclidean distance</strong> is the straight-line distance:</p>
+<div class="arithmatex">\[d_E(x, y) = \sqrt{\sum_{i=1}^D (x_i - y_i)^2}\]</div>
+<p>It is the default choice when features are continuous and on comparable scales. Most dimensionality reduction methods (PCA, t-SNE) and clustering algorithms (K-means) implicitly assume Euclidean geometry.</p>
+<p><strong>Manhattan distance</strong> (the <span class="arithmatex">\(L^1\)</span> norm) sums absolute coordinate differences:</p>
+<div class="arithmatex">\[d_M(x, y) = \sum_{i=1}^D |x_i - y_i|\]</div>
+<p>It is more robust when features have different scales or when data lie on a grid-like structure, because it does not square large individual differences the way Euclidean distance does.</p>
+<p><strong>Chebyshev distance</strong> takes the maximum deviation over all dimensions:</p>
+<div class="arithmatex">\[d_C(x, y) = \max_{i} |x_i - y_i|\]</div>
+<p>It emphasizes the single coordinate with the largest discrepancy, making it useful for highlighting extreme outliers in feature space.</p>
+<p><strong>The curse of dimensionality.</strong> In high dimensions, geometric intuition breaks down. Consider two points <span class="arithmatex">\(x\)</span> and <span class="arithmatex">\(y\)</span> drawn uniformly at random from the unit hypercube <span class="arithmatex">\([0,1]^D\)</span>. The expected squared Euclidean distance between them is <span class="arithmatex">\(D/6\)</span>, so:</p>
+<div class="arithmatex">\[\mathbb{E}[d_E(x, y)] \approx \sqrt{D/6}\]</div>
+<p>The expected distance grows with dimension, but more critically, <em>all</em> pairwise distances converge toward the same value as <span class="arithmatex">\(D\)</span> increases: the ratio <span class="arithmatex">\(d_\text{max}/d_\text{min} \to 1\)</span>. Points that differ in only a few features become indistinguishable from genuinely distant points, making nearest-neighbor queries meaningless.</p>
+<p>A second manifestation: in a <span class="arithmatex">\(D\)</span>-dimensional ball of radius <span class="arithmatex">\(r\)</span>, almost all the volume concentrates in a thin shell near the surface as <span class="arithmatex">\(D \to \infty\)</span>. Equivalently, any local neighborhood must either contain exponentially few points or span a large fraction of the feature range, destroying the notion of locality that methods like K-means and t-SNE rely on.</p>
+<p>In computational chemistry and physics, molecular descriptors, electronic fingerprints, and force-field feature vectors routinely have hundreds to thousands of dimensions. Dimensionality reduction is not optional in such settings; it is the tool that makes local geometric analysis tractable.</p>
+<hr />
+<h2 id="32-principal-component-analysis-pca">3.2 Principal Component Analysis (PCA)<a class="headerlink" href="#32-principal-component-analysis-pca" title="Permanent link">&para;</a></h2>
+<p>PCA finds the <span class="arithmatex">\(K\)</span>-dimensional <strong>linear subspace</strong> of <span class="arithmatex">\(\mathbb{R}^N\)</span> that retains the maximum variance of the data, where <span class="arithmatex">\(N\)</span> is the feature dimension and <span class="arithmatex">\(K &lt; N\)</span> is the target (reduced) dimension. The method is motivated by the following observation: if we want to encode data <span class="arithmatex">\(x_p \in \mathbb{R}^N\)</span> (data point index <span class="arithmatex">\(p = 1,\ldots,M\)</span>, where <span class="arithmatex">\(M\)</span> is the number of samples) via a spanning set of <span class="arithmatex">\(K\)</span> orthonormal vectors <span class="arithmatex">\(c_1,\ldots,c_K \in \mathbb{R}^N\)</span>, then the optimal encoding <span class="arithmatex">\(w_p = C^T x_p \in \mathbb{R}^K\)</span> and decoding <span class="arithmatex">\(C w_p \approx x_p\)</span> (where <span class="arithmatex">\(C = [c_1|\cdots|c_K] \in \mathbb{R}^{N\times K}\)</span>) minimize the reconstruction loss</p>
+<div class="arithmatex">\[\mathcal{L} = \sum_p \|x_p - C C^T x_p\|^2\]</div>
+<p>when <span class="arithmatex">\(C\)</span> contains the eigenvectors of the covariance matrix with the <span class="arithmatex">\(K\)</span> largest eigenvalues. This motivates the following steps.</p>
+<p><strong>Step 1. Preprocess:</strong> center the data.
+Compute the sample mean <span class="arithmatex">\(\bar{x} = \frac{1}{M}\sum_{p=1}^M x_p \in \mathbb{R}^N\)</span> and subtract it. PCA requires the data to pass through the origin:</p>
+<div class="arithmatex">\[x_p \leftarrow x_p - \bar{x}\]</div>
+<p>Stacking the (now centered) data points as columns gives the data matrix <span class="arithmatex">\(X \in \mathbb{R}^{N \times M}\)</span>.</p>
+<p><strong>Step 2. Covariance:</strong> compute the covariance matrix.</p>
+<div class="arithmatex">\[\Sigma = \frac{1}{M} X X^T \in \mathbb{R}^{N \times N}\]</div>
+<p><span class="arithmatex">\(\Sigma\)</span> is symmetric and positive semi-definite. Its <span class="arithmatex">\((i,j)\)</span> entry is the sample covariance between feature dimensions <span class="arithmatex">\(i\)</span> and <span class="arithmatex">\(j\)</span>.</p>
+<p><strong>Step 3. Eigen-decomposition:</strong> compute eigenvalues and eigenvectors.</p>
+<div class="arithmatex">\[\Sigma = V D V^T\]</div>
+<p>where <span class="arithmatex">\(V \in \mathbb{R}^{N \times N}\)</span> is orthogonal (columns are eigenvectors <span class="arithmatex">\(c_k\)</span>) and <span class="arithmatex">\(D = \text{diag}(\lambda_1, \lambda_2, \ldots, \lambda_N)\)</span> with eigenvalues sorted <span class="arithmatex">\(\lambda_1 \ge \lambda_2 \ge \cdots \ge \lambda_N \ge 0\)</span>. The eigenvector with the largest eigenvalue <span class="arithmatex">\(\lambda_1\)</span> is the 1st principal component; the <span class="arithmatex">\(k\)</span>-th largest eigenvalue gives the <span class="arithmatex">\(k\)</span>-th principal component.</p>
+<p><strong>Step 4. Variance:</strong> choose the number of components <span class="arithmatex">\(K\)</span>.
+The eigenvalue <span class="arithmatex">\(\lambda_k\)</span> equals the variance of the data projected onto <span class="arithmatex">\(c_k\)</span>. The fraction of total variance retained by <span class="arithmatex">\(K\)</span> components is:</p>
+<div class="arithmatex">\[\text{explained variance ratio} = \frac{\sum_{k=1}^K \lambda_k}{\sum_{k=1}^N \lambda_k}\]</div>
+<p>There is no single right answer; PCA is a tool for data exploration. Scree plots (plotting <span class="arithmatex">\(\lambda_k\)</span> vs. <span class="arithmatex">\(k\)</span>) help identify an "elbow" where additional components yield diminishing returns.</p>
+<p><strong>Step 5. Subspace projection.</strong>
+Form the projection matrix <span class="arithmatex">\(C = [c_1 | c_2 | \cdots | c_K] \in \mathbb{R}^{N\times K}\)</span> from the <span class="arithmatex">\(K\)</span> selected eigenvectors. Encode each data point:</p>
+<div class="arithmatex">\[w_p = C^T x_p \in \mathbb{R}^K\]</div>
+<p>The full dataset is encoded as <span class="arithmatex">\(W = C^T X \in \mathbb{R}^{K\times M}\)</span>.</p>
+<p><strong>Step 6. (Optional) Reconstruct.</strong>
+The approximate reconstruction from the low-dimensional code is:</p>
+<div class="arithmatex">\[\hat{x}_p = C w_p = C C^T x_p \approx x_p\]</div>
+<p>The per-point reconstruction error is <span class="arithmatex">\(\|x_p - \hat{x}_p\|^2\)</span>; the total equals the discarded variance <span class="arithmatex">\(\sum_{k=K+1}^N \lambda_k\)</span>.</p>
+<p><strong>Limitations.</strong> PCA can only discover linear structure. If the data lies on a curved, nonlinear manifold in <span class="arithmatex">\(\mathbb{R}^N\)</span>, PCA represents it poorly and nonlinear methods are needed.</p>
+<p><strong>Physics context.</strong> In MD simulations, PCA applied to atomic position trajectories identifies the principal modes of motion (e.g., protein conformational changes). TICA (Time-lagged Independent Component Analysis) is a variant that maximizes autocorrelation at a lag time <span class="arithmatex">\(\tau\)</span>, and is better at identifying slow collective variables relevant to rare events.</p>
+<hr />
+<h2 id="33-kernel-pca">3.3 Kernel PCA<a class="headerlink" href="#33-kernel-pca" title="Permanent link">&para;</a></h2>
+<p>Kernel PCA extends PCA to nonlinear manifolds using the <strong>kernel trick</strong>: data is implicitly mapped into a high-dimensional feature space <span class="arithmatex">\(\mathcal{H}\)</span> via <span class="arithmatex">\(\phi: \mathbb{R}^N \to \mathcal{H}\)</span>, and PCA is performed there. The mapping <span class="arithmatex">\(\phi\)</span> never needs to be computed explicitly; only pairwise inner products <span class="arithmatex">\(k(x_i, x_j) = \langle \phi(x_i), \phi(x_j) \rangle_\mathcal{H}\)</span> are needed.</p>
+<p><strong>Gram (kernel) matrix.</strong> Compute the <span class="arithmatex">\(M \times M\)</span> matrix:</p>
+<div class="arithmatex">\[K_{ij} = k(x_i, x_j), \quad i,j = 1,\ldots,M\]</div>
+<p><strong>Centering in feature space.</strong> To center the implicit feature vectors, adjust:</p>
+<div class="arithmatex">\[\tilde{K} = K - \mathbf{1}_M K - K \mathbf{1}_M + \mathbf{1}_M K \mathbf{1}_M\]</div>
+<p>where <span class="arithmatex">\(\mathbf{1}_M \in \mathbb{R}^{M\times M}\)</span> has all entries equal to <span class="arithmatex">\(1/M\)</span>.</p>
+<p><strong>Eigendecomposition.</strong> Solve <span class="arithmatex">\(\tilde{K}\,\alpha_k = \mu_k\,\alpha_k\)</span> for eigenvectors <span class="arithmatex">\(\alpha_k \in \mathbb{R}^M\)</span> and eigenvalues <span class="arithmatex">\(\mu_k\)</span>. The <span class="arithmatex">\(k\)</span>-th coordinate of the embedding of a new point <span class="arithmatex">\(x\)</span> is:</p>
+<div class="arithmatex">\[w_k(x) = \sum_{p=1}^M \alpha_k^{(p)}\, k(x, x_p)\]</div>
+<p>Common kernels: RBF <span class="arithmatex">\(k(x,x') = \exp(-\|x-x'\|^2 / 2\sigma^2)\)</span>; polynomial <span class="arithmatex">\(k(x,x') = (x^T x' + c)^q\)</span>.</p>
+<p>Kernel PCA can capture nonlinear structure, but requires <span class="arithmatex">\(\mathcal{O}(M^2)\)</span> memory and <span class="arithmatex">\(\mathcal{O}(M^3)\)</span> compute, making it impractical for large datasets.</p>
+<hr />
+<h2 id="34-autoencoders-nonlinear-dimensionality-reduction">3.4 Autoencoders (Nonlinear Dimensionality Reduction)<a class="headerlink" href="#34-autoencoders-nonlinear-dimensionality-reduction" title="Permanent link">&para;</a></h2>
+<p>The linear autoencoder formulation from PCA (encoding <span class="arithmatex">\(w_p = C^T x_p\)</span> and decoding <span class="arithmatex">\(C w_p \approx x_p\)</span>) generalizes directly to nonlinear models. A <strong>nonlinear autoencoder</strong> replaces the linear spanning set <span class="arithmatex">\(C\)</span> with neural networks:</p>
+<ul>
+<li>An <strong>encoder</strong> compresses <span class="arithmatex">\(x_p \in \mathbb{R}^N\)</span> to a low-dimensional latent code <span class="arithmatex">\(w_p \in \mathbb{R}^K\)</span> through a stack of nonlinear layers.</li>
+<li>A <strong>decoder</strong> reconstructs <span class="arithmatex">\(\hat{x}_p \approx x_p\)</span> from <span class="arithmatex">\(w_p\)</span> through a second nonlinear network.</li>
+</ul>
+<p>Training minimizes the same reconstruction loss <span class="arithmatex">\(\mathcal{L} = \sum_p \|x_p - \hat{x}_p\|^2\)</span>. With nonlinear activations (e.g. ReLU, tanh), the encoder can map data lying on a curved manifold to a flat latent space, something PCA cannot do. The latent code <span class="arithmatex">\(w_p\)</span> can then be used for visualization, clustering, or downstream supervised learning.</p>
+<p>If the encoder and decoder are linear (no activations), the autoencoder's optimal solution is identical to PCA, confirming that PCA is a special case of the autoencoder framework.</p>
+<p><strong>Limitation.</strong> The latent space of a standard autoencoder is not regularized and may be discontinuous or contain holes where the decoder produces unrealistic outputs. Variational autoencoders (VAEs, L9) address this by imposing a probabilistic prior on <span class="arithmatex">\(w\)</span>.</p>
+<hr />
+<h2 id="35-t-sne-t-distributed-stochastic-neighbor-embedding">3.5 t-SNE (t-distributed Stochastic Neighbor Embedding)<a class="headerlink" href="#35-t-sne-t-distributed-stochastic-neighbor-embedding" title="Permanent link">&para;</a></h2>
+<p>t-SNE maps high-dimensional data <span class="arithmatex">\(X = \{x_1, \ldots, x_N\}\)</span> (where <span class="arithmatex">\(N\)</span> is the number of data points, each <span class="arithmatex">\(x_i \in \mathbb{R}^D\)</span> with feature dimension <span class="arithmatex">\(D\)</span>) to a low-dimensional visualization <span class="arithmatex">\(\{w_i\}\)</span> with <span class="arithmatex">\(w_i \in \mathbb{R}^2\)</span> or <span class="arithmatex">\(\mathbb{R}^3\)</span>, preserving local neighborhood structure. It should not be used for general dimensionality reduction; <strong>it is primarily a visualization tool</strong>.</p>
+<p><strong>Step 1. Compute pairwise distances and similarity matrix in <span class="arithmatex">\(X\)</span>.</strong></p>
+<p>Compute Euclidean pairwise distances <span class="arithmatex">\(d(x_i, x_j)\)</span> for all pairs. Convert to a joint probability distribution capturing pairwise similarities. The conditional probability that point <span class="arithmatex">\(j\)</span> is a neighbor of point <span class="arithmatex">\(i\)</span> under a Gaussian centered at <span class="arithmatex">\(i\)</span> is:</p>
+<div class="arithmatex">\[p_{j|i} = \frac{\exp\!\left(-d(x_i,x_j)^2 / 2\sigma_i^2\right)}{\displaystyle\sum_{k \neq i} \exp\!\left(-d(x_i,x_k)^2 / 2\sigma_i^2\right)}\]</div>
+<p>The bandwidth <span class="arithmatex">\(\sigma_i\)</span> is chosen per point to achieve a target <strong>perplexity</strong> (typical values 5–50), which controls the effective number of neighbors. Symmetrize: <span class="arithmatex">\(p_{ij} = (p_{j|i} + p_{i|j}) / 2N\)</span>.</p>
+<p><strong>Step 2. Initialize and define low-dimensional similarities.</strong></p>
+<p>Create an initial set of low-dimensional points <span class="arithmatex">\(\{w_i\}\)</span>. Define similarities in the low-dimensional space using a Student-<span class="arithmatex">\(t\)</span> distribution with one degree of freedom:</p>
+<div class="arithmatex">\[q_{ij} = \frac{\left(1 + \|w_i - w_j\|^2\right)^{-1}}{\displaystyle\sum_{k \neq l}\left(1 + \|w_k - w_l\|^2\right)^{-1}}\]</div>
+<p>The heavy tail of the <span class="arithmatex">\(t\)</span>-distribution alleviates the <strong>crowding problem</strong>: in low dimensions, insufficient volume would otherwise force moderately similar points too close together.</p>
+<p><strong>Step 3. Minimize the Kullback-Leibler divergence.</strong></p>
+<p>Optimize <span class="arithmatex">\(\{w_i\}\)</span> by minimizing:</p>
+<div class="arithmatex">\[\mathcal{L} = \text{KL}(P \| Q) = \sum_{i \neq j} p_{ij} \log \frac{p_{ij}}{q_{ij}}\]</div>
+<p>via gradient descent.</p>
+<p>The <strong>KL divergence</strong> <span class="arithmatex">\(\text{KL}(P\|Q)\)</span> measures how much distribution <span class="arithmatex">\(Q\)</span> differs from a reference distribution <span class="arithmatex">\(P\)</span>. It is always <span class="arithmatex">\(\ge 0\)</span>, and equals zero only when <span class="arithmatex">\(P = Q\)</span>. Importantly, it is <strong>asymmetric</strong>: <span class="arithmatex">\(\text{KL}(P\|Q) \neq \text{KL}(Q\|P)\)</span>. The direction used here penalizes cases where <span class="arithmatex">\(P\)</span> assigns high probability but <span class="arithmatex">\(Q\)</span> does not: if two points are close in high dimensions (<span class="arithmatex">\(p_{ij}\)</span> large) but far apart in the embedding (<span class="arithmatex">\(q_{ij}\)</span> small), the log ratio <span class="arithmatex">\(\log(p_{ij}/q_{ij})\)</span> is large and the penalty is severe. The reverse (pairs close in the embedding but far apart in high dimensions) contributes little to the loss. This asymmetry is what forces t-SNE to prioritize preserving local neighborhoods over global structure.</p>
+<p>t-SNE focuses on preserving small pairwise similarities (local structure); PCA instead maximizes large pairwise distances (global variance). As a consequence, global distances and inter-cluster separations in the t-SNE embedding are not meaningful and should not be interpreted.</p>
+<p>The distill.pub article <a href="https://distill.pub/2016/misread-tsne/"><em>How to Use t-SNE Effectively</em></a> provides interactive examples of how perplexity and random seed affect the embedding, and is worth reading before applying t-SNE to real data.</p>
+<hr />
+<h2 id="36-umap-uniform-manifold-approximation-and-projection">3.6 UMAP (Uniform Manifold Approximation and Projection)<a class="headerlink" href="#36-umap-uniform-manifold-approximation-and-projection" title="Permanent link">&para;</a></h2>
+<p>UMAP uses tools from topological data analysis to build a fuzzy graph representation of the manifold underlying the data, then optimizes a low-dimensional embedding to match it. Compared to t-SNE, UMAP is faster and better preserves global structure, while both are primarily used for visualization. The axes of either embedding carry no direct physical meaning.</p>
+<hr />
+<h3 id="comparison-of-dimensionality-reduction-methods">Comparison of dimensionality reduction methods<a class="headerlink" href="#comparison-of-dimensionality-reduction-methods" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Linear?</th>
+<th>Preserves global structure</th>
+<th>Typical cost</th>
+<th>Primary use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PCA</td>
+<td>Yes</td>
+<td>Yes</td>
+<td><span class="arithmatex">\(\mathcal{O}(MN^2)\)</span></td>
+<td>General reduction, collective variables</td>
+</tr>
+<tr>
+<td>Kernel PCA</td>
+<td>No</td>
+<td>Partial</td>
+<td><span class="arithmatex">\(\mathcal{O}(M^3)\)</span></td>
+<td>Nonlinear, small <span class="arithmatex">\(M\)</span></td>
+</tr>
+<tr>
+<td>Autoencoder</td>
+<td>No</td>
+<td>Yes (if trained well)</td>
+<td><span class="arithmatex">\(\mathcal{O}(M)\)</span> per epoch</td>
+<td>Large-scale nonlinear</td>
+</tr>
+<tr>
+<td>t-SNE</td>
+<td>No</td>
+<td>No</td>
+<td><span class="arithmatex">\(\mathcal{O}(N\log N)\)</span></td>
+<td>2D/3D visualization</td>
+</tr>
+<tr>
+<td>UMAP</td>
+<td>No</td>
+<td>Partial</td>
+<td><span class="arithmatex">\(\mathcal{O}(N^{1.14})\)</span></td>
+<td>2D/3D visualization</td>
+</tr>
+</tbody>
+</table>
+<p>Here <span class="arithmatex">\(M\)</span> = number of data points, <span class="arithmatex">\(N\)</span> = feature dimension (PCA context); for t-SNE/UMAP, <span class="arithmatex">\(N\)</span> = number of data points.</p>
+<p><strong>Physics context.</strong> PCA and TICA applied to MD trajectories yield collective variables (CVs) <span class="arithmatex">\(\xi\)</span> parameterizing slow conformational changes. The free energy surface along a CV is <span class="arithmatex">\(F(\xi) = -k_\mathrm{B}T \ln P(\xi)\)</span>, where <span class="arithmatex">\(k_\mathrm{B}\)</span> is Boltzmann's constant, <span class="arithmatex">\(T\)</span> is temperature, and <span class="arithmatex">\(P(\xi)\)</span> is the probability density of observing value <span class="arithmatex">\(\xi\)</span> in an equilibrium simulation.</p>
+<hr />
+<div style="margin:3.5rem 0 2.5rem;">
+  <div style="background:linear-gradient(135deg,#86BCBD 0%,#6ba5a6 100%);border-radius:10px;padding:1.6rem 2rem;box-shadow:0 4px 16px rgba(134,188,189,0.3);">
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.75);margin-bottom:0.35rem;">Part II</div>
+    <div style="font-size:1.9rem;font-weight:700;color:#fff;line-height:1.15;margin-bottom:0.4rem;">Clustering</div>
+    <div style="font-size:0.9rem;color:rgba(255,255,255,0.88);font-style:italic;">Partitioning unlabeled data into groups of similar points</div>
+  </div>
+</div>
+
+<p>Clustering algorithms partition a dataset <span class="arithmatex">\(\{x^{(p)}\}_{p=1}^P\)</span> into groups of similar points without using any labels. Two broad families of methods exist, reflecting different geometric assumptions about cluster structure.</p>
+<h2 id="37-partition-based-and-density-based-methods">3.7 Partition-Based and Density-Based Methods<a class="headerlink" href="#37-partition-based-and-density-based-methods" title="Permanent link">&para;</a></h2>
+<p><strong>Partition-based methods</strong> (K-means, Gaussian mixture models) divide data into <span class="arithmatex">\(K\)</span> groups by optimizing a global objective: the within-cluster variance for K-means, or a likelihood for GMMs. The number of clusters <span class="arithmatex">\(K\)</span> must be specified in advance. These methods work best when clusters have roughly uniform size and convex shape, and they assign every point to exactly one cluster.</p>
+<p><strong>Density-based methods</strong> (DBSCAN, HDBSCAN) define clusters as regions of high point density separated by sparse regions. They can find clusters of arbitrary shape and size, and explicitly identify <strong>noise points</strong> that do not belong to any dense region. No value of <span class="arithmatex">\(K\)</span> needs to be specified; clusters emerge from the local structure of the data.</p>
+<p><strong>Hierarchical clustering</strong> sits between these two families. It produces a tree of nested partitions, the <strong>dendrogram</strong>, spanning all values of <span class="arithmatex">\(K\)</span> from 1 to <span class="arithmatex">\(P\)</span>. A flat clustering at any desired granularity is obtained by cutting the dendrogram at a chosen height, without re-running the algorithm.</p>
+<hr />
+<h2 id="38-k-means-clustering">3.8 K-Means Clustering<a class="headerlink" href="#38-k-means-clustering" title="Permanent link">&para;</a></h2>
+<p>K-means places <span class="arithmatex">\(N\)</span> observations into <span class="arithmatex">\(K\)</span> sets <span class="arithmatex">\(\mathcal{C} = \{C_1, C_2, \ldots, C_K\}\)</span> (where <span class="arithmatex">\(N\)</span> is the number of data points, each <span class="arithmatex">\(x_i \in \mathbb{R}^D\)</span> with feature dimension <span class="arithmatex">\(D\)</span>) by minimizing the total internal cluster variance:</p>
+<div class="arithmatex">\[\mathcal{L}(\mathcal{C}, \{\mu_k\}) = \sum_{k=1}^K \sum_{i \in C_k} \left\|x_i - \mu_k\right\|^2\]</div>
+<p>where <span class="arithmatex">\(\mu_k = \frac{1}{|C_k|}\sum_{i \in C_k} x_i\)</span> is the centroid (mean) of cluster <span class="arithmatex">\(C_k\)</span>.</p>
+<p><strong>Algorithm (Lloyd's algorithm):</strong>
+1. <strong>Initialization</strong>: choose the number of clusters <span class="arithmatex">\(K\)</span> and randomly assign each of the <span class="arithmatex">\(N\)</span> points to a cluster (or use K-means++, which greedily places initial centroids far apart to improve convergence).
+2. <strong>Distance metric</strong>: choose a distance measure in the feature space (typically Euclidean).
+3. <strong>Centroid</strong>: compute the centroid <span class="arithmatex">\(\mu_k\)</span> of each cluster.
+4. <strong>Assignment</strong>: reassign each point to the nearest centroid based on the chosen distance, iterating until the clusters stop changing.</p>
+<p><strong>Convergence.</strong> The loss <span class="arithmatex">\(\mathcal{L}\)</span> decreases at every step; convergence is guaranteed because the number of possible assignments is finite. However, convergence is only to a <strong>local minimum</strong>; K-means is sensitive to initialization. Running multiple times with different random starts and keeping the lowest-loss result is standard practice.</p>
+<p><strong>Choosing <span class="arithmatex">\(K\)</span>.</strong>
+- <strong>Elbow method</strong>: plot <span class="arithmatex">\(\mathcal{L}\)</span> vs. <span class="arithmatex">\(K\)</span> and pick the "elbow" where adding more clusters yields diminishing improvement.
+- <strong>Silhouette score</strong>: for each point <span class="arithmatex">\(i\)</span>, let <span class="arithmatex">\(a_i\)</span> = mean intra-cluster distance and <span class="arithmatex">\(b_i\)</span> = mean distance to the nearest other cluster. The silhouette coefficient <span class="arithmatex">\(s_i = (b_i - a_i)/\max(a_i, b_i) \in [-1, 1]\)</span>; higher = better separated.</p>
+<p><strong>Limitations of K-means.</strong> The algorithm's strength is its simplicity, but it comes with structural constraints. Points at cluster boundaries must be assigned to exactly one cluster, with no dual membership or soft assignment. Clusters are discrete and cannot overlap or nest within each other. The algorithm is non-deterministic: it finds only local minima of the objective, and different random initializations can yield qualitatively different clusterings; running K-means++ initialization with multiple random restarts mitigates but does not eliminate this problem. Beyond these structural constraints, K-means implicitly assumes clusters are convex and roughly spherical: it fails on non-convex shapes such as crescents or rings, and is sensitive to outliers that pull centroids toward them.</p>
+<p>The widget below lets you vary <span class="arithmatex">\(K\)</span> and the dataset. Note how <em>Moons</em> and <em>Rings</em> fool K-means regardless of <span class="arithmatex">\(K\)</span>. The "Re-run" button re-initializes with a different random seed; repeated runs on <em>Blobs</em> with large <span class="arithmatex">\(K\)</span> will sometimes settle at different local minima.</p>
+<div id="km-widget" style="margin:1.5rem 0;">
+  <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;margin-bottom:0.6rem;">
+    <div style="display:flex;gap:5px;" id="km-btns">
+      <button id="km-btn-blobs" onclick="kmSetData('blobs')"
+        style="padding:3px 12px;border-radius:20px;border:1.5px solid #86BCBD;
+               background:#86BCBD;color:#fff;font-size:0.8rem;cursor:pointer;font-weight:600;">Blobs</button>
+      <button id="km-btn-moons" onclick="kmSetData('moons')"
+        style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;
+               background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">Moons</button>
+      <button id="km-btn-rings" onclick="kmSetData('rings')"
+        style="padding:3px 12px;border-radius:20px;border:1.5px solid #8886;
+               background:transparent;color:var(--md-default-fg-color);font-size:0.8rem;cursor:pointer;">Rings</button>
+    </div>
+    <span style="font-size:0.93rem;font-weight:600;">K =</span>
+    <input type="range" id="km-k" min="2" max="8" value="3" step="1"
+           oninput="kmSetK(+this.value)" style="width:130px;accent-color:#BA5A5A;">
+    <span id="km-k-val" style="font-weight:700;min-width:1.2em;">3</span>
+    <button onclick="kmRun()"
+      style="padding:3px 12px;border-radius:20px;border:1.5px solid #BA5A5A;
+             background:transparent;color:#BA5A5A;font-size:0.8rem;cursor:pointer;">Re-run</button>
+  </div>
+  <div id="km-plot" style="width:100%;height:360px;"></div>
+</div>
+
+<script>
+(function(){
+  var _dat='blobs', _K=3, _seed=42;
+  var _PAL=['#BA5A5A','#A4CE8B','#86BCBD','#F7E49B','#D48AAA','#C2D48A','#A4CDD4','#F0CF80'];
+
+  function _rng(s){
+    var st=s>>>0;
+    return function(){st=(st*1664525+1013904223)>>>0;return st/0x100000000;};
+  }
+  function _genBlobs(){
+    var r=_rng(12345),pts=[],centers=[[-2,2],[2,2],[0,-2.5]];
+    for(var i=0;i<150;i++){
+      var c=centers[i%3],u1=r()+1e-10,u2=r(),nr=Math.sqrt(-2*Math.log(u1));
+      pts.push([c[0]+nr*Math.cos(2*Math.PI*u2)*0.65,c[1]+nr*Math.sin(2*Math.PI*u2)*0.65]);
+    }
+    return pts;
+  }
+  function _genMoons(){
+    var r=_rng(54321),pts=[];
+    for(var i=0;i<150;i++){
+      var angle=r()*Math.PI,nr=(r()-0.5)*0.2;
+      if(i<75) pts.push([Math.cos(angle)+nr,-Math.sin(angle)+nr]);
+      else pts.push([1-Math.cos(angle)+nr,Math.sin(angle)-0.5+nr]);
+    }
+    return pts;
+  }
+  function _genRings(){
+    var r=_rng(99887),pts=[];
+    for(var i=0;i<150;i++){
+      var angle=r()*2*Math.PI,rad=(i<75)?(1.2+r()*0.1):(2.5+r()*0.1);
+      pts.push([rad*Math.cos(angle),rad*Math.sin(angle)]);
+    }
+    return pts;
+  }
+  function _getData(){return _dat==='blobs'?_genBlobs():_dat==='moons'?_genMoons():_genRings();}
+
+  function _kmeans(pts,K,seed){
+    var n=pts.length,r=_rng(seed);
+    var ci=[Math.floor(r()*n)];
+    while(ci.length<K){
+      var dists=pts.map(function(p){
+        return Math.min.apply(null,ci.map(function(idx){
+          var dx=p[0]-pts[idx][0],dy=p[1]-pts[idx][1];return dx*dx+dy*dy;
+        }));
+      });
+      var tot=dists.reduce(function(a,b){return a+b;},0),t=r()*tot;
+      for(var i=0;i<n;i++){t-=dists[i];if(t<=0){ci.push(i);break;}}
+      if(ci.length<K) ci.push(Math.floor(r()*n));
+    }
+    var centroids=ci.slice(0,K).map(function(i){return pts[i].slice();});
+    var labels=new Array(n).fill(0);
+    for(var iter=0;iter<200;iter++){
+      var changed=false;
+      for(var i=0;i<n;i++){
+        var best=0,bestD=Infinity;
+        for(var k=0;k<K;k++){
+          var dx=pts[i][0]-centroids[k][0],dy=pts[i][1]-centroids[k][1],d=dx*dx+dy*dy;
+          if(d<bestD){bestD=d;best=k;}
+        }
+        if(labels[i]!==best){labels[i]=best;changed=true;}
+      }
+      if(!changed)break;
+      for(var k=0;k<K;k++){
+        var sx=0,sy=0,cnt=0;
+        for(var i=0;i<n;i++) if(labels[i]===k){sx+=pts[i][0];sy+=pts[i][1];cnt++;}
+        if(cnt>0)centroids[k]=[sx/cnt,sy/cnt];
+      }
+    }
+    return {labels:labels,centroids:centroids};
+  }
+
+  function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
+
+  function _draw(){
+    var el=document.getElementById('km-plot');
+    if(!el||!window.Plotly)return;
+    var pts=_getData(),res=_kmeans(pts,_K,_seed);
+    var dk=_dark(),bg=dk?'#1e2228':'#ffffff',fg=dk?'#e0e0e0':'#333333';
+    var gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+    var traces=[];
+    for(var k=0;k<_K;k++){
+      var px=[],py=[];
+      for(var i=0;i<pts.length;i++) if(res.labels[i]===k){px.push(pts[i][0]);py.push(pts[i][1]);}
+      traces.push({x:px,y:py,mode:'markers',showlegend:false,
+        marker:{color:_PAL[k%_PAL.length],size:5.5,opacity:0.8,
+                line:{color:'rgba(0,0,0,0.15)',width:0.5}}});
+    }
+    for(var k=0;k<_K;k++){
+      traces.push({x:[res.centroids[k][0]],y:[res.centroids[k][1]],
+        mode:'markers',showlegend:false,
+        marker:{symbol:'star',size:16,color:_PAL[k%_PAL.length],
+                line:{color:'#fff',width:2}}});
+    }
+    Plotly.react('km-plot',traces,{
+      paper_bgcolor:bg,plot_bgcolor:bg,
+      font:{color:fg,family:'inherit',size:12},
+      margin:{t:15,b:30,l:30,r:15},
+      xaxis:{gridcolor:gc,zerolinecolor:gc,showticklabels:false},
+      yaxis:{gridcolor:gc,zerolinecolor:gc,showticklabels:false,scaleanchor:'x'},
+    },{displayModeBar:false,responsive:true});
+  }
+
+  function _setBtn(active){
+    ['blobs','moons','rings'].forEach(function(n){
+      var b=document.getElementById('km-btn-'+n);if(!b)return;
+      if(n===active){b.style.background='#86BCBD';b.style.color='#fff';
+        b.style.borderColor='#86BCBD';b.style.fontWeight='600';}
+      else{b.style.background='transparent';b.style.color='var(--md-default-fg-color)';
+        b.style.borderColor='#8886';b.style.fontWeight='normal';}
+    });
+  }
+
+  window.kmSetData=function(d){_dat=d;_seed=42;_setBtn(d);_draw();};
+  window.kmSetK=function(k){_K=k;document.getElementById('km-k-val').textContent=k;_seed=42;_draw();};
+  window.kmRun=function(){_seed=Math.floor(Math.random()*99999)+1;_draw();};
+
+  function _init(){
+    if(!document.getElementById('km-plot'))return;
+    if(!window.Plotly){
+      if(!document.getElementById('plotly-cdn')){
+        var s=document.createElement('script');s.id='plotly-cdn';
+        s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';
+        s.onload=function(){_draw();};document.head.appendChild(s);
+      }
+    } else {_draw();}
+  }
+  if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
+  else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
+  else{_init();}
+})();
+</script>
+
+<hr />
+<h2 id="39-gaussian-mixture-models">3.9 Gaussian Mixture Models<a class="headerlink" href="#39-gaussian-mixture-models" title="Permanent link">&para;</a></h2>
+<p><strong>Gaussian mixture models (GMMs)</strong> treat clustering as a probabilistic density estimation problem. The data are modeled as draws from a mixture of <span class="arithmatex">\(K\)</span> Gaussians:</p>
+<div class="arithmatex">\[p(x; \theta) = \sum_{k=1}^K \pi_k\, \mathcal{N}(x;\, \mu_k,\, \Sigma_k)\]</div>
+<p>where <span class="arithmatex">\(\pi_k &gt; 0\)</span> are <strong>mixing weights</strong> with <span class="arithmatex">\(\sum_k \pi_k = 1\)</span>, <span class="arithmatex">\(\mu_k \in \mathbb{R}^D\)</span> are cluster means, and <span class="arithmatex">\(\Sigma_k \in \mathbb{R}^{D \times D}\)</span> are covariance matrices. Unlike K-means, GMMs produce <strong>soft assignments</strong>: the <strong>responsibility</strong> <span class="arithmatex">\(r_{ik} = p(z=k \,|\, x_i;\, \theta)\)</span> quantifies the posterior probability that point <span class="arithmatex">\(x_i\)</span> belongs to cluster <span class="arithmatex">\(k\)</span>.</p>
+<p>Parameters are estimated by the <strong>Expectation-Maximization (EM) algorithm</strong>. The E-step computes responsibilities <span class="arithmatex">\(r_{ik}\)</span> given current parameter estimates via Bayes' rule. The M-step then updates <span class="arithmatex">\(\pi_k\)</span>, <span class="arithmatex">\(\mu_k\)</span>, and <span class="arithmatex">\(\Sigma_k\)</span> to maximize the expected log-likelihood under those responsibilities. These two steps alternate until convergence.</p>
+<p>K-means is the hard-assignment limit of a GMM with isotropic covariances <span class="arithmatex">\(\Sigma_k = \sigma^2 I\)</span> as <span class="arithmatex">\(\sigma \to 0\)</span>: in this limit, each point is assigned entirely to its nearest centroid (responsibility collapses to 0 or 1), and the M-step reduces to recomputing the centroid mean.</p>
+<hr />
+<h2 id="310-hierarchical-clustering">3.10 Hierarchical Clustering<a class="headerlink" href="#310-hierarchical-clustering" title="Permanent link">&para;</a></h2>
+<p>Hierarchical clustering produces a tree of nested cluster merges (agglomerative, bottom-up) or splits (divisive, top-down), represented as a <strong>dendrogram</strong>. The desired number of clusters <span class="arithmatex">\(K\)</span> need not be specified in advance; one cuts the dendrogram at a chosen height to obtain any <span class="arithmatex">\(K\)</span> from 1 to <span class="arithmatex">\(N\)</span>.</p>
+<p><strong>Agglomerative algorithm:</strong>
+1. Initialize: each of the <span class="arithmatex">\(N\)</span> data points is its own cluster.
+2. Compute pairwise distances <span class="arithmatex">\(d(x_i, x_j)\)</span> between all points.
+3. Merge the two clusters <span class="arithmatex">\(A\)</span> and <span class="arithmatex">\(B\)</span> with the smallest inter-cluster distance <span class="arithmatex">\(d(A,B)\)</span>.
+4. Update the distance matrix to reflect the newly merged cluster.
+5. Repeat steps 3–4 until a single cluster remains.</p>
+<p>The choice of <strong>linkage criterion</strong> defines <span class="arithmatex">\(d(A,B)\)</span> and strongly affects the shape of the resulting clusters:</p>
+<table>
+<thead>
+<tr>
+<th>Linkage</th>
+<th>Distance <span class="arithmatex">\(d(A, B)\)</span></th>
+<th>Typical cluster shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single</td>
+<td><span class="arithmatex">\(\min_{a \in A,\, b \in B} d(a,b)\)</span></td>
+<td>Elongated; prone to chaining</td>
+</tr>
+<tr>
+<td>Complete</td>
+<td><span class="arithmatex">\(\max_{a \in A,\, b \in B} d(a,b)\)</span></td>
+<td>Compact, equal-diameter</td>
+</tr>
+<tr>
+<td>Average (UPGMA)</td>
+<td><span class="arithmatex">\(\frac{1}{\|A\|\|B\|}\sum_{a \in A, b \in B} d(a,b)\)</span></td>
+<td>Intermediate</td>
+</tr>
+<tr>
+<td>Ward</td>
+<td><span class="arithmatex">\(\Delta\)</span> in total within-cluster variance upon merge</td>
+<td>Spherical, equal-sized</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Strengths</strong>: no need to pre-specify <span class="arithmatex">\(K\)</span>; the dendrogram reveals multi-scale cluster structure; works with any distance metric.</p>
+<p><strong>Weaknesses</strong>: <span class="arithmatex">\(\mathcal{O}(P^2)\)</span> memory for the distance matrix; earlier merges cannot be revised (greedy); sensitive to choice of linkage; does not natively handle outliers.</p>
+<hr />
+<h2 id="311-density-based-clustering-dbscan">3.11 Density-Based Clustering: DBSCAN<a class="headerlink" href="#311-density-based-clustering-dbscan" title="Permanent link">&para;</a></h2>
+<p>DBSCAN (Density-Based Spatial Clustering of Applications with Noise) defines clusters as <strong>dense connected regions</strong>, separated by sparse regions. Points in sparse regions are treated as noise rather than forced into a cluster.</p>
+<p><strong>Parameters</strong>: <span class="arithmatex">\(\varepsilon &gt; 0\)</span> (neighborhood radius) and <span class="arithmatex">\(\mathrm{MinPts} \ge 1\)</span> (minimum number of points to define a dense region).</p>
+<p><strong>Point classification:</strong>
+- A point <span class="arithmatex">\(x_i\)</span> is a <strong>core point</strong> if at least <span class="arithmatex">\(\mathrm{MinPts}\)</span> other points lie within its <span class="arithmatex">\(\varepsilon\)</span>-neighborhood: <span class="arithmatex">\(|\mathcal{N}_\varepsilon(x_i)| \ge \mathrm{MinPts}\)</span>, where <span class="arithmatex">\(\mathcal{N}_\varepsilon(x_i) = \{j : d(x_i, x_j) \le \varepsilon\}\)</span>.
+- A point <span class="arithmatex">\(x_j\)</span> is <strong>density-reachable</strong> from <span class="arithmatex">\(x_i\)</span> if there exists a chain of core points <span class="arithmatex">\(x_i = p_1, p_2, \ldots, p_m = x_j\)</span> where each <span class="arithmatex">\(p_{t+1} \in \mathcal{N}_\varepsilon(p_t)\)</span> and each <span class="arithmatex">\(p_t\)</span> for <span class="arithmatex">\(t &lt; m\)</span> is a core point.
+- A <strong>border point</strong> is not a core point but is density-reachable from some core point.
+- A <strong>noise point</strong> (outlier) is neither core nor border.</p>
+<p><strong>Algorithm:</strong>
+1. Classify all points as core, border, or noise using the definitions above.
+2. Each core point seeds a cluster; the cluster grows by recursively adding all density-reachable points.
+3. Border points are assigned to whichever cluster first reaches them. Noise points are left unlabeled.</p>
+<p><strong>Strengths</strong>: finds clusters of arbitrary shape; automatically identifies and labels outliers; does not require <span class="arithmatex">\(K\)</span> to be specified.</p>
+<p><strong>Weaknesses</strong>: the single global <span class="arithmatex">\(\varepsilon\)</span> makes it difficult to handle clusters of varying density; both <span class="arithmatex">\(\varepsilon\)</span> and <span class="arithmatex">\(\mathrm{MinPts}\)</span> require careful tuning (a poor choice can merge distinct clusters or split a single cluster into many); naive implementation costs <span class="arithmatex">\(\mathcal{O}(P^2)\)</span>, though this reduces to <span class="arithmatex">\(\mathcal{O}(P \log P)\)</span> with a spatial index.</p>
+<hr />
+<h2 id="312-hdbscan-hierarchical-dbscan">3.12 HDBSCAN (Hierarchical DBSCAN)<a class="headerlink" href="#312-hdbscan-hierarchical-dbscan" title="Permanent link">&para;</a></h2>
+<p>HDBSCAN addresses DBSCAN's main limitation: a single global <span class="arithmatex">\(\varepsilon\)</span> fails when clusters have varying densities. It does so by running DBSCAN over all scales <span class="arithmatex">\(\varepsilon\)</span> simultaneously, building a cluster hierarchy, and extracting the most persistent (stable) clusters.</p>
+<p><strong>Core distance.</strong> The core distance of point <span class="arithmatex">\(x_i\)</span> with respect to <span class="arithmatex">\(\mathrm{MinPts}\)</span> is the distance to its <span class="arithmatex">\(\mathrm{MinPts}\)</span>-th nearest neighbor:</p>
+<div class="arithmatex">\[d_\mathrm{core}(i) = d(x_i,\; \mathrm{MinPts}\text{-th nearest neighbor of } x_i)\]</div>
+<p>Points in dense regions have small core distances; sparse points have large core distances.</p>
+<p><strong>Mutual reachability distance.</strong> The pairwise distance is inflated to:</p>
+<div class="arithmatex">\[d_\mathrm{mreach}(i, j) = \max\!\left(d_\mathrm{core}(i),\; d_\mathrm{core}(j),\; d(x_i, x_j)\right)\]</div>
+<p>This inflates distances for sparse points (whose large core distances dominate), making the method robust to outliers and capable of handling varying cluster densities.</p>
+<p><strong>Algorithm:</strong>
+1. Build the minimum spanning tree (MST) of the complete graph on <span class="arithmatex">\(\{x_i\}\)</span> with edge weights <span class="arithmatex">\(d_\mathrm{mreach}(i,j)\)</span>.
+2. Construct the cluster hierarchy (dendrogram) by removing MST edges in decreasing weight order; each removal splits a component into two.
+3. <strong>Condense the tree</strong>: track cluster membership as the density scale increases. When a split produces a child with fewer than <span class="arithmatex">\(\mathrm{MinPts}\)</span> points, those points fall out as noise rather than forming a new cluster.
+4. <strong>Extract stable clusters</strong>: define <span class="arithmatex">\(\lambda = 1/\varepsilon\)</span> (higher <span class="arithmatex">\(\lambda\)</span> = denser neighborhood). For each cluster <span class="arithmatex">\(C\)</span> in the condensed tree, the stability is:</p>
+<div class="arithmatex">\[\text{stability}(C) = \sum_{i \in C} \left(\lambda_i^\mathrm{out} - \lambda_C^\mathrm{in}\right)\]</div>
+<p>where <span class="arithmatex">\(\lambda_C^\mathrm{in}\)</span> is the <span class="arithmatex">\(\lambda\)</span>-value at which cluster <span class="arithmatex">\(C\)</span> was born and <span class="arithmatex">\(\lambda_i^\mathrm{out}\)</span> is the <span class="arithmatex">\(\lambda\)</span>-value at which point <span class="arithmatex">\(i\)</span> left <span class="arithmatex">\(C\)</span> (into a child cluster or as noise). The selected flat clustering maximizes total stability over the condensed tree.</p>
+<p><strong>Strengths over DBSCAN</strong>: handles varying-density clusters; requires only <span class="arithmatex">\(\mathrm{MinPts}\)</span> (no <span class="arithmatex">\(\varepsilon\)</span>); returns a full hierarchy; more principled outlier detection.</p>
+<p><strong>Weaknesses</strong>: more complex to implement; worst-case <span class="arithmatex">\(\mathcal{O}(N^2)\)</span> memory for the distance matrix, though efficient approximations exist.</p>
+<hr />
+<h2 id="313-cluster-sampling">3.13 Cluster Sampling<a class="headerlink" href="#313-cluster-sampling" title="Permanent link">&para;</a></h2>
+<p>Clustering is not only a descriptive tool; it also provides a principled way to draw representative subsets from large datasets. This is especially valuable in computational chemistry, where exhaustive evaluation of a database with <span class="arithmatex">\(10^{180}\)</span> candidate molecules is computationally impossible.</p>
+<p><strong>Subsampling from clusters.</strong> After partitioning data into <span class="arithmatex">\(K\)</span> clusters, draw a fixed number of samples from each cluster. This ensures broad coverage of the data distribution regardless of whether the original dataset is strongly imbalanced: dense, well-sampled regions of chemical space do not crowd out sparse regions in the training set.</p>
+<p><strong>Centroid proximity sampling.</strong> From each cluster <span class="arithmatex">\(C_k\)</span>, select structures in order of increasing distance from the centroid <span class="arithmatex">\(\mu_k\)</span>. Three cases arise. If only one structure per cluster is needed, select the structure closest to <span class="arithmatex">\(\mu_k\)</span>. If <span class="arithmatex">\(k &gt; 1\)</span> structures are needed, sort all points in <span class="arithmatex">\(C_k\)</span> by distance from <span class="arithmatex">\(\mu_k\)</span> and take the <span class="arithmatex">\(k\)</span> nearest. If <span class="arithmatex">\(k\)</span> exceeds the cluster size, all points in the cluster are included.</p>
+<p>When applied to building training sets for machine learning interatomic potentials, this approach is called <strong>stratified sampling</strong> (Stark et al., J. Phys. Chem. C 127, 24168). It yields training sets that efficiently tile configurational space without near-duplicate structures that would otherwise dominate a random draw.</p>
+<hr />
+<h2 id="314-notes-on-clustering">3.14 Notes on Clustering<a class="headerlink" href="#314-notes-on-clustering" title="Permanent link">&para;</a></h2>
+<p>Three practical considerations apply across all clustering methods.</p>
+<p><strong>Sensitivity.</strong> Small choices can have large effects on results. Whether features are normalized or raw, which distance metric is used, how centroids are initialized, and which linkage criterion is chosen in hierarchical clustering can all substantially change which clusters emerge. These choices should be reported explicitly, treated as modeling decisions, and justified where possible.</p>
+<p><strong>Exploration.</strong> It is rarely sufficient to run a single clustering. Varying the number of clusters <span class="arithmatex">\(K\)</span>, the method, the distance metric, and the feature normalization reveals which structures appear consistently across different settings. Running the same method on different subsets of the data also tests whether patterns are reproducible or artifacts of a particular split.</p>
+<p><strong>Reporting.</strong> Clustering results are not ground truth. They reflect the geometry imposed by the chosen method and metric, and can shift substantially with different choices. Treat clusters as hypotheses: starting points for further investigation and validation on independent data, not as established categories.</p>
+<hr />
+<h2 id="315-clustering-method-summary">3.15 Clustering Method Summary<a class="headerlink" href="#315-clustering-method-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Cluster shape</th>
+<th>Requires <span class="arithmatex">\(K\)</span>?</th>
+<th>Handles outliers</th>
+<th>Best suited for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>K-Means</td>
+<td>Spherical</td>
+<td>Yes</td>
+<td>No</td>
+<td>Large data, known <span class="arithmatex">\(K\)</span>, convex clusters</td>
+</tr>
+<tr>
+<td>GMM</td>
+<td>Elliptical</td>
+<td>Yes</td>
+<td>No</td>
+<td>Soft assignments, probabilistic model</td>
+</tr>
+<tr>
+<td>Hierarchical</td>
+<td>Any</td>
+<td>No (post-hoc cut)</td>
+<td>No</td>
+<td>Small data, hierarchical structure</td>
+</tr>
+<tr>
+<td>DBSCAN</td>
+<td>Any</td>
+<td>No</td>
+<td>Yes</td>
+<td>Arbitrary shapes, uniform density, outliers</td>
+</tr>
+<tr>
+<td>HDBSCAN</td>
+<td>Any</td>
+<td>No</td>
+<td>Yes</td>
+<td>Arbitrary shapes, varying density (most general)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="../javascripts/font-size.js"></script>
+      
+        <script src="../javascripts/collapsible-sidebars.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

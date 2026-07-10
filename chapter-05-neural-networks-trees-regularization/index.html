@@ -1,0 +1,1325 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Lecture notes for Machine Learning in Computational Physics">
+      
+      
+      
+        <link rel="canonical" href="https://hbarquanta.github.io/MLinCP-Notes/chapter-05-neural-networks-trees-regularization/">
+      
+      
+        <link rel="prev" href="../chapter-04-regression-uncertainty-quantification/">
+      
+      
+        <link rel="next" href="../chapter-06-graph-neural-networks-gnns/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Chapter 5 — Neural Networks, Trees & Regularization - ML in Computational Physics</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-5-neural-networks-trees-regularization" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ML in Computational Physics" class="md-header__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ML in Computational Physics
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter 5 — Neural Networks, Trees & Regularization
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ML in Computational Physics" class="md-nav__button md-logo" aria-label="ML in Computational Physics" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    ML in Computational Physics
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/hbarquanta/MLinCP-Notes" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    hbarquanta/MLinCP-Notes
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-01-introduction-core-ml-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1 — Introduction & Core ML Concepts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-02-descriptors-featurization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2 — Descriptors & Featurization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-03-dimensionality-reduction-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3 — Dimensionality Reduction & Clustering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-04-regression-uncertainty-quantification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4 — Regression & Uncertainty Quantification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5 — Neural Networks, Trees & Regularization
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5 — Neural Networks, Trees & Regularization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#51-decision-stumps-and-decision-trees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Decision Stumps and Decision Trees
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52-boosted-trees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Boosted Trees
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#53-bagging-and-random-forests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Bagging and Random Forests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#54-feed-forward-neural-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Feed-Forward Neural Networks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#55-activation-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.5 Activation Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#56-skip-connections-and-residual-networks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.6 Skip Connections and Residual Networks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#57-batch-normalization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.7 Batch Normalization
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#58-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.8 Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5.8 Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gradient-descent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gradient Descent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stochastic-gradient-descent-sgd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stochastic Gradient Descent (SGD)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backpropagation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backpropagation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adam-adaptive-moment-estimation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adam (Adaptive Moment Estimation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#59-regularization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.9 Regularization
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-06-graph-neural-networks-gnns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6 — Graph Neural Networks (GNNs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-07-machine-learning-interatomic-potentials-i/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 7 — Machine Learning Interatomic Potentials I
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-08-machine-learning-interatomic-potentials-ii/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 8 — Machine Learning Interatomic Potentials II
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-09-generative-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 9 — Generative Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chapter-10-ml-methods-for-rare-events-sampling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 10 — ML Methods for Rare Events Sampling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="chapter-5-neural-networks-trees-regularization">Chapter 5: Neural Networks, Trees &amp; Regularization<a class="headerlink" href="#chapter-5-neural-networks-trees-regularization" title="Permanent link">&para;</a></h1>
+<p>This chapter covers two families of universal approximators: tree-based models and feed-forward neural networks, together with the optimization and regularization strategies used to train them.</p>
+<p>Three levels of nonlinearity can be built into a regression model. A <em>linear model</em> is a weighted sum of raw input features: <span class="arithmatex">\(f(\mathbf{x},\omega) = w_0 + \sum_j w_j x_j\)</span>. A model with <em>fixed nonlinear features</em> applies a predetermined set of basis functions <span class="arithmatex">\(\phi_b\)</span> to the input: <span class="arithmatex">\(f(\mathbf{x},\omega) = w_0 + \sum_b w_b \phi_b(\mathbf{x})\)</span>; the <span class="arithmatex">\(\phi_b\)</span> are fixed before training and only the weights <span class="arithmatex">\(w_b\)</span> are learned. A model with <em>learnable nonlinear features</em> lets the sub-functions themselves carry tunable parameters: <span class="arithmatex">\(f(\mathbf{x},\omega) = w_0 + \sum_b w_b f_b(\mathbf{x},\omega_b)\)</span>. Decision trees and feed-forward neural networks both belong to this third category; the <span class="arithmatex">\(f_b\)</span> are learned end-to-end alongside the outer weights.</p>
+<h2 id="51-decision-stumps-and-decision-trees">5.1 Decision Stumps and Decision Trees<a class="headerlink" href="#51-decision-stumps-and-decision-trees" title="Permanent link">&para;</a></h2>
+<p>The simplest nonlinear model is a <strong>decision stump</strong>: a single step function along one input coordinate. For a one-dimensional input <span class="arithmatex">\(x \in \mathbb{R}\)</span>, a stump has three parameters (a bias <span class="arithmatex">\(w_0\)</span>, a step height <span class="arithmatex">\(w_1\)</span>, and a split point <span class="arithmatex">\(s_1\)</span>) and produces</p>
+<div class="arithmatex">\[f(x;\,w_0, w_1, s_1) = w_0 + w_1 \,\mathbf{1}\!\left\{x &gt; s_1\right\},\]</div>
+<p>where <span class="arithmatex">\(\mathbf{1}\{x &gt; s_1\}\)</span> is 1 if <span class="arithmatex">\(x &gt; s_1\)</span> and 0 otherwise. For an <span class="arithmatex">\(N\)</span>-dimensional input <span class="arithmatex">\(\mathbf{x} \in \mathbb{R}^N\)</span> the stump still cuts along a single coordinate: <span class="arithmatex">\(\mathbf{1}\{x_i &gt; s_1\}\)</span> for some chosen feature index <span class="arithmatex">\(i\)</span>.</p>
+<p>A <strong>decision tree</strong> of depth <span class="arithmatex">\(D\)</span> is a hierarchy of <span class="arithmatex">\(2^D - 1\)</span> stumps arranged so that the output of each stump routes a data point to the left or right child stump, terminating in <span class="arithmatex">\(2^D\)</span> leaf nodes (each holding a constant prediction value). The total number of free parameters grows exponentially with depth: each internal node contributes a split index, a split threshold <span class="arithmatex">\(s\)</span>, and the two leaf values <span class="arithmatex">\(v_L\)</span> and <span class="arithmatex">\(v_R\)</span>.</p>
+<p><strong>Training a tree of depth <span class="arithmatex">\(D\)</span></strong> proceeds recursively. For each candidate split (choosing feature index <span class="arithmatex">\(i\)</span> and threshold <span class="arithmatex">\(s\)</span>), partition the <span class="arithmatex">\(P\)</span> training points into two groups <span class="arithmatex">\(\mathcal{P}_L = \{p : x_i^{(p)} \leq s\}\)</span> and <span class="arithmatex">\(\mathcal{P}_R = \{p : x_i^{(p)} &gt; s\}\)</span>. The optimal constant predictions are the group means,</p>
+<div class="arithmatex">\[v_L = \frac{1}{|\mathcal{P}_L|}\sum_{p \in \mathcal{P}_L} y^{(p)}, \qquad v_R = \frac{1}{|\mathcal{P}_R|}\sum_{p \in \mathcal{P}_R} y^{(p)},\]</div>
+<p>and the split is chosen to minimize the least-squares error across both groups. The procedure is repeated recursively within each child node until depth <span class="arithmatex">\(D\)</span> is reached. In practice, recursion is also halted early when the label variance within a node falls below a threshold or when a node contains fewer than a minimum number of data points. For classification tasks, leaf values are found by minimizing a classifier loss rather than squared error; a common choice is log-loss, <span class="arithmatex">\(\sum_{p \in \mathcal{P}} \log(1 + e^{-v\,y^{(p)}})\)</span>, whose minimizer gives the leaf log-odds. Trees are high-variance, low-bias models: a sufficiently deep tree memorizes the training data.</p>
+<p>The widget below shows how a depth-<span class="arithmatex">\(D\)</span> tree partitions the feature axis into piecewise-constant segments. Increasing <span class="arithmatex">\(D\)</span> halves each segment's width and doubles the leaf count.</p>
+<div id="tw-widget" style="margin:1.5rem 0;">
+  <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.6rem;flex-wrap:wrap;">
+    <span style="font-size:0.88rem;font-weight:600;">Depth <em>D</em> =</span>
+    <input type="range" id="tw-depth" min="0" max="20" value="2" step="1"
+           oninput="twSetD(+this.value)" style="width:140px;accent-color:#86BCBD;">
+    <span id="tw-dval" style="font-weight:700;min-width:1em;">2</span>
+    <span style="font-size:0.79rem;opacity:0.65;margin-left:0.4rem;">
+      <span id="tw-leaves">4</span> leaves &middot; <span id="tw-params">7</span> parameters
+    </span>
+  </div>
+  <div id="tw-plot" style="height:300px;"></div>
+  <div style="font-size:0.8rem;opacity:0.65;margin-top:0.3rem;">True function: sin(2&pi;x) &mdash; dashed green. Each new depth splits the highest-variance node.</div>
+</div>
+
+<script>
+(function(){
+  function _rng(s){var st=s>>>0;return function(){st=(st*1664525+1013904223)>>>0;return st/0x100000000;};}
+  var r=_rng(314),_N=80,_pts=[];
+  for(var i=0;i<_N;i++){var xi=r();_pts.push([xi,Math.sin(2*Math.PI*xi)+(r()-0.5)*0.4]);}
+  _pts.sort(function(a,b){return a[0]-b[0];});
+  var _xF=[],_yF=[];for(var i=0;i<150;i++){var xf=i/149;_xF.push(xf);_yF.push(Math.sin(2*Math.PI*xf));}
+  function _mean(ps){return ps.reduce(function(s,p){return s+p[1];},0)/(ps.length||1);}
+  function _var(ps){var m=_mean(ps);return ps.reduce(function(s,p){return s+(p[1]-m)*(p[1]-m);},0)/(ps.length||1);}
+  function _fit(pts,D,x0,x1){
+    if(D===0||pts.length<2)return [{x0:x0,x1:x1,y:_mean(pts)}];
+    var best=Infinity,bk=-1;
+    for(var k=0;k<pts.length-1;k++){var L=pts.slice(0,k+1),R=pts.slice(k+1);var cost=L.length*_var(L)+R.length*_var(R);if(cost<best){best=cost;bk=k;}}
+    if(bk<0)return [{x0:x0,x1:x1,y:_mean(pts)}];
+    var sp=(pts[bk][0]+pts[bk+1][0])/2;
+    return _fit(pts.slice(0,bk+1),D-1,x0,sp).concat(_fit(pts.slice(bk+1),D-1,sp,x1));
+  }
+  var _D=2;
+  function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
+  function _draw(){
+    var el=document.getElementById('tw-plot');if(!el||!window.Plotly)return;
+    var dk=_dark(),bg=dk?'#1e2228':'#fff',fg=dk?'#e0e0e0':'#333',gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+    var segs=_fit(_pts,_D,0,1);
+    document.getElementById('tw-dval').textContent=_D;
+    document.getElementById('tw-leaves').textContent=segs.length;
+    document.getElementById('tw-params').textContent=2*segs.length-1;
+    var xs=segs.map(function(s){return s.x0;}).concat([1]);
+    var ys=segs.map(function(s){return s.y;}).concat([segs[segs.length-1].y]);
+    Plotly.react(el,[
+      {x:_xF,y:_yF,mode:'lines',name:'true f(x)',line:{color:'#A4CE8B',width:1.8,dash:'dot'},showlegend:true},
+      {x:xs,y:ys,mode:'lines',name:'tree fit (D='+_D+')',line:{color:'#86BCBD',width:2.5,shape:'hv'},showlegend:true},
+      {x:_pts.map(function(p){return p[0];}),y:_pts.map(function(p){return p[1];}),
+       mode:'markers',name:'data',marker:{color:'#BA5A5A',size:7,line:{color:'#fff',width:1}},showlegend:true},
+    ],{paper_bgcolor:bg,plot_bgcolor:bg,font:{color:fg,size:10.5},margin:{t:10,b:38,l:38,r:10},
+       xaxis:{range:[0,1],title:'x',gridcolor:gc,zerolinecolor:gc},
+       yaxis:{range:[-2,2],title:'y',gridcolor:gc,zerolinecolor:gc},
+       legend:{x:0.01,y:0.99,bgcolor:'transparent',font:{size:9.5}},
+    },{displayModeBar:false,responsive:true});
+  }
+  window.twSetD=function(d){_D=+d;_draw();};
+  function _ep(cb){if(window.Plotly){cb();return;}var s=document.getElementById('plotly-cdn');if(!s){s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';document.head.appendChild(s);}s.addEventListener('load',cb);}
+  function _init(){if(!document.getElementById('tw-plot'))return;_ep(_draw);}
+  if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
+  else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
+  else{setTimeout(_init,80);}
+})();
+</script>
+
+<h2 id="52-boosted-trees">5.2 Boosted Trees<a class="headerlink" href="#52-boosted-trees" title="Permanent link">&para;</a></h2>
+<p><strong>Boosting</strong> converts a sequence of weak learners (shallow trees) into a strong model by fitting each new tree to the residuals left by the current ensemble. Let <span class="arithmatex">\(\hat{h}_b(\mathbf{x}) = \sum_{b'=1}^b f_{b'}(\mathbf{x}, \omega_{b'})\)</span> denote the ensemble after <span class="arithmatex">\(b\)</span> rounds, where <span class="arithmatex">\(\omega_b = (s, v_L, v_R)_b\)</span> collects the parameters of tree <span class="arithmatex">\(b\)</span>. At round <span class="arithmatex">\(b+1\)</span>, define the residuals</p>
+<div class="arithmatex">\[r_{b}^{(p)} = y^{(p)} - \hat{h}_b(\mathbf{x}^{(p)}), \qquad p = 1, \ldots, P,\]</div>
+<p>and train tree <span class="arithmatex">\(f_{b+1}\)</span> to minimize the sum of squared residuals <span class="arithmatex">\(\sum_p (r_b^{(p)} - f_{b+1}(\mathbf{x}^{(p)}))^2\)</span>. The ensemble is then updated: <span class="arithmatex">\(\hat{h}_{b+1} = \hat{h}_b + f_{b+1}\)</span>. This continues for <span class="arithmatex">\(B\)</span> rounds, yielding</p>
+<div class="arithmatex">\[\hat{h}_B(\mathbf{x}) = \sum_{b=1}^B f_b(\mathbf{x}, \omega_b).\]</div>
+<p>Each new tree corrects the mistakes of all previous trees. Boosting reduces bias by iterative refinement; combined with early stopping, it is the dominant approach for structured tabular data (implemented in XGBoost, LightGBM, etc.).</p>
+<h2 id="53-bagging-and-random-forests">5.3 Bagging and Random Forests<a class="headerlink" href="#53-bagging-and-random-forests" title="Permanent link">&para;</a></h2>
+<p><strong>Bagging</strong> (bootstrap aggregating) is an ensemble method that trains many models in parallel on different bootstrap samples of the training set (random draws with replacement) and averages their predictions. Unlike boosting, bagging reduces variance rather than bias, and the base models are independent so training is embarrassingly parallel.</p>
+<p>A <strong>random forest</strong> is bagged decision trees with an additional randomization: at each split, only a random subset of <span class="arithmatex">\(\sqrt{N}\)</span> out of <span class="arithmatex">\(N\)</span> input features is considered as split candidates (where <span class="arithmatex">\(N\)</span> is the total feature dimensionality). This decorrelates the trees: if one feature dominates, individual trees no longer all exploit it in the same way, which further reduces variance. Random forests are robust, require minimal hyperparameter tuning, and provide a natural out-of-bag error estimate (using the samples not drawn for each tree).</p>
+<h2 id="54-feed-forward-neural-networks">5.4 Feed-Forward Neural Networks<a class="headerlink" href="#54-feed-forward-neural-networks" title="Permanent link">&para;</a></h2>
+<p>A <strong>feed-forward neural network (FFNN)</strong> is a composition of parameterized nonlinear transformations arranged in layers. Let the input layer be <span class="arithmatex">\(\mathbf{f}^{(0)}(\mathbf{x}) = \mathbf{x} \in \mathbb{R}^N\)</span>. The network has <span class="arithmatex">\(L\)</span> hidden layers followed by an output layer. The <span class="arithmatex">\(i\)</span>-th unit in layer <span class="arithmatex">\(k \in \{1, \ldots, L\}\)</span> computes</p>
+<div class="arithmatex">\[f_i^{(k)}(\mathbf{x}, \omega^{(k)}) = \sigma\!\left(b_i^{(k)} + \sum_j w_{i,j}^{(k)} f_j^{(k-1)}(\mathbf{x}, \omega^{(k-1)})\right),\]</div>
+<p>where <span class="arithmatex">\(b_i^{(k)}\)</span> is a bias for unit <span class="arithmatex">\(i\)</span> in layer <span class="arithmatex">\(k\)</span>, <span class="arithmatex">\(w_{i,j}^{(k)}\)</span> is the weight from unit <span class="arithmatex">\(j\)</span> in layer <span class="arithmatex">\(k-1\)</span> to unit <span class="arithmatex">\(i\)</span> in layer <span class="arithmatex">\(k\)</span>, and <span class="arithmatex">\(\sigma(\cdot)\)</span> is a pointwise nonlinear <strong>activation function</strong>. All parameters for layer <span class="arithmatex">\(k\)</span> are collected in <span class="arithmatex">\(\omega^{(k)}\)</span>. The network depth equals the number of recursive applications of this formula; each application constitutes one hidden layer. The output layer applies no activation function for regression (raw linear output) or a softmax for classification.</p>
+<p>The entire parameter set is <span class="arithmatex">\(\omega = \{\omega^{(1)}, \ldots, \omega^{(L)}, \omega^{(\text{out})}\}\)</span>. The <strong>universal approximation theorem</strong> (Cybenko 1989; Hornik 1991) states: for any continuous function <span class="arithmatex">\(f: [0,1]^N \to \mathbb{R}\)</span>, any <span class="arithmatex">\(\varepsilon &gt; 0\)</span>, and any continuous non-polynomial activation <span class="arithmatex">\(\sigma\)</span>, there exists a single-hidden-layer network <span class="arithmatex">\(\hat{f}\)</span> such that <span class="arithmatex">\(\sup_{\mathbf{x}} |\hat{f}(\mathbf{x}) - f(\mathbf{x})| &lt; \varepsilon\)</span>. The theorem guarantees existence but says nothing about how many units are needed, how to find the weights, or whether gradient descent will converge to such a solution. Deeper networks are more <em>parameter-efficient</em>: functions that require exponentially many units in a shallow network can often be represented with polynomially many units arranged in <span class="arithmatex">\(O(\log(1/\varepsilon))\)</span> layers, because each layer can learn reusable intermediate features rather than reconstructing everything from scratch.</p>
+<div id="nn-widget" style="margin:1.5rem 0;display:flex;flex-direction:column;align-items:center;">
+  <div style="display:flex;gap:0.8rem;align-items:center;margin-bottom:0.55rem;flex-wrap:wrap;justify-content:center;font-size:0.84rem;">
+    <label>N (inputs):&nbsp;<input type="range" id="nn-inp" min="1" max="5" value="2" step="1"
+      oninput="nnDraw()" style="width:60px;accent-color:#A4CE8B;vertical-align:middle;"> <b id="nn-inp-v">2</b></label>
+    <label>L (hidden layers):&nbsp;<input type="range" id="nn-hl" min="1" max="4" value="1" step="1"
+      oninput="nnDraw()" style="width:60px;accent-color:#86BCBD;vertical-align:middle;"> <b id="nn-hl-v">1</b></label>
+    <label>U (width):&nbsp;<input type="range" id="nn-w" min="1" max="7" value="2" step="1"
+      oninput="nnDraw()" style="width:60px;accent-color:#86BCBD;vertical-align:middle;"> <b id="nn-w-v">2</b></label>
+    <label>&sigma;:&nbsp;<select id="nn-act" onchange="nnDraw()"
+      style="font-size:0.82rem;padding:2px 6px;border-radius:4px;border:1px solid rgba(128,128,128,0.4);">
+      <option value="sigma">&sigma; (generic)</option>
+      <option value="tanh">tanh</option>
+      <option value="relu">ReLU</option>
+    </select></label>
+  </div>
+  <svg id="nn-svg" width="100%" style="max-width:640px;height:255px;" viewBox="0 0 640 255"></svg>
+  <div style="display:flex;gap:1.1rem;margin-top:0.3rem;font-size:0.79rem;flex-wrap:wrap;justify-content:center;">
+    <span><span style="display:inline-block;width:11px;height:11px;background:#A4CE8B;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Input</span>
+    <span><span style="display:inline-block;width:11px;height:11px;background:#86BCBD;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Hidden</span>
+    <span><span style="display:inline-block;width:11px;height:11px;background:#BA5A5A;border-radius:50%;vertical-align:middle;margin-right:3px;"></span>Output</span>
+    <span><span style="display:inline-block;width:10px;height:10px;background:#555;border-radius:2px;vertical-align:middle;margin-right:3px;"></span>Bias unit (value = 1)</span>
+    <span style="opacity:0.55;font-style:italic;">dashed = bias connections; edge weight = b<sub>i</sub><sup>(k)</sup></span>
+  </div>
+  <div id="nn-params" style="font-size:0.79rem;opacity:0.62;margin-top:0.28rem;text-align:center;"></div>
+  <div id="nn-formula" style="margin-top:0.8rem;width:100%;max-width:700px;padding:0.65rem 1rem 0.75rem;border-radius:6px;overflow-x:auto;line-height:2.6;"></div>
+</div>
+
+<script>
+(function(){
+  function _dk(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
+  function _el(tag,at,tx){
+    var e=document.createElementNS('http://www.w3.org/2000/svg',tag);
+    for(var k in at)e.setAttribute(k,at[k]);
+    if(tx!==undefined)e.textContent=tx;
+    return e;
+  }
+
+  function drawSVG(N,L,U){
+    var svg=document.getElementById('nn-svg');if(!svg)return;
+    svg.innerHTML='';
+    var W=640,H=255,dk=_dk();
+    var eCol=dk?'rgba(180,180,180,0.15)':'rgba(70,70,70,0.12)';
+    var bCol=dk?'rgba(247,228,155,0.45)':'rgba(150,100,15,0.4)';
+    var nodeBd=dk?'#1a1e24':'#fff';
+    var lblC=dk?'#999':'#555';
+    var biasF=dk?'#888':'#444';
+
+    var struct=[N];for(var k=0;k<L;k++)struct.push(U);struct.push(1);
+    var nC=struct.length;
+    var BSY=13,BSZ=9; // bias square: center y, half-size
+    var TPAD=BSY+BSZ+10,BPAD=22,AH=H-TPAD-BPAD;
+    var maxN=Math.max.apply(null,struct);
+    var R=Math.max(5,Math.min(13,Math.floor(AH/(2*(maxN+1)))));
+    var xs=struct.map(function(_,i){return W*(i+1)/(nC+1);});
+    function nY(n,i){return TPAD+AH*(i+1)/(n+1);}
+
+    // regular edges
+    for(var ci=0;ci<nC-1;ci++){
+      var nA=struct[ci],nB=struct[ci+1],xA=xs[ci],xB=xs[ci+1];
+      for(var a=0;a<nA;a++){var yA=nY(nA,a);
+        for(var b=0;b<nB;b++)svg.appendChild(_el('line',{x1:xA,y1:yA,x2:xB,y2:nY(nB,b),stroke:eCol,'stroke-width':'1'}));
+      }
+    }
+    // bias edges (dashed, bias square → next-layer nodes)
+    for(var ci=0;ci<nC-1;ci++){
+      var nB=struct[ci+1],xB=xs[ci+1];
+      for(var b=0;b<nB;b++)
+        svg.appendChild(_el('line',{x1:xs[ci],y1:BSY+BSZ,x2:xB,y2:nY(nB,b)-R,
+          stroke:bCol,'stroke-width':'0.9','stroke-dasharray':'3,3'}));
+    }
+    // regular nodes
+    var fills=['#A4CE8B','#86BCBD','#BA5A5A'];
+    for(var ci=0;ci<nC;ci++){
+      var n=struct[ci],x=xs[ci];
+      var f=ci===0?fills[0]:(ci===nC-1?fills[2]:fills[1]);
+      for(var ni=0;ni<n;ni++)
+        svg.appendChild(_el('circle',{cx:x,cy:nY(n,ni),r:R,fill:f,stroke:nodeBd,'stroke-width':'2'}));
+    }
+    // bias squares
+    for(var ci=0;ci<nC-1;ci++){
+      var x=xs[ci];
+      svg.appendChild(_el('rect',{x:x-BSZ,y:BSY-BSZ,width:BSZ*2,height:BSZ*2,fill:biasF,rx:'2'}));
+      svg.appendChild(_el('text',{x:x,y:BSY+4,'text-anchor':'middle','font-size':'9','font-weight':'bold',fill:'#fff'},'1'));
+    }
+    // labels
+    var lbls=['Input'];for(var k=0;k<L;k++)lbls.push(L===1?'Hidden':'H'+(k+1));lbls.push('Output');
+    for(var ci=0;ci<nC;ci++)
+      svg.appendChild(_el('text',{x:xs[ci],y:H-4,'text-anchor':'middle','font-size':'10',fill:lblC},lbls[ci]));
+  }
+
+  function iRange(U){
+    if(U===1)return 'i=1';
+    if(U===2)return 'i=1,\\,2';
+    return 'i=1,\\ldots,'+U;
+  }
+
+  function buildFormula(N,L,U,aSym){
+    var lines=[],EXIN=N<=4,EXHID=U<=4,EXOUT=U<=5;
+    // Layer 1
+    var in1;
+    if(EXIN){
+      in1='b_i^{(1)}';
+      for(var j=1;j<=N;j++)in1+=' + w_{i,'+j+'}^{(1)}\\,x_{'+j+'}';
+    } else {
+      in1='b_i^{(1)} + {\\textstyle\\sum_{j=1}^{'+N+'}}\\, w_{i,j}^{(1)}\\,x_j';
+    }
+    lines.push('f_i^{(1)} = '+aSym+'\\!\\left('+in1+'\\right),\\quad '+iRange(U));
+    // Layers 2..L
+    if(L>1){
+      var hid;
+      if(EXHID){
+        hid='b_i^{(k)}';
+        for(var j=1;j<=U;j++)hid+=' + w_{i,'+j+'}^{(k)}\\,f_{'+j+'}^{(k-1)}';
+      } else {
+        hid='b_i^{(k)} + {\\textstyle\\sum_{j=1}^{'+U+'}}\\, w_{i,j}^{(k)}\\,f_j^{(k-1)}';
+      }
+      var kr=L===2?'k=2':'k=2,\\ldots,'+L;
+      lines.push('f_i^{(k)} = '+aSym+'\\!\\left('+hid+'\\right),\\quad '+kr+',\\;'+iRange(U));
+    }
+    // Output
+    var out;
+    if(EXOUT){
+      out='b';
+      for(var ui=1;ui<=U;ui++)out+=' + w_{'+ui+'}\\,f_{'+ui+'}^{('+L+')}';
+    } else {
+      out='b + {\\textstyle\\sum_{u=1}^{'+U+'}}\\, w_u\\,f_u^{('+L+')}';
+    }
+    lines.push('\\hat{f}(\\mathbf{x},\\boldsymbol{\\Theta}) = '+out);
+    return lines;
+  }
+
+  window.nnDraw=function(){
+    var N=+document.getElementById('nn-inp').value;
+    var L=+document.getElementById('nn-hl').value;
+    var U=+document.getElementById('nn-w').value;
+    var asel=(document.getElementById('nn-act')||{}).value||'sigma';
+    var aSym={sigma:'\\sigma',tanh:'\\tanh',relu:'\\operatorname{ReLU}'}[asel]||'\\sigma';
+    document.getElementById('nn-inp-v').textContent=N;
+    document.getElementById('nn-hl-v').textContent=L;
+    document.getElementById('nn-w-v').textContent=U;
+    var params=(N+1)*U+(L-1)*(U+1)*U+(U+1);
+    document.getElementById('nn-params').textContent=params+' trainable parameters';
+    drawSVG(N,L,U);
+    var fEl=document.getElementById('nn-formula');if(!fEl)return;
+    var dk=_dk();
+    fEl.style.background=dk?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.04)';
+    fEl.style.border='1px solid '+(dk?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.09)');
+    var lines=buildFormula(N,L,U,aSym);
+    if(window.katex){
+      fEl.innerHTML=lines.map(function(line){
+        return '<div>'+katex.renderToString('\\displaystyle '+line,{throwOnError:false})+'</div>';
+      }).join('');
+    } else {
+      fEl.innerHTML='<pre style="font-size:0.77rem;white-space:pre-wrap;">'+lines.join('\n')+'</pre>';
+    }
+  };
+
+  function _init(){if(document.getElementById('nn-svg'))window.nnDraw();}
+  if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
+  else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
+  else{setTimeout(_init,80);}
+})();
+</script>
+
+<p><a href="https://playground.tensorflow.org">TensorFlow Playground</a> provides an interactive browser-based visualization of how depth, width, activation choice, and regularization affect the decision boundary of a network trained on 2D data, useful for building intuition before working through the math.</p>
+<h2 id="55-activation-functions">5.5 Activation Functions<a class="headerlink" href="#55-activation-functions" title="Permanent link">&para;</a></h2>
+<p>The activation function <span class="arithmatex">\(\sigma\)</span> is the source of nonlinearity. Four standard choices are:</p>
+<p><strong>Sigmoid</strong>: <span class="arithmatex">\(\sigma(x) = 1/(1 + e^{-x})\)</span>. Output lies in <span class="arithmatex">\((0, 1)\)</span>, making it a natural probability model. Saturates for large <span class="arithmatex">\(|x|\)</span>, causing vanishing gradients in deep networks.</p>
+<p><strong>Hyperbolic tangent</strong>: <span class="arithmatex">\(\tanh(x) = (e^x - e^{-x})/(e^x + e^{-x})\)</span>. Output in <span class="arithmatex">\((-1, 1)\)</span>, zero-centered (unlike sigmoid), but still saturates.</p>
+<p><strong>Rectified Linear Unit (ReLU)</strong>: <span class="arithmatex">\(\text{ReLU}(x) = \max(0, x)\)</span>. Gradient is exactly 1 for <span class="arithmatex">\(x &gt; 0\)</span>, solving the vanishing-gradient problem. However, whenever a unit's pre-activation <span class="arithmatex">\(z &lt; 0\)</span> its output is exactly zero and its gradient <span class="arithmatex">\(\text{ReLU}'(z) = 0\)</span> as well, so the weights feeding that unit receive no update and the unit stays permanently silent. This is the <strong>dying neuron</strong> (or <em>dead ReLU</em>) problem. It is triggered by a large learning rate that drives a unit negative in one step, or by an initialisation that starts many units below zero. Common fixes are activations with a small negative-side gradient (ELU below, or <em>Leaky ReLU</em> <span class="arithmatex">\(\max(\alpha x,\, x)\)</span> with <span class="arithmatex">\(\alpha \approx 0.01\)</span>) paired with proper weight initialisation.</p>
+<p><strong>Exponential Linear Unit (ELU)</strong>: <span class="arithmatex">\(\text{ELU}(x) = x\)</span> if <span class="arithmatex">\(x \geq 0\)</span>, and <span class="arithmatex">\(\alpha(e^x - 1)\)</span> if <span class="arithmatex">\(x &lt; 0\)</span>, where <span class="arithmatex">\(\alpha &gt; 0\)</span> is a hyperparameter. ELU is smooth everywhere and has a nonzero gradient for <span class="arithmatex">\(x &lt; 0\)</span>, mitigating the dying-neuron issue while retaining the non-saturating behavior of ReLU for positive inputs.</p>
+<p><strong>Weight initialisation</strong> is a critical but easily overlooked design choice. Setting all weights to zero makes every unit compute identical gradients, producing symmetric updates that never break symmetry: the network fails to learn. Random initialisation breaks symmetry, but the scale matters. If initial weights are too large, pre-activations grow exponentially with depth, saturating activations and destroying gradients. If too small, activations collapse toward zero at the same rate. <em>Xavier (Glorot) initialisation</em> draws each weight from <span class="arithmatex">\(\mathcal{N}\!\left(0,\,\tfrac{2}{n_\text{in}+n_\text{out}}\right)\)</span>, where <span class="arithmatex">\(n_\text{in}\)</span> and <span class="arithmatex">\(n_\text{out}\)</span> are the fan-in and fan-out of the layer. This keeps the variance of activations and gradients roughly constant through tanh or sigmoid layers. <em>He (Kaiming) initialisation</em> uses <span class="arithmatex">\(\mathcal{N}\!\left(0,\,\tfrac{2}{n_\text{in}}\right)\)</span>, accounting for the fact that ReLU zeroes out roughly half its inputs on average, and is the default for ReLU networks. Biases are typically initialised to zero.</p>
+<div id="act-widget" style="margin:1.5rem 0;">
+  <div style="display:flex;gap:0.45rem;flex-wrap:wrap;margin-bottom:0.45rem;justify-content:center;">
+    <button id="act-btn-0" onclick="actToggle(0)"
+      style="padding:4px 15px;border-radius:5px;border:2px solid #BA5A5A;background:#BA5A5A;color:#fff;font-size:0.82rem;cursor:pointer;transition:opacity 0.15s;font-weight:600;">Sigmoid</button>
+    <button id="act-btn-1" onclick="actToggle(1)"
+      style="padding:4px 15px;border-radius:5px;border:2px solid #4d9e6b;background:#A4CE8B;color:#1a3a26;font-size:0.82rem;cursor:pointer;transition:opacity 0.15s;font-weight:600;">Tanh</button>
+    <button id="act-btn-2" onclick="actToggle(2)"
+      style="padding:4px 15px;border-radius:5px;border:2px solid #4a8a8c;background:#86BCBD;color:#fff;font-size:0.82rem;cursor:pointer;transition:opacity 0.15s;font-weight:600;">ReLU</button>
+    <button id="act-btn-3" onclick="actToggle(3)"
+      style="padding:4px 15px;border-radius:5px;border:2px solid #b8a800;background:#F7E49B;color:#3a3200;font-size:0.82rem;cursor:pointer;transition:opacity 0.15s;font-weight:600;">ELU (&alpha;=1)</button>
+  </div>
+  <div style="font-size:0.79rem;opacity:0.62;text-align:center;margin-bottom:0.35rem;">Click a button to toggle that function on/off.</div>
+  <div id="act-plot" style="height:280px;"></div>
+  <div style="font-size:0.8rem;opacity:0.65;margin-top:0.3rem;text-align:center;">ELU uses &alpha;&nbsp;=&nbsp;1. Note saturation of sigmoid and tanh vs the unbounded positive regime of ReLU/ELU.</div>
+</div>
+
+<script>
+(function(){
+  var _vis=[true,true,true,true];
+  function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
+  function _draw(){
+    var el=document.getElementById('act-plot');if(!el||!window.Plotly)return;
+    var dk=_dark(),bg=dk?'#1e2228':'#fff',fg=dk?'#e0e0e0':'#333',gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+    var x=Array.from({length:200},function(_,i){return -4+8*i/199;});
+    Plotly.react(el,[
+      {x:x,y:x.map(function(xi){return 1/(1+Math.exp(-xi));}),mode:'lines',name:'Sigmoid',line:{color:'#BA5A5A',width:2.5},visible:_vis[0]?true:'legendonly'},
+      {x:x,y:x.map(function(xi){return Math.tanh(xi);}),mode:'lines',name:'Tanh',line:{color:'#A4CE8B',width:2.5},visible:_vis[1]?true:'legendonly'},
+      {x:x,y:x.map(function(xi){return Math.max(0,xi);}),mode:'lines',name:'ReLU',line:{color:'#86BCBD',width:2.5},visible:_vis[2]?true:'legendonly'},
+      {x:x,y:x.map(function(xi){return xi>=0?xi:Math.exp(xi)-1;}),mode:'lines',name:'ELU (a=1)',line:{color:'#F7E49B',width:2.5},visible:_vis[3]?true:'legendonly'},
+    ],{paper_bgcolor:bg,plot_bgcolor:bg,font:{color:fg,size:10.5},margin:{t:10,b:38,l:38,r:10},
+       xaxis:{title:'x',range:[-4,4],gridcolor:gc,zerolinecolor:gc,zeroline:true,zerolinewidth:1.5},
+       yaxis:{title:'activation',range:[-1.5,4],gridcolor:gc,zerolinecolor:gc,zeroline:true,zerolinewidth:1.5},
+       showlegend:false,
+    },{displayModeBar:false,responsive:true});
+  }
+  window.actToggle=function(i){
+    var el=document.getElementById('act-plot');if(!el||!window.Plotly)return;
+    _vis[i]=!_vis[i];
+    var btn=document.getElementById('act-btn-'+i);
+    if(btn)btn.style.opacity=_vis[i]?'1':'0.28';
+    Plotly.restyle(el,{visible:[_vis[i]?true:'legendonly']},[i]);
+  };
+  function _ep(cb){if(window.Plotly){cb();return;}var s=document.getElementById('plotly-cdn');if(!s){s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';document.head.appendChild(s);}s.addEventListener('load',cb);}
+  function _init(){if(!document.getElementById('act-plot'))return;_ep(_draw);}
+  if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
+  else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
+  else{setTimeout(_init,80);}
+})();
+</script>
+
+<h2 id="56-skip-connections-and-residual-networks">5.6 Skip Connections and Residual Networks<a class="headerlink" href="#56-skip-connections-and-residual-networks" title="Permanent link">&para;</a></h2>
+<p>Training very deep networks (tens or hundreds of layers) is difficult because gradients must flow back through every layer without vanishing. <strong>Skip (residual) connections</strong>, introduced by He et al. (<em>CVPR</em>, 2016), add the input of a block directly to its output:</p>
+<div class="arithmatex">\[f_i^{(k)}(\mathbf{x}) = f_i^{(k-1)}(\mathbf{x}) + \sigma\!\left(b_i^{(k)} + \sum_j w_{i,j}^{(k)} f_j^{(k-1)}(\mathbf{x})\right).\]</div>
+<p>The Jacobian of <span class="arithmatex">\(f_i^{(k)}\)</span> with respect to <span class="arithmatex">\(f_j^{(k-1)}\)</span> is</p>
+<div class="arithmatex">\[\frac{\partial f_i^{(k)}}{\partial f_j^{(k-1)}} = \delta_{ij} + \sigma'\!\left(z_i^{(k)}\right) w_{i,j}^{(k)},\]</div>
+<p>where <span class="arithmatex">\(z_i^{(k)} = b_i^{(k)} + \sum_j w_{i,j}^{(k)} f_j^{(k-1)}\)</span> is the pre-activation and <span class="arithmatex">\(\delta_{ij}\)</span> is the Kronecker delta. The identity term <span class="arithmatex">\(\delta_{ij}\)</span> guarantees that the gradient is at least 1 along the diagonal even if <span class="arithmatex">\(\sigma'\)</span> vanishes, so gradients can propagate without exponential decay. This identity path also smooths the loss landscape and enables architectures hundreds of layers deep (ResNets, Transformers).</p>
+<h2 id="57-batch-normalization">5.7 Batch Normalization<a class="headerlink" href="#57-batch-normalization" title="Permanent link">&para;</a></h2>
+<p>During training, the distribution of each layer's pre-activations shifts as weights change, a phenomenon called <strong>internal covariate shift</strong>, which slows convergence and makes the network sensitive to the choice of learning rate. <strong>Batch normalization</strong> addresses this by standardizing the activations of each hidden unit <span class="arithmatex">\(j\)</span> in layer <span class="arithmatex">\(k\)</span> across the current mini-batch of <span class="arithmatex">\(P'\)</span> examples.</p>
+<p>For unit <span class="arithmatex">\(j\)</span> at layer <span class="arithmatex">\(k\)</span>, collect activations <span class="arithmatex">\(\{f_j^{(k)}(\mathbf{x}^{(p)})\}_{p=1}^{P'}\)</span> and compute the mini-batch mean and variance:</p>
+<div class="arithmatex">\[\mu_{f_j^{(k)}} = \frac{1}{P'}\sum_{p=1}^{P'} f_j^{(k)}(\mathbf{x}^{(p)}), \qquad \sigma^2_{f_j^{(k)}} = \frac{1}{P'}\sum_{p=1}^{P'} \left(f_j^{(k)}(\mathbf{x}^{(p)}) - \mu_{f_j^{(k)}}\right)^2.\]</div>
+<p>The normalized activation is <span class="arithmatex">\(\hat{f}_j^{(k)} = (f_j^{(k)} - \mu_{f_j^{(k)}})/\sigma_{f_j^{(k)}}\)</span>. To prevent this normalization from permanently restricting the representational capacity of the network, two <strong>learnable</strong> scalar parameters <span class="arithmatex">\(\gamma_j^{(k)}\)</span> (scale) and <span class="arithmatex">\(\beta_j^{(k)}\)</span> (shift) are introduced, and the output of the batch normalization layer is</p>
+<div class="arithmatex">\[\tilde{f}_j^{(k)} = \gamma_j^{(k)} \hat{f}_j^{(k)} + \beta_j^{(k)}.\]</div>
+<p>This allows the network to recover any mean and variance if that is optimal. Because mean and variance are re-computed at every weight update for every layer, batch normalization layers are typically inserted between affine transformations and activation functions. During inference, the running mean and variance accumulated over training are used rather than the current mini-batch statistics.</p>
+<h2 id="58-optimization">5.8 Optimization<a class="headerlink" href="#58-optimization" title="Permanent link">&para;</a></h2>
+<p>The training loss for a network with parameters <span class="arithmatex">\(\omega\)</span> over <span class="arithmatex">\(P\)</span> data points is</p>
+<div class="arithmatex">\[\mathcal{L}(\omega) = \frac{1}{P} \sum_{p=1}^{P} \ell\!\left(\hat{f}(\mathbf{x}^{(p)}, \omega),\, y^{(p)}\right),\]</div>
+<p>where <span class="arithmatex">\(\ell\)</span> is a pointwise loss (e.g. squared error). Deep network losses are almost always <strong>non-convex</strong>, so no closed-form solution exists and iterative gradient-based methods are required.</p>
+<h3 id="gradient-descent">Gradient Descent<a class="headerlink" href="#gradient-descent" title="Permanent link">&para;</a></h3>
+<p>The simplest approach computes the exact gradient over all <span class="arithmatex">\(P\)</span> training examples:</p>
+<div class="arithmatex">\[\omega_{k+1} = \omega_k - \varepsilon\, \frac{1}{P} \sum_{p=1}^{P} \nabla_\omega \ell\!\left(\hat{f}(\mathbf{x}^{(p)}, \omega_k),\, y^{(p)}\right),\]</div>
+<p>where <span class="arithmatex">\(\varepsilon &gt; 0\)</span> is the <strong>learning rate</strong>. Each update requires a full forward and backward pass over the dataset, which costs <span class="arithmatex">\(\mathcal{O}(P)\)</span> and becomes infeasible for large datasets.</p>
+<h3 id="stochastic-gradient-descent-sgd">Stochastic Gradient Descent (SGD)<a class="headerlink" href="#stochastic-gradient-descent-sgd" title="Permanent link">&para;</a></h3>
+<p><strong>Stochastic gradient descent</strong> replaces the full gradient with a cheap estimate computed over a random mini-batch <span class="arithmatex">\(\mathcal{B}\)</span> of <span class="arithmatex">\(P' \ll P\)</span> examples:</p>
+<div class="arithmatex">\[g = \frac{1}{P'} \sum_{p \in \mathcal{B}} \nabla_\omega \ell\!\left(\hat{f}(\mathbf{x}^{(p)}, \omega), y^{(p)}\right), \qquad \omega_{k+1} = \omega_k - \varepsilon\, g.\]</div>
+<p>One pass through the full dataset is called an <strong>epoch</strong>; a single gradient step is a <strong>step</strong>. Gradients of the layer composition are computed efficiently by <strong>backpropagation</strong> (reverse-mode automatic differentiation), which propagates error signals layer by layer from output to input.</p>
+<p>A limitation of plain SGD is that in elongated loss landscapes the negative gradient zig-zags across the valley rather than pointing down it. The simplest fix is <strong>momentum</strong>, which replaces the raw gradient with an exponentially weighted moving average of past gradients:</p>
+<div class="arithmatex">\[d_k = \beta\, d_{k-1} + (1 - \beta)\, g_k, \qquad \omega_{k+1} = \omega_k - \varepsilon\, d_k,\]</div>
+<p>where <span class="arithmatex">\(\beta \approx 0.9\)</span> is the momentum coefficient. Expanding the recursion shows that <span class="arithmatex">\(d_k = \sum_{j=0}^k \beta^{k-j}(1-\beta)\,g_j\)</span>: each past gradient contributes with exponentially decaying weight, so the update accumulates speed in consistent directions and is dampened by noisy cancellations.</p>
+<h3 id="backpropagation">Backpropagation<a class="headerlink" href="#backpropagation" title="Permanent link">&para;</a></h3>
+<p>Backpropagation is the algorithm that computes <span class="arithmatex">\(\nabla_\omega \mathcal{L}\)</span> by applying the chain rule from output to input. Define the <em>pre-activation</em> of unit <span class="arithmatex">\(i\)</span> in layer <span class="arithmatex">\(k\)</span> as</p>
+<div class="arithmatex">\[z_i^{(k)} = b_i^{(k)} + \sum_j w_{i,j}^{(k)}\, f_j^{(k-1)},\]</div>
+<p>so <span class="arithmatex">\(f_i^{(k)} = \sigma(z_i^{(k)})\)</span>. The <em>error signal</em> for that unit is <span class="arithmatex">\(\delta_i^{(k)} = \partial\mathcal{L}/\partial z_i^{(k)}\)</span>.</p>
+<p><strong>Forward pass.</strong> Propagate inputs through the network layer by layer, storing every <span class="arithmatex">\(z_i^{(k)}\)</span> and <span class="arithmatex">\(f_i^{(k)}\)</span>.</p>
+<p><strong>Output error.</strong> For a squared loss, <span class="arithmatex">\(\delta^{(\text{out})} = \hat{f} - y\)</span>. For cross-entropy with softmax, <span class="arithmatex">\(\delta_i^{(\text{out})} = \hat{p}_i - y_i\)</span>. In general, <span class="arithmatex">\(\delta^{(\text{out})} = \partial\ell/\partial z^{(\text{out})}\)</span>.</p>
+<p><strong>Backward pass.</strong> Propagate error signals from layer <span class="arithmatex">\(L\)</span> down to layer <span class="arithmatex">\(1\)</span>. For each unit in layer <span class="arithmatex">\(k\)</span> (in reverse order):</p>
+<div class="arithmatex">\[\delta_i^{(k)} = \sigma'\!\left(z_i^{(k)}\right) \sum_m w_{m,i}^{(k+1)}\, \delta_m^{(k+1)}.\]</div>
+<p>Each <span class="arithmatex">\(\delta_i^{(k)}\)</span> is the local activation derivative multiplied by the weighted sum of error signals from the layer above, the chain rule applied one step at a time.</p>
+<p><strong>Gradient readout.</strong> With all <span class="arithmatex">\(\delta_i^{(k)}\)</span> in hand, the gradients are</p>
+<div class="arithmatex">\[\frac{\partial\mathcal{L}}{\partial w_{i,j}^{(k)}} = \delta_i^{(k)}\, f_j^{(k-1)}, \qquad \frac{\partial\mathcal{L}}{\partial b_i^{(k)}} = \delta_i^{(k)}.\]</div>
+<p>Both the forward and backward passes cost <span class="arithmatex">\(\mathcal{O}(W)\)</span> operations, where <span class="arithmatex">\(W\)</span> is the total number of weights. Backpropagation therefore computes the full gradient in only twice the cost of a single forward pass, which is what makes training large networks feasible.</p>
+<p>The <strong>vanishing gradient</strong> problem appears when <span class="arithmatex">\(\sigma'(z_i^{(k)})\)</span> is consistently small: each multiplication shrinks <span class="arithmatex">\(\delta\)</span> further, and by the time the signal reaches early layers it has essentially disappeared. Sigmoid and tanh saturate for large <span class="arithmatex">\(|z|\)</span>, making <span class="arithmatex">\(\sigma' \approx 0\)</span> there. ReLU eliminates this for positive pre-activations (<span class="arithmatex">\(\sigma' = 1\)</span> exactly), which is the primary reason it became the default activation for deep networks.</p>
+<h3 id="adam-adaptive-moment-estimation">Adam (Adaptive Moment Estimation)<a class="headerlink" href="#adam-adaptive-moment-estimation" title="Permanent link">&para;</a></h3>
+<p><strong>Adam</strong> (short for <em>Adaptive Moment Estimation</em>, Kingma &amp; Ba 2014) addresses a remaining weakness of momentum SGD: near saddle points the gradient magnitude approaches zero, making every step vanishingly small regardless of direction. Adam combines momentum with <em>per-parameter adaptive step sizes</em> by maintaining two exponentially weighted running averages for each parameter <span class="arithmatex">\(i\)</span>: the first moment <span class="arithmatex">\(d_k^i\)</span> (mean of recent gradients) and the second moment <span class="arithmatex">\(h_k^i\)</span> (mean of recent squared gradients):</p>
+<div class="arithmatex">\[d_k^i = \beta_1 d_{k-1}^i + (1 - \beta_1)\, g_i(\omega_k), \qquad h_k^i = \beta_2 h_{k-1}^i + (1 - \beta_2)\, g_i(\omega_k)^2,\]</div>
+<p>with defaults <span class="arithmatex">\(\beta_1 = 0.9\)</span> and <span class="arithmatex">\(\beta_2 = 0.999\)</span>. The update is</p>
+<div class="arithmatex">\[\omega_{k+1}^i = \omega_k^i - \varepsilon\, \frac{\hat{d}_k^i}{\sqrt{\hat{h}_k^i} + \epsilon},\]</div>
+<p>where <span class="arithmatex">\(\hat{d}_k^i = d_k^i\,/\,(1 - \beta_1^k)\)</span> and <span class="arithmatex">\(\hat{h}_k^i = h_k^i\,/\,(1 - \beta_2^k)\)</span> are bias-corrected estimates that compensate for the zero initialization of both moments. Dividing by <span class="arithmatex">\(\sqrt{\hat{h}_k^i}\)</span> normalizes each coordinate's step by its recent gradient magnitude: directions with consistently large gradients are slowed, and directions with small or inconsistent gradients are amplified. This is what "adaptive" means in the name: the effective learning rate is different for every parameter, automatically tuned by the geometry of the loss surface around that parameter. In practice, bias-correction factors are applied to <span class="arithmatex">\(\hat{d}_k^i\)</span> and <span class="arithmatex">\(\hat{h}_k^i\)</span> to account for their initialization at zero.</p>
+<p>The widget below animates three optimization trajectories on the loss surface <span class="arithmatex">\(\mathcal{L}(w_1, w_2) = w_1^2 + 25\,w_2^2\)</span> (minimum at the origin). The high curvature in <span class="arithmatex">\(w_2\)</span> forces GD to use a small learning rate that barely moves <span class="arithmatex">\(w_1\)</span>; the zig-zag in <span class="arithmatex">\(w_2\)</span> is the classical signature of anisotropic GD. Adam normalises each coordinate's effective step size and converges in roughly half as many iterations.</p>
+<div id="opt-widget" style="margin:1.5rem 0;">
+  <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:0.55rem;justify-content:center;flex-wrap:wrap;">
+    <button onclick="optPlay()" id="opt-btn"
+      style="padding:5px 18px;border-radius:6px;border:1px solid #86BCBD;background:#86BCBD;color:#1a4a50;font-weight:600;cursor:pointer;font-size:0.85rem;">&#9654; Play</button>
+    <button onclick="optRestart()"
+      style="padding:5px 14px;border-radius:6px;border:1px solid rgba(128,128,128,0.4);background:transparent;cursor:pointer;font-size:0.85rem;">&#8635; Restart</button>
+    <span id="opt-step" style="font-size:0.81rem;opacity:0.65;">Step 0 / 80</span>
+  </div>
+  <div id="opt-plot" style="height:340px;"></div>
+  <div style="display:flex;gap:1.4rem;margin-top:0.45rem;font-size:0.81rem;flex-wrap:wrap;justify-content:center;">
+    <span><span style="display:inline-block;width:22px;height:3px;background:#BA5A5A;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>GD (lr=0.038)</span>
+    <span><span style="display:inline-block;width:22px;height:3px;background:#F7E49B;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>SGD (lr=0.038 + mini-batch noise)</span>
+    <span><span style="display:inline-block;width:22px;height:3px;background:#A4CE8B;vertical-align:middle;margin-right:4px;border-radius:2px;"></span>Adam (lr=0.12, &beta;&#8321;=0.9, &beta;&#8322;=0.999)</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  function _rng(s){var st=s>>>0;return function(){st=(st*1664525+1013904223)>>>0;return st/0x100000000;};}
+  // Surface: L = w1^2 + 25*w2^2, grad = (2w1, 50w2)
+  function _grad(w){return [2*w[0],50*w[1]];}
+  var STEPS=80,LR=0.038,LRA=0.12,B1=0.9,B2=0.999,EP=1e-8;
+  var W0=[2.5,1.5];
+
+  // GD: lr=0.038, w2 factor = 1-50*0.038 = -0.9 (strong zig-zag), w1 factor = 0.924 (slow)
+  var gd=[W0.slice()];
+  for(var k=0;k<STEPS;k++){var g=_grad(gd[k]);gd.push([gd[k][0]-LR*g[0],gd[k][1]-LR*g[1]]);}
+
+  // SGD: same lr + moderate mini-batch noise
+  var sgd=[W0.slice()];var r=_rng(777);
+  for(var k=0;k<STEPS;k++){
+    var g=_grad(sgd[k]);
+    var n1=(r()-0.5)*3,n2=(r()-0.5)*12;
+    sgd.push([sgd[k][0]-LR*(g[0]+n1),sgd[k][1]-LR*(g[1]+n2)]);
+  }
+
+  // Adam with bias correction
+  var adam=[W0.slice()];var d1=0,d2=0,h1=0,h2=0;
+  for(var k=0;k<STEPS;k++){
+    var g=_grad(adam[k]),t=k+1;
+    d1=B1*d1+(1-B1)*g[0];d2=B1*d2+(1-B1)*g[1];
+    h1=B2*h1+(1-B2)*g[0]*g[0];h2=B2*h2+(1-B2)*g[1]*g[1];
+    var dh1=d1/(1-Math.pow(B1,t)),dh2=d2/(1-Math.pow(B1,t));
+    var hh1=h1/(1-Math.pow(B2,t)),hh2=h2/(1-Math.pow(B2,t));
+    adam.push([adam[k][0]-LRA*dh1/(Math.sqrt(hh1)+EP),adam[k][1]-LRA*dh2/(Math.sqrt(hh2)+EP)]);
+  }
+
+  // Contour grid for L = w1^2 + 25*w2^2
+  var NX=60,NY=50;
+  var xR=Array.from({length:NX},function(_,i){return -3+6*i/(NX-1);});
+  var yR=Array.from({length:NY},function(_,i){return -2+4*i/(NY-1);});
+  var zC=yR.map(function(y){return xR.map(function(x){return Math.min(60,x*x+25*y*y);});});
+
+  var _fr=1,_tmr=null,_ready=false;
+  function _xy(path,n){return{x:path.slice(0,n).map(function(p){return p[0];}),y:path.slice(0,n).map(function(p){return p[1];})};}
+  function _dark(){return document.body&&document.body.getAttribute('data-md-color-scheme')==='slate';}
+
+  function _initPlot(){
+    var el=document.getElementById('opt-plot');if(!el||!window.Plotly)return;
+    var dk=_dark(),bg=dk?'#1e2228':'#fff',fg=dk?'#e0e0e0':'#333',gc=dk?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+    Plotly.react(el,[
+      {type:'contour',x:xR,y:yR,z:zC,colorscale:'Blues',reversescale:true,
+       contours:{coloring:'heatmap',showlabels:false,start:0,end:60,size:5},
+       showscale:false,opacity:0.55,hoverinfo:'skip'},
+      {x:[W0[0]],y:[W0[1]],mode:'lines+markers',line:{color:'#BA5A5A',width:2.5},marker:{size:5,color:'#BA5A5A'},showlegend:false},
+      {x:[W0[0]],y:[W0[1]],mode:'lines+markers',line:{color:'#F7E49B',width:2.5},marker:{size:5,color:'#F7E49B'},showlegend:false},
+      {x:[W0[0]],y:[W0[1]],mode:'lines+markers',line:{color:'#A4CE8B',width:2.5},marker:{size:5,color:'#A4CE8B'},showlegend:false},
+      {x:[0],y:[0],mode:'markers',marker:{symbol:'star',size:16,color:'white',line:{color:'#666',width:1.5}},showlegend:false},
+    ],{paper_bgcolor:bg,plot_bgcolor:bg,font:{color:fg,size:10.5},margin:{t:10,b:42,l:44,r:10},
+       xaxis:{title:'w₁',range:[-3,3],gridcolor:gc,zerolinecolor:gc},
+       yaxis:{title:'w₂',range:[-2,2],gridcolor:gc,zerolinecolor:gc},
+    },{displayModeBar:false,responsive:true});
+    _ready=true;
+  }
+
+  function _update(){
+    if(!_ready)return;
+    var el=document.getElementById('opt-plot');if(!el)return;
+    var n=Math.min(_fr,STEPS+1);
+    var g=_xy(gd,n),s=_xy(sgd,n),a=_xy(adam,n);
+    Plotly.restyle(el,{x:[g.x,s.x,a.x],y:[g.y,s.y,a.y]},[1,2,3]);
+    document.getElementById('opt-step').textContent='Step '+Math.min(_fr-1,STEPS)+' / '+STEPS;
+  }
+
+  window.optPlay=function(){
+    var btn=document.getElementById('opt-btn');
+    if(_tmr){clearInterval(_tmr);_tmr=null;btn.innerHTML='&#9654; Play';return;}
+    if(_fr>STEPS)optRestart();
+    btn.innerHTML='&#9646;&#9646; Pause';
+    _tmr=setInterval(function(){_fr++;_update();if(_fr>STEPS){clearInterval(_tmr);_tmr=null;btn.innerHTML='&#9654; Play';}},80);
+  };
+  window.optRestart=function(){
+    if(_tmr){clearInterval(_tmr);_tmr=null;}
+    document.getElementById('opt-btn').innerHTML='&#9654; Play';
+    _fr=1;_update();
+  };
+
+  function _ep(cb){if(window.Plotly){cb();return;}var s=document.getElementById('plotly-cdn');if(!s){s=document.createElement('script');s.id='plotly-cdn';s.src='https://cdn.plot.ly/plotly-2.27.0.min.js';document.head.appendChild(s);}s.addEventListener('load',cb);}
+  function _init(){if(!document.getElementById('opt-plot'))return;_ep(function(){_initPlot();_update();});}
+  if(typeof document$!=='undefined'){document$.subscribe(function(){setTimeout(_init,80);});}
+  else if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',_init);}
+  else{setTimeout(_init,80);}
+})();
+</script>
+
+<p><strong>Learning-rate schedulers</strong> adjust <span class="arithmatex">\(\varepsilon\)</span> during training according to a predetermined or adaptive rule. A single fixed <span class="arithmatex">\(\varepsilon\)</span> works poorly across an entire run: a value large enough for fast early progress will overshoot minima later, while a value small enough for precise late-stage convergence makes early training unnecessarily slow. Schedulers resolve this tension. Four standard strategies are used in practice:</p>
+<ul>
+<li><strong>Exponential decay</strong> multiplies <span class="arithmatex">\(\varepsilon\)</span> by a constant factor <span class="arithmatex">\(\gamma &lt; 1\)</span> every <span class="arithmatex">\(n\)</span> steps, giving <span class="arithmatex">\(\varepsilon_k = \varepsilon_0 \gamma^{k/n}\)</span>. The rate decays steadily regardless of the loss, which is simple but inflexible.</li>
+<li><strong>ReduceLROnPlateau</strong> monitors the validation loss and reduces <span class="arithmatex">\(\varepsilon\)</span> by a fixed factor whenever the loss has not improved for a specified number of epochs. It is reactive: the rate only falls when progress genuinely stalls.</li>
+<li><strong>Cosine annealing with warm restarts</strong> follows a cosine curve from <span class="arithmatex">\(\varepsilon_{\max}\)</span> down to <span class="arithmatex">\(\varepsilon_{\min}\)</span> over a cycle of <span class="arithmatex">\(T\)</span> steps, then resets to <span class="arithmatex">\(\varepsilon_{\max}\)</span>. The periodic restarts allow the optimizer to escape sharp local minima by briefly taking larger steps again before reconverging.</li>
+<li><strong>Cyclic learning rate</strong> oscillates <span class="arithmatex">\(\varepsilon\)</span> between a minimum and maximum value. Counterintuitively, periodically increasing the rate can help escape saddle points and sharp minima, often yielding faster convergence than monotone decay.</li>
+</ul>
+<h2 id="59-regularization">5.9 Regularization<a class="headerlink" href="#59-regularization" title="Permanent link">&para;</a></h2>
+<p>Neural networks are highly overparameterized and prone to overfitting. Several strategies reduce this:</p>
+<p><strong>Data augmentation</strong> exploits known symmetries of the problem to generate additional training examples synthetically. For images, this includes rotations, flips, and color jitter; for molecules, this includes permutation of equivalent atoms. Augmentation is the most principled regularization: it directly encodes prior knowledge. Care must be taken not to apply transformations that change the label (e.g. reflecting the letter "b" to "d" in handwriting recognition). A related strategy is <strong>noise injection</strong>: adding small random perturbations to the training inputs, or to intermediate hidden-unit activations. Input-level noise is mathematically equivalent to data augmentation; hidden-unit noise prevents the network from becoming brittle to specific activation magnitudes.</p>
+<p><strong>Early stopping</strong> trains a high-capacity model and monitors validation loss at regular intervals. Each time the validation loss reaches a new minimum, the current parameters are saved. Training is halted when the validation loss has not improved for <span class="arithmatex">\(P_{\text{patience}}\)</span> consecutive checkpoints, and the saved best parameters are restored. The algorithm depends on a patience hyperparameter <span class="arithmatex">\(P_{\text{patience}}\)</span> and a check frequency, but requires no modification to the loss or architecture.</p>
+<p><strong>Dropout</strong> addresses a specific failure mode called co-adaptation: during training, units can become mutually dependent (unit <span class="arithmatex">\(A\)</span> learns to correct the errors of unit <span class="arithmatex">\(B\)</span> and vice versa), which causes the network to overfit because that cooperation only works on training data. Dropout breaks this by randomly zeroing each non-output unit independently with probability <span class="arithmatex">\(p_{\text{drop}}\)</span> on every forward pass during training, so no unit can rely on any specific partner being present. This forces each unit to be individually useful and learn redundant, general-purpose representations.</p>
+<p>At inference, all units are active and their outputs are scaled by <span class="arithmatex">\((1 - p_{\text{drop}})\)</span> to match the expected activation magnitude seen during training (since on average a fraction <span class="arithmatex">\(p_{\text{drop}}\)</span> of inputs were zeroed). Dropout has a clean ensemble interpretation: with <span class="arithmatex">\(N\)</span> droppable units there are <span class="arithmatex">\(2^N\)</span> possible binary masks, and training with dropout samples a different sub-network at each step, all sharing weights. Inference with weight scaling approximates averaging the predictions of all <span class="arithmatex">\(2^N\)</span> sub-networks simultaneously. Unlike ordinary bagging, no separate training run is needed for each sub-network, making dropout computationally cheap.</p>
+<p><strong>Weight decay (L2 regularization)</strong> adds a penalty <span class="arithmatex">\(\lambda \|\omega\|^2\)</span> to the loss, keeping weights small and discouraging the network from relying on any single parameter. L1 regularization (<span class="arithmatex">\(\lambda \|\omega\|_1\)</span>) promotes sparsity.</p>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.top", "navigation.instant", "navigation.tracking", "navigation.sections", "navigation.indexes", "toc.integrate", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/katex.js"></script>
+      
+        <script src="../javascripts/font-size.js"></script>
+      
+        <script src="../javascripts/collapsible-sidebars.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>
