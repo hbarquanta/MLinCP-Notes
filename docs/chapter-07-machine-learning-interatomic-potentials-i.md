@@ -484,9 +484,9 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 
 <div style="border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(164,206,139,0.12);color:#2a5a1a;border-bottom:1px solid #A4CE8B;">Embedding <span style="font-weight:400;text-transform:none;color:#888;">&middot; computed once</span></div>
-<div style="display:flex;gap:0.4rem;padding:0.45rem;flex-wrap:wrap;">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;padding:0.45rem;">
 
-<div style="flex:1;min-width:150px;display:flex;flex-direction:column;gap:0.35rem;">
+<div style="display:flex;flex-direction:column;gap:0.35rem;">
 <div id="mace-onehot" style="background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Species one-hot <span style="color:#A4CE8B;">&#9679;</span></div>
 <span data-eq="\delta_{sm}" data-dm="1"></span></div>
@@ -495,21 +495,21 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 <span data-eq="h_{i,k00}^{(0)} = W_{km}" data-dm="1"></span></div>
 </div>
 
-<div id="mace-radial-emb" style="flex:1.2;min-width:200px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;align-self:flex-start;">
+<div id="mace-radial-emb" style="background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;align-self:flex-start;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Radial embedding <span style="color:#86BCBD;">&#9679;</span> from r<sub>ij</sub></div>
 <span data-eq="\tilde{f}_n(r_{ij}) = \sqrt{\tfrac{2}{r_c}}\,\frac{\sin\!\left(\frac{n\pi r_{ij}}{r_c}\right)}{r_{ij}}\,f_c(r_{ij})" data-dm="1"></span></div>
 
-<div id="mace-angular-emb" style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;align-self:flex-start;">
+<div id="mace-angular-emb" style="background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;align-self:flex-start;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Angular embedding <span style="color:#86BCBD;">&#9679;</span> from r&#770;<sub>ij</sub></div>
 <span data-eq="Y_l^{m_l}(\hat{\mathbf{r}}_{ij}),\; l = 0,\ldots,L_{\max}" data-dm="1"></span></div>
 
 </div>
 </div>
 
-<div style="display:flex;gap:0.4rem;margin:0.5rem 0;flex-wrap:wrap;">
-<div id="mace-feat-node0" style="flex:1;min-width:140px;background:rgba(164,206,139,0.15);border:1px solid #A4CE8B;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#2a5a1a;text-align:center;">Node features h<sup>(0)</sup></div>
-<div id="mace-feat-edgef" style="flex:1;min-width:140px;background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#0f3a3c;text-align:center;">Edge features f&#771;</div>
-<div id="mace-feat-edgea" style="flex:1;min-width:140px;background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#0f3a3c;text-align:center;">Edge attributes Y</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;margin:0.5rem 0;">
+<div id="mace-feat-node0" style="background:rgba(164,206,139,0.15);border:1px solid #A4CE8B;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#2a5a1a;text-align:center;">Node features h<sup>(0)</sup></div>
+<div id="mace-feat-edgef" style="background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#0f3a3c;text-align:center;">Edge features f&#771;</div>
+<div id="mace-feat-edgea" style="background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#0f3a3c;text-align:center;">Edge attributes Y</div>
 </div>
 
 <div style="border:1.5px dashed #86BCBD;border-radius:8px;padding:0.5rem 0.55rem 0.6rem;background:rgba(134,188,189,0.03);">
@@ -519,13 +519,15 @@ The small model is suitable for fast MD on well-defined systems; the medium mode
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(134,188,189,0.12);color:#0f3a3c;border-bottom:1px solid #86BCBD;">Interaction <span style="font-weight:400;text-transform:none;color:#888;">&middot; equivariant message passing &rarr; A-basis</span></div>
 <div style="padding:0.45rem 0.5rem;">
 
-<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.35rem;">
-<div id="mace-int-linear" style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.4rem;margin-bottom:0.35rem;">
+<div id="mace-int-linear" style="background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">1 &middot; Linear mix <span style="color:#A4CE8B;">&#9679;</span></div>
 <span data-eq="\tilde{h}_{i,kl_2m_2}^{(s)} = \textstyle\sum_{k'} W_{kk'l_2}^{(s)}\,h_{i,k'l_2m_2}^{(s)}" data-dm="1"></span></div>
-<div id="mace-int-radial" style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div id="mace-int-radial" style="background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
 <div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">2 &middot; Radial MLP <span style="color:#86BCBD;">&#9679;</span></div>
 <span data-eq="R_{kl_1l_2l}^{(s)}(r_{ij}) = \mathrm{MLP}\!\left(\{\tilde{f}_n(r_{ij})\}_n\right)" data-dm="1"></span></div>
+<div id="mace-int-spacer" style="border:1px dashed #d8d2ca;border-radius:5px;display:flex;align-items:center;justify-content:center;">
+<span style="font-size:0.63rem;color:#c3bdb4;text-align:center;padding:0.3rem;">Y passes<br>straight through</span></div>
 </div>
 
 <div id="mace-int-tp" style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin-bottom:0.35rem;">
@@ -601,9 +603,11 @@ function drawMaceArrows(){
            bottom:r.bottom-wRect.top,cx:r.left+r.width/2-wRect.left,cy:r.top+r.height/2-wRect.top,
            width:r.width,height:r.height};
   }
-  function vArrow(x1,y1,x2,y2,col,mid){
+  // Straight vertical arrow, x taken from the target column (so bars
+  // wider than their target still drop a clean plumb line).
+  function vArrow(x,y1,y2,col,mid){
     var p=document.createElementNS(NS,'line');
-    p.setAttribute('x1',x1);p.setAttribute('y1',y1);p.setAttribute('x2',x2);p.setAttribute('y2',y2-6);
+    p.setAttribute('x1',x);p.setAttribute('y1',y1);p.setAttribute('x2',x);p.setAttribute('y2',y2-6);
     p.setAttribute('stroke',col);p.setAttribute('stroke-width','1.8');p.setAttribute('marker-end','url(#'+mid+')');
     asvg.appendChild(p);
   }
@@ -620,50 +624,49 @@ function drawMaceArrows(){
   var onehot=rel('mace-onehot'), nodeEmb=rel('mace-node-emb');
   var radEmb=rel('mace-radial-emb'), angEmb=rel('mace-angular-emb');
   var fn0=rel('mace-feat-node0'), fef=rel('mace-feat-edgef'), fea=rel('mace-feat-edgea');
-  var il=rel('mace-int-linear'), ir=rel('mace-int-radial'), tp=rel('mace-int-tp'), ab=rel('mace-int-abasis');
+  var il=rel('mace-int-linear'), ir=rel('mace-int-radial'), spacer=rel('mace-int-spacer'), tp=rel('mace-int-tp'), ab=rel('mace-int-abasis');
   var pb=rel('mace-prod-b'), pu=rel('mace-prod-update');
   var fn1=rel('mace-feat-node1'), ro=rel('mace-readout'), out=rel('mace-output');
 
-  // Embedding internals
-  if(onehot&&nodeEmb) vArrow(onehot.cx,onehot.bottom, nodeEmb.cx,nodeEmb.top,'#3a7a28','mah-g');
+  // Embedding internals (same column -> vertical)
+  if(onehot&&nodeEmb) vArrow(nodeEmb.cx, onehot.bottom, nodeEmb.top,'#3a7a28','mah-g');
 
-  // Embedding -> feature bars
-  if(nodeEmb&&fn0) vArrow(nodeEmb.cx,nodeEmb.bottom, fn0.cx,fn0.top,'#3a7a28','mah-g');
-  if(radEmb&&fef) vArrow(radEmb.cx,radEmb.bottom, fef.cx,fef.top,'#1f6668','mah-b');
-  if(angEmb&&fea) vArrow(angEmb.cx,angEmb.bottom, fea.cx,fea.top,'#1f6668','mah-b');
+  // Embedding -> feature bars: each column aligns with the bar below it
+  if(nodeEmb&&fn0) vArrow(fn0.cx, nodeEmb.bottom, fn0.top,'#3a7a28','mah-g');
+  if(radEmb&&fef) vArrow(fef.cx, radEmb.bottom, fef.top,'#1f6668','mah-b');
+  if(angEmb&&fea) vArrow(fea.cx, angEmb.bottom, fea.top,'#1f6668','mah-b');
 
-  // Feature bars -> Interaction
-  if(fn0&&il) vArrow(fn0.cx,fn0.bottom, il.cx,il.top,'#3a7a28','mah-g');
-  if(fef&&ir) vArrow(fef.cx,fef.bottom, ir.cx,ir.top,'#1f6668','mah-b');
+  // Feature bars -> Interaction row 1 (same 3-column grid, so straight down)
+  if(fn0&&il) vArrow(il.cx, fn0.bottom, il.top,'#3a7a28','mah-g');
+  if(fef&&ir) vArrow(ir.cx, fef.bottom, ir.top,'#1f6668','mah-b');
 
-  // linear/radial MLP -> tensor product
-  if(il&&tp) vArrow(il.cx,il.bottom, tp.left+tp.width*0.3,tp.top,'#3a7a28','mah-g');
-  if(ir&&tp) vArrow(ir.cx,ir.bottom, tp.left+tp.width*0.7,tp.top,'#1f6668','mah-b');
+  // linear/radial MLP -> tensor product: straight down from each column
+  if(il&&tp) vArrow(il.cx, il.bottom, tp.top,'#3a7a28','mah-g');
+  if(ir&&tp) vArrow(ir.cx, ir.bottom, tp.top,'#1f6668','mah-b');
 
-  // edge attributes -> tensor product: straight rail down the right margin
-  if(fea&&tp){
-    var railX = W-10;
-    orthDown(fea.right, fea.cy, railX, tp.top+16, tp.right-14, '#1f6668','mah-b');
-  }
+  // edge attributes -> tensor product: straight down through the empty
+  // 3rd column (no detour needed now that the grid reserves that space)
+  if(fea&&spacer&&tp) vArrow(spacer.cx, fea.bottom, tp.top,'#1f6668','mah-b');
 
   // tensor product -> A-basis -> Product (B-basis)
-  if(tp&&ab) vArrow(tp.cx,tp.bottom, ab.cx,ab.top,'#888','mah-k');
-  if(ab&&pb) vArrow(ab.cx,ab.bottom, pb.cx,pb.top,'#3a7a28','mah-g');
+  if(tp&&ab) vArrow(ab.cx, tp.bottom, ab.top,'#888','mah-k');
+  if(ab&&pb) vArrow(pb.cx, ab.bottom, pb.top,'#3a7a28','mah-g');
 
   // B-basis -> Update
-  if(pb&&pu) vArrow(pb.cx,pb.bottom, pu.cx,pu.top,'#888','mah-k');
+  if(pb&&pu) vArrow(pu.cx, pb.bottom, pu.top,'#888','mah-k');
 
   // Residual skip: node features h(0) -> Update, straight rail down the left margin
+  // (genuinely needs to bypass the full-width Interaction+Product stack)
   if(fn0&&pu){
     var railL = 10;
     orthDown(fn0.left, fn0.cy, railL, pu.top-14, pu.left+14, '#3a7a28','mah-g');
   }
 
   // Update -> node features h(1)
-  if(pu&&fn1) vArrow(pu.cx,pu.bottom, fn1.cx,fn1.top,'#3a7a28','mah-g');
+  if(pu&&fn1) vArrow(fn1.cx, pu.bottom, fn1.top,'#3a7a28','mah-g');
 
-  // Readout row
-  if(fn1&&ro) vArrow(fn1.cx,fn1.bottom, ro.cx,ro.top,'#3a7a28','mah-g');
+  // Readout row: drop straight down from directly above Readout
+  if(fn1&&ro) vArrow(ro.cx, fn1.bottom, ro.top,'#3a7a28','mah-g');
   if(ro&&out){
     var p=document.createElementNS(NS,'line');
     p.setAttribute('x1',ro.right);p.setAttribute('y1',ro.cy);
