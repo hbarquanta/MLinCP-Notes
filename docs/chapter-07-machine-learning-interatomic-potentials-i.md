@@ -473,106 +473,107 @@ The initial node embedding $h_{i,k00}^{(0)}$ is `Kx0e` only: pure scalars, since
 
 The small model is suitable for fast MD on well-defined systems; the medium model is the typical research choice; the large model (similar to MACE-MP-0) is used for universal/foundation models trained on millions of structures across the periodic table.
 
-<div id="mace-fc" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 0.9rem;margin:1.8rem 0;font-family:inherit;position:relative;padding-right:44px;">
-<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.75rem;letter-spacing:0.01em;">MACE Architecture &mdash; Embedding &rarr; [Interaction + Product + Readout] &times; <em>S</em> &rarr; Output</div>
+<style>#mace-fc .katex{color:#2b2b2b;}</style>
+<div id="mace-fc" style="background:#faf8f5;border:1px solid #e0dbd4;border-radius:8px;padding:1.1rem 2.4rem;margin:1.8rem 0;font-family:inherit;position:relative;color:#333;">
+<div style="text-align:center;font-size:0.84rem;font-weight:700;color:#444;margin-bottom:0.85rem;letter-spacing:0.01em;">MACE Architecture &mdash; Embedding &rarr; [Interaction + Product] &times; <em>S</em> &rarr; Readout</div>
 
-<div style="display:flex;justify-content:center;gap:0.7rem;margin-bottom:0.15rem;flex-wrap:wrap;">
-<div style="background:#f0ece6;border:1.5px solid #c8c2ba;border-radius:5px;padding:0.22rem 0.85rem;font-size:0.8rem;font-weight:600;color:#555;">Species Z<sub>i</sub></div>
-<div style="background:#f0ece6;border:1.5px solid #c8c2ba;border-radius:5px;padding:0.22rem 0.85rem;font-size:0.8rem;font-weight:600;color:#555;">Edges: r<sub>ij</sub>, &nbsp;r&#770;<sub>ij</sub></div>
+<div style="display:flex;justify-content:center;gap:2.2rem;margin-bottom:0.3rem;flex-wrap:wrap;font-size:0.78rem;font-weight:600;color:#555;">
+<div>Atom&rsquo;s chemical species</div>
+<div>graph &lsquo;edge&rsquo;</div>
 </div>
-<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.15rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
+
 <div style="border:1.5px solid #A4CE8B;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(164,206,139,0.12);color:#2a5a1a;border-bottom:1px solid #A4CE8B;">Embedding <span style="font-weight:400;text-transform:none;color:#888;">&middot; computed once</span></div>
 <div style="display:flex;gap:0.4rem;padding:0.45rem;flex-wrap:wrap;">
-<div id="mace-emb-node" style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Node <span style="color:#A4CE8B;">&#9679;</span> from species Z<sub>i</sub></div>
-<span data-eq="h_{i,k00}^{(0)} = W_{km}" data-dm="1"></span></div>
-<div id="mace-emb-radial" style="flex:1.2;min-width:200px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Radial basis <span style="color:#86BCBD;">&#9679;</span> from edge distances r<sub>ij</sub></div>
-<span data-eq="\tilde{f}_n(r_{ij}) = \sqrt{\tfrac{2}{r_c}}\,\frac{\sin\!\left(\frac{n\pi r_{ij}}{r_c}\right)}{r_{ij}}\,f_c(r_{ij})" data-dm="1"></span></div>
-<div id="mace-emb-angular" style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Angular basis <span style="color:#86BCBD;">&#9679;</span> from directions r&#770;<sub>ij</sub></div>
-<span data-eq="Y_l^{m_l}(\hat{\mathbf{r}}_{ij}),\; l = 0,\ldots,L_{\max}" data-dm="1"></span></div>
-</div>
-</div>
-<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.15rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
-<div style="border:1.5px dashed #86BCBD;border-radius:8px;padding:0.45rem;background:rgba(134,188,189,0.03);">
-<div style="text-align:center;font-size:0.73rem;font-weight:700;color:#86BCBD;letter-spacing:0.03em;margin-bottom:0.3rem;">&#10227;&thinsp;&times;S&thinsp; interaction layers</div>
 
-<div style="border:1.5px solid #86BCBD;border-radius:6px;overflow:hidden;margin-bottom:0.3rem;">
+<div style="flex:1;min-width:150px;display:flex;flex-direction:column;gap:0.35rem;">
+<div id="mace-onehot" style="background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Species one-hot <span style="color:#A4CE8B;">&#9679;</span></div>
+<span data-eq="\delta_{sm}" data-dm="1"></span></div>
+<div id="mace-node-emb" style="background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Node embedding</div>
+<span data-eq="h_{i,k00}^{(0)} = W_{km}" data-dm="1"></span></div>
+</div>
+
+<div id="mace-radial-emb" style="flex:1.2;min-width:200px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;align-self:flex-start;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Radial embedding <span style="color:#86BCBD;">&#9679;</span> from r<sub>ij</sub></div>
+<span data-eq="\tilde{f}_n(r_{ij}) = \sqrt{\tfrac{2}{r_c}}\,\frac{\sin\!\left(\frac{n\pi r_{ij}}{r_c}\right)}{r_{ij}}\,f_c(r_{ij})" data-dm="1"></span></div>
+
+<div id="mace-angular-emb" style="flex:1;min-width:150px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;align-self:flex-start;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Angular embedding <span style="color:#86BCBD;">&#9679;</span> from r&#770;<sub>ij</sub></div>
+<span data-eq="Y_l^{m_l}(\hat{\mathbf{r}}_{ij}),\; l = 0,\ldots,L_{\max}" data-dm="1"></span></div>
+
+</div>
+</div>
+
+<div style="display:flex;gap:0.4rem;margin:0.5rem 0;flex-wrap:wrap;">
+<div id="mace-feat-node0" style="flex:1;min-width:140px;background:rgba(164,206,139,0.15);border:1px solid #A4CE8B;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#2a5a1a;text-align:center;">Node features h<sup>(0)</sup></div>
+<div id="mace-feat-edgef" style="flex:1;min-width:140px;background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#0f3a3c;text-align:center;">Edge features f&#771;</div>
+<div id="mace-feat-edgea" style="flex:1;min-width:140px;background:rgba(134,188,189,0.15);border:1px solid #86BCBD;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#0f3a3c;text-align:center;">Edge attributes Y</div>
+</div>
+
+<div style="border:1.5px dashed #86BCBD;border-radius:8px;padding:0.5rem 0.55rem 0.6rem;background:rgba(134,188,189,0.03);">
+<div style="text-align:center;font-size:0.73rem;font-weight:700;color:#86BCBD;letter-spacing:0.03em;margin-bottom:0.35rem;">&#10227;&thinsp; &times; S interaction layers</div>
+
+<div style="border:1.5px solid #86BCBD;border-radius:6px;overflow:hidden;margin-bottom:0.35rem;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(134,188,189,0.12);color:#0f3a3c;border-bottom:1px solid #86BCBD;">Interaction <span style="font-weight:400;text-transform:none;color:#888;">&middot; equivariant message passing &rarr; A-basis</span></div>
-<div style="padding:0.4rem 0.45rem;">
-<div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+<div style="padding:0.45rem 0.5rem;">
+
+<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.35rem;">
 <div id="mace-int-linear" style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #A4CE8B;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">1 &middot; Linear mix &nbsp;<span style="color:#A4CE8B;">&#9679;</span><span style="font-weight:400;"> node features h</span></div>
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">1 &middot; Linear mix <span style="color:#A4CE8B;">&#9679;</span></div>
 <span data-eq="\tilde{h}_{i,kl_2m_2}^{(s)} = \textstyle\sum_{k'} W_{kk'l_2}^{(s)}\,h_{i,k'l_2m_2}^{(s)}" data-dm="1"></span></div>
 <div id="mace-int-radial" style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-left:3px solid #86BCBD;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">2 &middot; Radial MLP &nbsp;<span style="color:#86BCBD;">&#9679;</span><span style="font-weight:400;"> edge features f&#771;</span></div>
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">2 &middot; Radial MLP <span style="color:#86BCBD;">&#9679;</span></div>
 <span data-eq="R_{kl_1l_2l}^{(s)}(r_{ij}) = \mathrm{MLP}\!\left(\{\tilde{f}_n(r_{ij})\}_n\right)" data-dm="1"></span></div>
 </div>
-<div style="display:flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.18rem 0;font-size:0.69rem;color:#bbb;">
-<span style="color:#A4CE8B;font-weight:600;">h&#771;</span><span>+</span><span style="color:#86BCBD;font-weight:600;">R</span><span>+</span><span style="color:#86BCBD;font-weight:600;">Y<sub>l</sub><sup>m</sup></span><span>&darr;</span>
-</div>
-<div id="mace-int-tp" style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.08rem 0;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">3 &middot; Tensor product (Clebsch&ndash;Gordan) &nbsp;<span style="font-weight:400;color:#bbb;">combines h&#771; + R + Y</span></div>
+
+<div id="mace-int-tp" style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin-bottom:0.35rem;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">3 &middot; Tensor product (Clebsch&ndash;Gordan) &lsquo;conv_tp&rsquo; <span style="font-weight:400;color:#bbb;">combines h&#771; + R + Y</span></div>
 <span data-eq="\varphi_{i,klm}^{(s)} = \textstyle\sum_{l_1l_2m_1m_2} C_{l_1m_1,l_2m_2}^{l,m}\,R_{kl_1l_2l}^{(s)}\,\tilde{h}_{j,kl_1m_1}^{(s)}\,Y_{l_2}^{m_2}(\hat{\mathbf{r}}_{ij})" data-dm="1"></span></div>
-<svg width="10" height="18" viewBox="0 0 10 18" style="display:block;margin:0.1rem auto;"><line x1="5" y1="0" x2="5" y2="11" stroke="#888" stroke-width="1.5"/><polygon points="1,9 5,17 9,9" fill="#888"/></svg>
-<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.08rem 0;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">4 &middot; A-basis (neighbour sum + linear)</div>
+
+<div id="mace-int-abasis" style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">4 &middot; Neighbour sum + linear &rarr; A-basis</div>
 <span data-eq="A_{i,klm}^{(s)} = \textstyle\sum_{k'} W_{kk'}^{(s)}\sum_{j\in\mathcal{N}(i)}\varphi_{i,k'lm}^{(s)}" data-dm="1"></span></div>
+
 </div>
 </div>
-<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.15rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
-<div style="border:1.5px solid #C47070;border-radius:6px;overflow:hidden;margin-bottom:0.3rem;">
+
+<div style="border:1.5px solid #C47070;border-radius:6px;overflow:hidden;">
 <div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(186,90,90,0.08);color:#5a1a1a;border-bottom:1px solid #C47070;">Product <span style="font-weight:400;text-transform:none;color:#888;">&middot; &nu;-body ACE correlations &rarr; B-basis &rarr; update h</span></div>
-<div style="padding:0.4rem 0.45rem;">
-<div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">B-basis &nbsp;<span style="font-weight:400;color:#bbb;">&nu;-fold product of A</span></div>
-<span data-eq="B_{i,\eta,kLM}^{(s)} = \textstyle\sum_{lm} C_{lm}^{LM}\prod_{\xi=1}^{\nu} A_{i,k_\xi l_\xi m_\xi}^{(s)}" data-dm="1"></span></div>
-<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Message &nbsp;<span style="font-weight:400;color:#bbb;">linear over B channels</span></div>
+<div style="padding:0.45rem 0.5rem;">
+
+<div id="mace-prod-b" style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin-bottom:0.35rem;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">B-basis <span style="font-weight:400;color:#bbb;">&nu;-fold product of A</span> &nbsp;&amp;&nbsp; Message <span style="font-weight:400;color:#bbb;">linear over B</span></div>
+<span data-eq="B_{i,\eta,kLM}^{(s)} = \textstyle\sum_{lm} C_{lm}^{LM}\prod_{\xi=1}^{\nu} A_{i,k_\xi l_\xi m_\xi}^{(s)}" data-dm="1"></span>
+<span style="display:inline-block;width:0.6rem;"></span>
 <span data-eq="m_{i,kLM}^{(s)} = \textstyle\sum_{\eta,k'} W_{\eta,kk'}^{(s)}\,B_{i,\eta,k'LM}^{(s)}" data-dm="1"></span></div>
-</div>
-<svg width="10" height="18" viewBox="0 0 10 18" style="display:block;margin:0.1rem auto;"><line x1="5" y1="0" x2="5" y2="11" stroke="#888" stroke-width="1.5"/><polygon points="1,9 5,17 9,9" fill="#888"/></svg>
-<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;margin:0.08rem 0;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Update (residual) &nbsp;<span style="font-weight:400;color:#bbb;">m + skip from h<sup>(s)</sup></span></div>
+
+<div id="mace-prod-update" style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Update (residual) &nbsp;<span style="font-weight:400;color:#bbb;">message + skip from h<sup>(s)</sup></span></div>
 <span data-eq="h_{i,kLM}^{(s+1)} = \textstyle\sum_{k'} W_{kk'L}^{(s)}\,m_{i,k'LM}^{(s)} + \sum_{k'} U_{kk'L}^{(s)}\,h_{i,k'LM}^{(s)}" data-dm="1"></span></div>
+
 </div>
 </div>
-<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.15rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
-<div style="border:1.5px solid #c8ad3a;border-radius:6px;overflow:hidden;">
-<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(247,228,155,0.25);color:#5a4c00;border-bottom:1px solid #c8ad3a;">Readout <span style="font-weight:400;text-transform:none;color:#888;">&middot; l=0 scalars &rarr; atomic energy &epsilon;<sub>i</sub><sup>(s)</sup></span></div>
-<div style="display:flex;gap:0.4rem;padding:0.4rem 0.45rem;flex-wrap:wrap;">
-<div style="flex:1;min-width:155px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">s &lt; S &nbsp;(linear)</div>
+
+</div>
+
+<div style="display:flex;gap:0.4rem;margin:0.5rem 0 0.3rem;flex-wrap:wrap;">
+<div id="mace-feat-node1" style="flex:1;min-width:140px;background:rgba(164,206,139,0.15);border:1px solid #A4CE8B;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.68rem;font-weight:700;color:#2a5a1a;text-align:center;">Node features h<sup>(1)</sup></div>
+<div style="flex:1;min-width:140px;border:1px dashed #c8c2ba;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.66rem;color:#aaa;text-align:center;">edge features f&#771; <span style="color:#ccc;">(pass through)</span></div>
+<div style="flex:1;min-width:140px;border:1px dashed #c8c2ba;border-radius:4px;padding:0.25rem 0.5rem;font-size:0.66rem;color:#aaa;text-align:center;">edge attributes Y <span style="color:#ccc;">(pass through)</span></div>
+</div>
+<div style="text-align:center;font-size:0.68rem;color:#bbb;font-style:italic;margin-bottom:0.5rem;">&#8635; repeat Interaction + Product &times; (S&minus;1) more times</div>
+
+<div style="display:flex;align-items:stretch;gap:0.4rem;flex-wrap:wrap;">
+<div id="mace-readout" style="flex:1;min-width:155px;background:#fff;border:1.5px solid #c8ad3a;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.7rem;font-weight:700;color:#8a7000;margin-bottom:0.15rem;">Readout <span style="font-weight:400;color:#bbb;">&middot; s&lt;S linear / s=S MLP</span></div>
 <span data-eq="\varepsilon_i^{(s)} = \textstyle\sum_k W_k^{(s)}\,h_{i,k00}^{(s)}" data-dm="1"></span></div>
-<div style="flex:1;min-width:155px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">s = S &nbsp;(MLP)</div>
-<span data-eq="\varepsilon_i^{(S)} = \mathrm{MLP}\!\left(\{h_{i,k00}^{(S)}\}_k\right)" data-dm="1"></span></div>
-</div>
-</div>
-
-</div>
-<svg width="14" height="22" viewBox="0 0 14 22" style="display:block;margin:0.15rem auto;"><line x1="7" y1="0" x2="7" y2="13" stroke="#555" stroke-width="2"/><polygon points="2,11 7,20 12,11" fill="#555"/></svg>
-<div style="border:1.5px solid #aaa;border-radius:6px;overflow:hidden;margin:0.15rem 0;">
-<div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;padding:0.28rem 0.7rem;background:rgba(170,170,170,0.1);color:#444;border-bottom:1px solid #ccc;">Output <span style="font-weight:400;text-transform:none;color:#888;">&middot; sum over atoms &amp; layers; forces via autodiff</span></div>
-<div style="padding:0.4rem 0.45rem;">
-<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.3rem;">
-<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Total energy</div>
-<span data-eq="E_i = \textstyle\sum_s \varepsilon_i^{(s)},\quad E_{\mathrm{tot}} = \sum_i E_i" data-dm="1"></span></div>
-<div style="flex:1;min-width:175px;background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Forces (conservative)</div>
-<span data-eq="\mathbf{F}_i = -\dfrac{\partial E_{\mathrm{tot}}}{\partial\mathbf{r}_i}" data-dm="1"></span></div>
-</div>
-<div style="background:#fff;border:1px solid #e5dfd7;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
-<div style="font-size:0.69rem;font-weight:700;color:#999;margin-bottom:0.1rem;">Training loss</div>
-<span data-eq="\mathcal{L} = \frac{\lambda_E}{B}\sum_b\!\left(\frac{E_b-\hat{E}_b}{N_b}\right)^{\!2} + \frac{\lambda_F}{3B}\sum_{b,i,\alpha}\!\left(\hat{F}_{i\alpha}+\frac{\partial E_b}{\partial r_{i\alpha}}\right)^{\!2}" data-dm="1"></span></div>
-</div>
+<div id="mace-output" style="flex:1;min-width:155px;background:#fff;border:1.5px solid #aaa;border-radius:5px;padding:0.35rem 0.6rem;overflow-x:auto;">
+<div style="font-size:0.7rem;font-weight:700;color:#555;margin-bottom:0.15rem;">Node / atomic energy</div>
+<span data-eq="E_i = \textstyle\sum_s \varepsilon_i^{(s)}" data-dm="1"></span></div>
 </div>
 
-<!-- JS-drawn connecting arrows overlay -->
 <svg id="mace-arrows" style="position:absolute;top:0;left:0;pointer-events:none;z-index:5;overflow:visible;"></svg>
 </div>
 <script>
@@ -591,38 +592,84 @@ function drawMaceArrows(){
   asvg.innerHTML='<defs>'+
     '<marker id="mah-g" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" fill="#3a7a28"/></marker>'+
     '<marker id="mah-b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" fill="#1f6668"/></marker>'+
+    '<marker id="mah-k" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L8,4 L0,8 Z" fill="#888"/></marker>'+
     '</defs>';
   function rel(id){
     var e=document.getElementById(id);if(!e)return null;
     var r=e.getBoundingClientRect();
     return{left:r.left-wRect.left,top:r.top-wRect.top,right:r.right-wRect.left,
-           bottom:r.bottom-wRect.top,cx:r.left+r.width/2-wRect.left,cy:r.top+r.height/2-wRect.top};
+           bottom:r.bottom-wRect.top,cx:r.left+r.width/2-wRect.left,cy:r.top+r.height/2-wRect.top,
+           width:r.width,height:r.height};
   }
-  function bz(x1,y1,x2,y2,col,mid){
-    var dy=y2-y1,p=document.createElementNS(NS,'path');
-    p.setAttribute('d','M'+x1+','+y1+' C'+x1+','+(y1+dy*0.45)+' '+x2+','+(y1+dy*0.55)+' '+x2+','+y2);
-    p.setAttribute('fill','none');p.setAttribute('stroke',col);
-    p.setAttribute('stroke-width','1.8');p.setAttribute('marker-end','url(#'+mid+')');
+  function vArrow(x1,y1,x2,y2,col,mid){
+    var p=document.createElementNS(NS,'line');
+    p.setAttribute('x1',x1);p.setAttribute('y1',y1);p.setAttribute('x2',x2);p.setAttribute('y2',y2-6);
+    p.setAttribute('stroke',col);p.setAttribute('stroke-width','1.8');p.setAttribute('marker-end','url(#'+mid+')');
     asvg.appendChild(p);
   }
-  var en=rel('mace-emb-node'),er=rel('mace-emb-radial'),ea=rel('mace-emb-angular');
-  var il=rel('mace-int-linear'),ir=rel('mace-int-radial'),tp=rel('mace-int-tp');
-  // Embedding -> Interaction inputs
-  if(en&&il) bz(en.cx,en.bottom, il.cx,il.top, '#3a7a28','mah-g');       // Node -> Linear mix
-  if(er&&ir) bz(er.cx,er.bottom, ir.cx,ir.top, '#1f6668','mah-b');       // Radial -> Radial MLP
-  // Interaction -> Tensor product (all three inputs converge)
-  if(il&&tp) bz(il.cx,il.bottom, tp.cx-20,tp.top, '#3a7a28','mah-g');   // Linear mix -> TP
-  if(ir&&tp) bz(ir.cx,ir.bottom, tp.cx+12,tp.top, '#1f6668','mah-b');   // Radial MLP -> TP
-  // Angular bypass: exits Angular bottom-right, travels right rail, enters TP top-right
-  if(ea&&tp){
-    var rx=W-6,ry=8,sx=ea.right+2,sy=ea.bottom,ex=tp.right-14,ey=tp.top;
-    var d='M'+sx+','+sy+' L'+(rx-ry)+','+sy+' Q'+rx+','+sy+' '+rx+','+(sy+ry)+
-          ' L'+rx+','+(ey-ry)+' Q'+rx+','+ey+' '+(rx-ry)+','+ey+' L'+ex+','+ey;
-    var pe=document.createElementNS(NS,'path');
-    pe.setAttribute('d',d);pe.setAttribute('fill','none');
-    pe.setAttribute('stroke','#1f6668');pe.setAttribute('stroke-width','1.8');
-    pe.setAttribute('marker-end','url(#mah-b)');
-    asvg.appendChild(pe);
+  function orthDown(x1,y1,railX,y2,x2,col,mid){
+    var p=document.createElementNS(NS,'path');
+    var d='M'+x1+','+y1+' L'+railX+','+y1+' L'+railX+','+y2+' L'+x2+','+y2;
+    p.setAttribute('d',d);p.setAttribute('fill','none');
+    p.setAttribute('stroke',col);p.setAttribute('stroke-width','1.6');
+    p.setAttribute('stroke-dasharray','4,3');
+    p.setAttribute('marker-end','url(#'+mid+')');
+    asvg.appendChild(p);
+  }
+
+  var onehot=rel('mace-onehot'), nodeEmb=rel('mace-node-emb');
+  var radEmb=rel('mace-radial-emb'), angEmb=rel('mace-angular-emb');
+  var fn0=rel('mace-feat-node0'), fef=rel('mace-feat-edgef'), fea=rel('mace-feat-edgea');
+  var il=rel('mace-int-linear'), ir=rel('mace-int-radial'), tp=rel('mace-int-tp'), ab=rel('mace-int-abasis');
+  var pb=rel('mace-prod-b'), pu=rel('mace-prod-update');
+  var fn1=rel('mace-feat-node1'), ro=rel('mace-readout'), out=rel('mace-output');
+
+  // Embedding internals
+  if(onehot&&nodeEmb) vArrow(onehot.cx,onehot.bottom, nodeEmb.cx,nodeEmb.top,'#3a7a28','mah-g');
+
+  // Embedding -> feature bars
+  if(nodeEmb&&fn0) vArrow(nodeEmb.cx,nodeEmb.bottom, fn0.cx,fn0.top,'#3a7a28','mah-g');
+  if(radEmb&&fef) vArrow(radEmb.cx,radEmb.bottom, fef.cx,fef.top,'#1f6668','mah-b');
+  if(angEmb&&fea) vArrow(angEmb.cx,angEmb.bottom, fea.cx,fea.top,'#1f6668','mah-b');
+
+  // Feature bars -> Interaction
+  if(fn0&&il) vArrow(fn0.cx,fn0.bottom, il.cx,il.top,'#3a7a28','mah-g');
+  if(fef&&ir) vArrow(fef.cx,fef.bottom, ir.cx,ir.top,'#1f6668','mah-b');
+
+  // linear/radial MLP -> tensor product
+  if(il&&tp) vArrow(il.cx,il.bottom, tp.left+tp.width*0.3,tp.top,'#3a7a28','mah-g');
+  if(ir&&tp) vArrow(ir.cx,ir.bottom, tp.left+tp.width*0.7,tp.top,'#1f6668','mah-b');
+
+  // edge attributes -> tensor product: straight rail down the right margin
+  if(fea&&tp){
+    var railX = W-10;
+    orthDown(fea.right, fea.cy, railX, tp.top+16, tp.right-14, '#1f6668','mah-b');
+  }
+
+  // tensor product -> A-basis -> Product (B-basis)
+  if(tp&&ab) vArrow(tp.cx,tp.bottom, ab.cx,ab.top,'#888','mah-k');
+  if(ab&&pb) vArrow(ab.cx,ab.bottom, pb.cx,pb.top,'#3a7a28','mah-g');
+
+  // B-basis -> Update
+  if(pb&&pu) vArrow(pb.cx,pb.bottom, pu.cx,pu.top,'#888','mah-k');
+
+  // Residual skip: node features h(0) -> Update, straight rail down the left margin
+  if(fn0&&pu){
+    var railL = 10;
+    orthDown(fn0.left, fn0.cy, railL, pu.top-14, pu.left+14, '#3a7a28','mah-g');
+  }
+
+  // Update -> node features h(1)
+  if(pu&&fn1) vArrow(pu.cx,pu.bottom, fn1.cx,fn1.top,'#3a7a28','mah-g');
+
+  // Readout row
+  if(fn1&&ro) vArrow(fn1.cx,fn1.bottom, ro.cx,ro.top,'#3a7a28','mah-g');
+  if(ro&&out){
+    var p=document.createElementNS(NS,'line');
+    p.setAttribute('x1',ro.right);p.setAttribute('y1',ro.cy);
+    p.setAttribute('x2',out.left-6);p.setAttribute('y2',out.cy);
+    p.setAttribute('stroke','#888');p.setAttribute('stroke-width','1.8');p.setAttribute('marker-end','url(#mah-k)');
+    asvg.appendChild(p);
   }
 }
 
